@@ -1,7 +1,9 @@
 name:                deriving-trans
 version:             0.1.0.0
 synopsis:            Derive transformer type classes with DerivingVia
---description:
+description:         MonadTrans is a prime example of a type class, that is not derivable with
+                     GeneralizedNewtypeDeriving.
+                     A simple way to still derive such an instance is by using DerivingVia.
 license:             BSD3
 license-file:        LICENSE
 author:              Felix Springer
