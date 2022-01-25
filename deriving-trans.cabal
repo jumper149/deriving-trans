@@ -1,10 +1,12 @@
 cabal-version:       3.0
 name:                deriving-trans
 version:             0.1.0.0
-synopsis:            Derive transformer type classes with DerivingVia
-description:         MonadTrans is a prime example of a type class, that is not derivable with
-                     GeneralizedNewtypeDeriving.
-                     A simple way to still derive such an instance is by using DerivingVia.
+synopsis:            Derive monad type classes with DerivingVia
+description:         Deriving type class instances for monad transformer stacks can be tedious.
+                     By actually composing transformers with `ComposeT` we don't need to implement
+                     each type class for each transformer.
+                     Instead we need a single instance for `Elevator`, which will then help us pick
+                     the correct instance with DerivingVia.
 license:             BSD-3-Clause
 license-file:        LICENSE
 author:              Felix Springer
