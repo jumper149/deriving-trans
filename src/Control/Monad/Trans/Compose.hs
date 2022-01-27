@@ -14,6 +14,7 @@ import Control.Monad.Writer.Class
 import Data.Kind
 
 -- | A newtype wrapper for two stacked monad transformers.
+--
 -- Access instances of the intermediate monad @t2 m@, whenever @t1@ implements
 -- 'MonadTrans'/'MonadTransControl'.
 newtype ComposeT
@@ -88,12 +89,23 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadWriter w (t2 m)
     ) => MonadWriter w (ComposeT t1 t2 m)
 
-runComposeT :: (forall a. t1 (t2 m) a -> t2 m (StT t1 a))
-            -> (forall a. t2 m a -> m (StT t2 a))
+-- | Run a transformer stack.
+--
+-- This function takes the two individual monad transformer runners as arguments.
+runComposeT :: (forall a. t1 (t2 m) a -> t2 m (StT t1 a)) -- ^ run @t1@
+            -> (forall a. t2 m a -> m (StT t2 a)) -- ^ run @t2@
             -> (forall a. ComposeT t1 t2 m a -> m (StT t2 (StT t1 a)))
 runComposeT runT1 runT2 = runT2 . runT1 . deComposeT
 
-runComposeT' :: (t1 (t2 m) a -> t2 m a)
-             -> (t2 m a -> m a)
+-- | Equivalent to 'runComposeT', but discards the monadic state 'StT'.
+-- This is a simple approach when your monad transformer stack doesn't carry monadic state.
+--
+-- @
+-- 'StT' ('ComposeT' t1 t2) a ~ a
+-- @
+--
+-- This can be used to improve error messages when modifying a monad transformer stack.
+runComposeT' :: (t1 (t2 m) a -> t2 m a) -- ^ run @t1@
+             -> (t2 m a -> m a) -- ^ run @t2@
              -> (ComposeT t1 t2 m a -> m a)
 runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
