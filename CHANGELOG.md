@@ -1,5 +1,10 @@
 # Revision history for deriving-trans
 
+## 0.2.1.0 *27 Jan 2022*
+
+* Use StandaloneKindSignatures.
+* Add Haddock documentation.
+
 ## 0.2.0.0 *25 Jan 2022*
 
 * Completely change the idea of this project. Pretty much everything has been changed.
