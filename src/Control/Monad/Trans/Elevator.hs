@@ -1,4 +1,4 @@
-{-# LANGUAGE QuantifiedConstraints, UndecidableInstances, TupleSections #-}
+{-# LANGUAGE QuantifiedConstraints, UndecidableInstances, StandaloneKindSignatures, TupleSections #-}
 
 module Control.Monad.Trans.Elevator where
 
@@ -13,12 +13,12 @@ import Data.Kind
 
 -- | A newtype wrapper for monad transformers.
 --
--- Access instances of the inner monad @m@.
-newtype Elevator
-  (t :: (Type -> Type) -> Type -> Type)
-  (m :: Type -> Type)
-  (a :: Type)
-    = Ascend { descend :: t m a }
+-- Access instances of the inner monad 'm'.
+type Elevator :: ((Type -> Type) -> Type -> Type) -- ^ 't'
+              -> (Type -> Type) -- ^ 'm'
+              -> Type -- ^ 'a'
+              -> Type
+newtype Elevator t m a = Ascend { descend :: t m a }
   deriving newtype (Applicative, Functor, Monad)
   deriving newtype (MonadTrans, MonadTransControl)
 
