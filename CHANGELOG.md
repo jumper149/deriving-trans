@@ -2,6 +2,7 @@
 
 ## 0.2.1.0 *27 Jan 2022*
 
+* Add `MonadTrans` and `MonadTransControl` instances to `Elevator`.
 * Use StandaloneKindSignatures.
 * Add Haddock documentation.
 
