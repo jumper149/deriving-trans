@@ -52,3 +52,55 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
   listen tma = liftWith (\ runT -> listen $ runT tma) >>= \ (sta, w) ->
     (, w) <$> restoreT (pure sta)
   pass tma = lift . pass . pure =<< tma
+
+-- * Examples
+--
+-- $examples
+--
+-- == Example 1: Recover submerged instances
+--
+-- Let's assume you want to define a monad transformer stack.
+--
+-- @
+-- newtype StackT m a = StackT { unStackT :: ReaderT Char (ReaderT Bool m) a }
+--   deriving newtype (Functor, Applicative Monad)
+-- @
+--
+-- Now you want to expose the inner @(MonadReader Bool)@ instance with @(StackT m)@.
+--
+-- Normally it's shadowed by the @(MonadReader Char)@ instance, but we can use @Elevator@ to access
+-- the inner transformer.
+--
+-- @
+--   deriving (MonadReader Bool) via (Elevator (ReaderT Char) (ReaderT Bool m))
+-- @
+--
+-- == Example 2: Custom transformer without boilerplate
+--
+-- Let's assume you have defined a monad transformer.
+--
+-- @
+-- newtype CustomT m a = CustomT { unComposeT :: IdentityT m a }
+--   deriving newtype (Functor, Applicative Monad)
+--   deriving newtype (MonadTrans, MonadTransControl)
+--
+-- runCustomT :: CustomT m a -> m a
+-- runCustomT = runIdentityT . unComposeT
+-- @
+--
+-- Now you want to use this monad transformer in a transformer stack.
+--
+-- @
+-- newtype StackT m a = { unStackT :: CustomT (ReaderT Bool m) a }
+--   deriving newtype (Functor, Applicative Monad)
+--   deriving newtype (MonadTrans, MonadTransControl)
+-- @
+--
+-- Unfortunately we can't derive a @Monad m => MonadReader Bool (StackT m)@ instance with
+-- GeneralizedNewtypeDeriving, without also adding the instance to @CustomT@.
+--
+-- To still derive this trivial instance we can use @Elevator@ with DerivingVia.
+--
+-- @
+--   deriving (MonadReader Bool) via (Elevator CustomT (ReaderT Bool m))
+-- @
