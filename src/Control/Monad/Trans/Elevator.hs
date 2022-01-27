@@ -11,6 +11,15 @@ import Control.Monad.Trans.Control
 import Control.Monad.Writer.Class
 import Data.Kind
 
+-- * 'Elevator'
+--
+-- $elevator
+--
+-- 'Elevator' can be used to lift instances through monad transformers as long as they implement
+-- 'MonadTrans' and 'MonadTransControl' instances.
+--
+-- 'MonadTransControl' is only necessary when there is atleast one method with a monadic argument.
+
 -- | A newtype wrapper for monad transformers.
 --
 -- Access instances of the inner monad 'm'.

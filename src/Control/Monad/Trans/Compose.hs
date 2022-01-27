@@ -13,6 +13,15 @@ import Control.Monad.Trans.Elevator
 import Control.Monad.Writer.Class
 import Data.Kind
 
+-- * 'ComposeT'
+--
+-- $composet
+--
+-- 'ComposeT' can be used in monad transformer stacks to derive instances in a clean way.
+--
+-- This also allows the usage of these instances, while in the middle of the transformer stack.
+-- This proves particularly useful, when writing a runner for a transformer stack.
+
 -- | A newtype wrapper for two stacked monad transformers.
 --
 -- Access instances of the intermediate monad @('t2' 'm')@, whenever 't1' implements
@@ -94,6 +103,12 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadTransControl t1
     , MonadWriter w (t2 m)
     ) => MonadWriter w (ComposeT t1 t2 m)
+
+-- ** Run 'ComposeT'
+--
+-- $runComposet
+--
+-- You have to run the composed monad transformers to get back into the base monad at some point.
 
 -- | Run a transformer stack.
 --
