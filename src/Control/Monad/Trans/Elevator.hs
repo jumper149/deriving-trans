@@ -109,3 +109,33 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- @
 --   deriving (MonadReader Bool) via (Elevator CustomT (ReaderT Bool m))
 -- @
+--
+-- == Example 3: Adding an instance for 'Elevator'
+--
+-- Suppose you define a new type class.
+--
+-- @
+-- class Monad m => MonadCustom m where
+--   simpleMethod :: a -> m a
+--   complicatedMethod :: (a -> m a) -> m a
+-- @
+--
+-- A simple way to allow a type class to be lifted through other monad transformers is by adding an
+-- instance for 'Elevator'.
+--
+-- You have to be careful about monadic state 'StT', when defining such instances using
+-- 'MonadTransControl'.
+--
+-- @
+-- instance (MonadCustom m, MonadTrans t) => MonadCustom (Elevator t m) where
+--   simpleMethod = lift . simpleMethod
+--   complicatedMethod f = (restoreT . pure =\<\<) $ liftWith $ \\ runT ->
+--     complicatedMethod $ runT . f
+-- @
+--
+-- Some useful examples (or exercises) are the instances for [mtl](https://hackage.haskell.org/package/mtl)'s type classes:
+--
+-- * 'MonadError'
+-- * 'MonadReader'
+-- * 'MonadState'
+-- * 'MonadWriter'
