@@ -14,8 +14,8 @@ import Control.Monad.Writer.Class
 import Data.Kind
 
 -- | A newtype wrapper for two stacked monad transformers.
--- Access instances of the intermediate monad `t2 m`, whenever `t1` implements
--- `MonadTrans`/`MonadTransControl`.
+-- Access instances of the intermediate monad @t2 m@, whenever @t1@ implements
+-- 'MonadTrans'/'MonadTransControl'.
 newtype ComposeT
   (t1 :: (Type -> Type) -> Type -> Type)
   (t2 :: (Type -> Type) -> Type -> Type)
@@ -32,7 +32,7 @@ instance (forall m. Monad m => Monad (t2 m), MonadTransControl t1, MonadTransCon
   liftWith f = defaultLiftWith2 ComposeT deComposeT $ \ x -> f x
   restoreT = defaultRestoreT2 ComposeT
 
--- | Elevated to `m`.
+-- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
     ( Monad (t1 (t2 m))
@@ -40,7 +40,7 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadIO m
     ) => MonadIO (ComposeT t1 t2 m)
 
--- | Elevated to `m`.
+-- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
     ( Monad (t1 (t2 m))
@@ -48,7 +48,7 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadBase b m
     ) => MonadBase b (ComposeT t1 t2 m)
 
--- | Elevated to `m`.
+-- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
     ( Monad (t1 (t2 m))
@@ -56,7 +56,7 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadBaseControl b m
     ) => MonadBaseControl b (ComposeT t1 t2 m)
 
--- | Elevated to `t2 m`.
+-- | Elevated to @t2 m@.
 deriving via Elevator t1 (t2 (m :: * -> *))
   instance
     ( Monad (t1 (t2 m))
@@ -64,7 +64,7 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadError e (t2 m)
     ) => MonadError e (ComposeT t1 t2 m)
 
--- | Elevated to `t2 m`.
+-- | Elevated to @t2 m@.
 deriving via Elevator t1 (t2 (m :: * -> *))
   instance
     ( Monad (t1 (t2 m))
@@ -72,7 +72,7 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadReader r (t2 m)
     ) => MonadReader r (ComposeT t1 t2 m)
 
--- | Elevated to `t2 m`.
+-- | Elevated to @t2 m@.
 deriving via Elevator t1 (t2 (m :: * -> *))
   instance
     ( Monad (t1 (t2 m))
@@ -80,7 +80,7 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadState s (t2 m)
     ) => MonadState s (ComposeT t1 t2 m)
 
--- | Elevated to `t2 m`.
+-- | Elevated to @t2 m@.
 deriving via Elevator t1 (t2 (m :: * -> *))
   instance
     ( Monad (t1 (t2 m))

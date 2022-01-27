@@ -12,7 +12,7 @@ import Control.Monad.Writer.Class
 import Data.Kind
 
 -- | A newtype wrapper for monad transformers.
--- Access instances of the inner monad `m`.
+-- Access instances of the inner monad @m@.
 newtype Elevator
   (t :: (Type -> Type) -> Type -> Type)
   (m :: Type -> Type)
