@@ -71,9 +71,9 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --   deriving newtype (Functor, Applicative Monad)
 -- @
 --
--- Now you want to expose the inner @(MonadReader Bool)@ instance with @(StackT m)@.
+-- Now you want to expose the inner @('MonadReader' 'Bool')@ instance with @(StackT m)@.
 --
--- Normally it's shadowed by the @(MonadReader Char)@ instance, but we can use @Elevator@ to access
+-- Normally it's shadowed by the @('MonadReader' 'Char')@ instance, but we can use 'Elevator' to access
 -- the inner transformer.
 --
 -- @
@@ -101,10 +101,10 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --   deriving newtype (MonadTrans, MonadTransControl)
 -- @
 --
--- Unfortunately we can't derive a @(Monad m => MonadReader Bool (StackT m))@ instance with
+-- Unfortunately we can't derive a @('Monad' m => 'MonadReader' 'Bool' (StackT m))@ instance with
 -- /GeneralizedNewtypeDeriving/, without also adding the instance to @CustomT@.
 --
--- To still derive this trivial instance we can use @Elevator@ with /DerivingVia/.
+-- To still derive this trivial instance we can use 'Elevator' with /DerivingVia/.
 --
 -- @
 --   deriving (MonadReader Bool) via (Elevator CustomT (ReaderT Bool m))
