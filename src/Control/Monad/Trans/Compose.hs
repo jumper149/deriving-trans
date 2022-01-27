@@ -115,3 +115,133 @@ runComposeT' :: (t1 (t2 m) a -> t2 m a) -- ^ run 't1'
              -> (t2 m a -> m a) -- ^ run 't2'
              -> (ComposeT t1 t2 m a -> m a)
 runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
+
+-- * Examples
+--
+-- $examples
+--
+-- == Example 1: Create a new type class
+--
+-- When creating a new type class that supports 'ComposeT', you want to add recursive instances for
+-- `ComposeT`.
+--
+-- @
+-- class Monad m => MonadCustom m where
+--   simpleMethod :: a -> m a
+--   complicatedMethod :: (a -> m a) -> m a
+-- @
+--
+-- You can easily derive those instances, after implementing an instance for 'Elevator'.
+-- This is the hardest part, since you have to be careful about using 'MonadTransControl'
+-- correctly.
+--
+-- @
+-- instance ( Monad (t m)
+--          , MonadTransControl t
+--          , MonadCustom m
+--          ) => MonadCustom (Elevator t m) where
+--   simpleMethod = lift . simpleMethod
+--   complicatedMethod f = liftWith $ \ runT ->
+--     f . runT -- TODO: Use correct implementation
+-- @
+--
+-- Now it's possible to derive the recursive instance.
+--
+-- @
+-- deriving via Elevator t1 (t2 (m :: * -> *))
+--   instance
+--     ( Monad (t1 (t2 m))
+--     , MonadTransControl t1
+--     , MonadCustom (t2 m)
+--     ) => MonadCustom (ComposeT t1 t2 m)
+-- @
+--
+-- == Example 2: Add an instance
+--
+-- Add a type class instance for a new monad transformer, when there already is a recursive instance for 'ComposeT'.
+--
+-- @
+-- newtype CustomT m a = CustomT { unCustomT :: IdentityT m a }
+--   deriving newtype (Functor, Applicative, Monad)
+--   deriving newtype (MonadTrans, MonadTransControl)
+-- @
+--
+-- First we need the regular instance.
+-- The method implementations are 'undefined' here, because they are not related to 'ComposeT'.
+--
+-- @
+-- instance Monad m => MonadCustom (CustomT m) where
+--   simpleMethod = undefined
+--   complicatedMethod = undefined
+-- @
+--
+-- To add an instance that takes priority over the recursive instance, we need an /OVERLAPPING/ instance.
+--
+-- @
+-- deriving via CustomT (t2 (m :: * -> *))
+--   instance {-# OVERLAPPING #-}
+--     ( Monad (t2 m)
+--     ) => MonadCustom ((CustomT |. t2) m)
+-- @
+--
+-- == Example 3: Build a transformer stack
+--
+-- Create a monad transformer stack and wrap it using a newtype.
+--
+-- @
+-- type (|.) = ComposeT
+-- type Stack = StateT Int |. ReaderT Char |. CustomT |. ReaderT Bool |. IdentityT
+-- newtype StackT m a = StackT { unStackT :: Stack m a }
+--   deriving newtype (Functor, Applicative, Monad)
+--   deriving newtype (MonadTrans, MonadTransControl)
+--   deriving newtype (MonadBase, MonadBaseControl)
+-- @
+--
+-- Now we can simply derive just the instances, that we want.
+--
+-- @
+--   deriving newtype (MonadState Int)
+--   deriving newtype (MonadCustom)
+-- @
+--
+-- We can even use 'Elevator' to access instances, that have been shadowed in the stack.
+--
+-- @
+--   deriving (MonadReader Bool) via ( (           StateT Int
+--                                     |. Elevator (ReaderT Char)
+--                                     |.          CustomT
+--                                     |.          ReaderT Bool
+--                                     |.          IdentityT
+--                                     )
+--                                     m
+--                                   )
+-- @
+--
+-- == Example 4: Run a transformer stack
+--
+-- This is the part, that actually contains your application logic.
+-- Because of the setup with `ComposeT`, we won't have to worry about 'lift'ing during the
+-- initialization.
+--
+-- @
+-- runStackT :: MonadBaseControl IO m
+--           => StackT m a
+--           -> m (StT StackT a)
+-- runStackT stackTma = do
+--   let
+--     runReaderT' :: MonadReader Bool m => ReaderT Char m a -> m a
+--     runReaderT' tma = do
+--       bool <- ask
+--       let char = if bool
+--                     then \'Y\'
+--                     then \'N\'
+--       runReaderT tma char
+--
+--     runStateT' :: MonadReader Char m => StateT Int m a -> m (a, Int)
+--     runStateT' tma = do
+--       char <- ask
+--       let num = fromEnum char
+--       runStateT tma num
+--
+--   runStateT' |. runReaderT' |. runCustomT |. (\\ tma -> runReaderT tma True) |. runIdentityT $ unStackT stackTma
+-- @
