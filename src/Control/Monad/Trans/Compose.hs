@@ -17,6 +17,12 @@ import Data.Kind
 --
 -- Access instances of the intermediate monad @('t2' 'm')@, whenever 't1' implements
 -- 'MonadTrans'/'MonadTransControl'.
+--
+-- ==== Type level arguments
+-- [@'t1' :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] outer monad transformer
+-- [@'t2' :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] inner monad transformer
+-- [@'m' :: 'Type' -> 'Type'@] monad
+-- [@'a' :: 'Type'@] value
 type ComposeT :: ((Type -> Type) -> Type -> Type) -- ^ 't1'
               -> ((Type -> Type) -> Type -> Type) -- ^ 't2'
               -> (Type -> Type) -- ^ 'm'

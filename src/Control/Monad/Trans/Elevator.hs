@@ -14,6 +14,11 @@ import Data.Kind
 -- | A newtype wrapper for monad transformers.
 --
 -- Access instances of the inner monad 'm'.
+--
+-- ==== Type level arguments
+-- [@'t' :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] monad transformer
+-- [@'m' :: 'Type' -> 'Type'@] monad
+-- [@'a' :: 'Type'@] value
 type Elevator :: ((Type -> Type) -> Type -> Type) -- ^ 't'
               -> (Type -> Type) -- ^ 'm'
               -> Type -- ^ 'a'
@@ -96,10 +101,10 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --   deriving newtype (MonadTrans, MonadTransControl)
 -- @
 --
--- Unfortunately we can't derive a @Monad m => MonadReader Bool (StackT m)@ instance with
--- GeneralizedNewtypeDeriving, without also adding the instance to @CustomT@.
+-- Unfortunately we can't derive a @(Monad m => MonadReader Bool (StackT m))@ instance with
+-- /GeneralizedNewtypeDeriving/, without also adding the instance to @CustomT@.
 --
--- To still derive this trivial instance we can use @Elevator@ with DerivingVia.
+-- To still derive this trivial instance we can use @Elevator@ with /DerivingVia/.
 --
 -- @
 --   deriving (MonadReader Bool) via (Elevator CustomT (ReaderT Bool m))
