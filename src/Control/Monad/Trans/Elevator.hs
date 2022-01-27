@@ -68,10 +68,10 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
   pass tma = lift . pass . pure =<< tma
 
 -- * Examples
+
+-- ** Example 1: Recover submerged instances
 --
--- $examples
---
--- == Example 1: Recover submerged instances
+-- $example1
 --
 -- Let's assume you want to define a monad transformer stack.
 --
@@ -88,8 +88,10 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- @
 --   deriving (MonadReader Bool) via (Elevator (ReaderT Char) (ReaderT Bool m))
 -- @
+
+-- ** Example 2: Custom transformer without boilerplate
 --
--- == Example 2: Custom transformer without boilerplate
+-- $example2
 --
 -- Let's assume you have defined a monad transformer.
 --
@@ -118,8 +120,10 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- @
 --   deriving (MonadReader Bool) via (Elevator CustomT (ReaderT Bool m))
 -- @
+
+-- ** Example 3: Adding an instance for 'Elevator'
 --
--- == Example 3: Adding an instance for 'Elevator'
+-- $example3
 --
 -- Suppose you define a new type class.
 --

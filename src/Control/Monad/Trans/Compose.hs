@@ -132,10 +132,10 @@ runComposeT' :: (t1 (t2 m) a -> t2 m a) -- ^ run 't1'
 runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 
 -- * Examples
+
+-- ** Example 1: Create a new type class
 --
--- $examples
---
--- == Example 1: Create a new type class
+-- $example1
 --
 -- When creating a new type class that supports 'ComposeT', you want to add recursive instances for
 -- `ComposeT`.
@@ -158,8 +158,10 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --     , MonadCustom (t2 m)
 --     ) => MonadCustom (ComposeT t1 t2 m)
 -- @
+
+-- ** Example 2: Add an instance
 --
--- == Example 2: Add an instance
+-- $example2
 --
 -- Add a type class instance for a new monad transformer, when there already is a recursive instance for 'ComposeT'.
 --
@@ -186,8 +188,10 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --     ( Monad (t2 m)
 --     ) => MonadCustom ((CustomT |. t2) m)
 -- @
+
+-- ** Example 3: Build a transformer stack
 --
--- == Example 3: Build a transformer stack
+-- $example3
 --
 -- Create a monad transformer stack and wrap it using a newtype.
 --
@@ -219,8 +223,10 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --                                     m
 --                                   )
 -- @
+
+-- ** Example 4: Run a transformer stack
 --
--- == Example 4: Run a transformer stack
+-- $example4
 --
 -- This is the part, that actually contains your application logic.
 -- Because of the setup with `ComposeT`, we won't have to worry about 'lift'ing during the
