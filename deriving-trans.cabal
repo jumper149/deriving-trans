@@ -55,6 +55,7 @@ library
     OverloadedStrings
     RankNTypes
     StandaloneDeriving
+    StandaloneKindSignatures
     TypeApplications
     TypeFamilies
   ghc-options: -Wall

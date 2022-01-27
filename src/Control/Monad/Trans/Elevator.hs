@@ -1,4 +1,4 @@
-{-# LANGUAGE QuantifiedConstraints, UndecidableInstances, StandaloneKindSignatures, TupleSections #-}
+{-# LANGUAGE QuantifiedConstraints, UndecidableInstances, TupleSections #-}
 
 module Control.Monad.Trans.Elevator where
 

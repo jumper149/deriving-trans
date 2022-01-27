@@ -1,4 +1,4 @@
-{-# LANGUAGE QuantifiedConstraints, StandaloneKindSignatures, UndecidableInstances #-}
+{-# LANGUAGE QuantifiedConstraints, UndecidableInstances #-}
 
 module Control.Monad.Trans.Compose where
 
