@@ -1,5 +1,5 @@
 {
-  description = "Composable monad transformer stacks";
+  description = "Derive instances for monad transformer stacks";
 
   inputs = {
     nixpkgs = {
