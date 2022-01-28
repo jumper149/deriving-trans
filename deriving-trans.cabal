@@ -3,7 +3,8 @@ name:                deriving-trans
 version:             0.2.1.0
 synopsis:            Derive instances for monad transformer stacks
 description:         Implementing instances for monad transformer stacks can be tedious.
-                     <https://hackage.haskell.org/package/mtl mtl> defines each instance for each transfomer.
+                     <https://hackage.haskell.org/package/mtl mtl> defines each instance for each
+                     transfomer, but this can be avoided.
 
                      'Elevator' let's you access instances of the underlying monad of a transformer.
                      Composing transformers with 'ComposeT' brings instances into scope during the
@@ -11,7 +12,8 @@ description:         Implementing instances for monad transformer stacks can be 
 
                      'Elevator' can be used with DerivingVia to select a specific transformer to
                      derive instances for a transformer stack.
-                     'ComposeT' composes transformers and accumulates instances in a transformer stack.
+                     'ComposeT' composes transformers and accumulates instances in a transformer
+                     stack.
 license:             BSD-3-Clause
 license-file:        LICENSE
 author:              Felix Springer
