@@ -10,6 +10,10 @@ import Control.Monad.State.Class
 import Control.Monad.Trans
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Elevator
+import Control.Monad.Trans.Except
+import Control.Monad.Trans.Reader
+import Control.Monad.Trans.State
+import Control.Monad.Trans.Writer
 import Control.Monad.Writer.Class
 import Data.Kind
 
@@ -72,37 +76,67 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadBaseControl b m
     ) => MonadBaseControl b (ComposeT t1 t2 m)
 
--- | Elevated to @('t2' 'm')@.
+-- | /OVERLAPPABLE/.
+-- Elevated to @('t2' 'm')@.
 deriving via Elevator t1 (t2 (m :: * -> *))
-  instance
+  instance {-# OVERLAPPABLE #-}
     ( Monad (t1 (t2 m))
     , MonadTransControl t1
     , MonadError e (t2 m)
     ) => MonadError e (ComposeT t1 t2 m)
 
--- | Elevated to @('t2' 'm')@.
-deriving via Elevator t1 (t2 (m :: * -> *))
+-- | Set by 'ExceptT'.
+deriving via ExceptT e (t2 (m :: * -> *))
   instance
+    ( Monad (t2 m)
+    ) => MonadError e ((ComposeT (ExceptT e) t2) m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @('t2' 'm')@.
+deriving via Elevator t1 (t2 (m :: * -> *))
+  instance {-# OVERLAPPABLE #-}
     ( Monad (t1 (t2 m))
     , MonadTransControl t1
     , MonadReader r (t2 m)
     ) => MonadReader r (ComposeT t1 t2 m)
 
--- | Elevated to @('t2' 'm')@.
-deriving via Elevator t1 (t2 (m :: * -> *))
+-- | Set by 'ReaderT'.
+deriving via ReaderT r (t2 (m :: * -> *))
   instance
+    ( Monad (t2 m)
+    ) => MonadReader r ((ComposeT (ReaderT r) t2) m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @('t2' 'm')@.
+deriving via Elevator t1 (t2 (m :: * -> *))
+  instance {-# OVERLAPPABLE #-}
     ( Monad (t1 (t2 m))
     , MonadTrans t1
     , MonadState s (t2 m)
     ) => MonadState s (ComposeT t1 t2 m)
 
--- | Elevated to @('t2' 'm')@.
-deriving via Elevator t1 (t2 (m :: * -> *))
+-- | Set by 'StateT'.
+deriving via StateT s (t2 (m :: * -> *))
   instance
+    ( Monad (t2 m)
+    ) => MonadState s ((ComposeT (StateT s) t2) m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @('t2' 'm')@.
+deriving via Elevator t1 (t2 (m :: * -> *))
+  instance {-# OVERLAPPABLE #-}
     ( Monad (t1 (t2 m))
     , MonadTransControl t1
     , MonadWriter w (t2 m)
     ) => MonadWriter w (ComposeT t1 t2 m)
+
+-- | Set by 'WriterT'.
+deriving via WriterT w (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadWriter w ((ComposeT (WriterT w) t2) m)
+
 
 -- ** Run 'ComposeT'
 --
@@ -149,10 +183,12 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- You can easily derive those instances, after implementing an instance for 'Elevator'.
 --
 -- Then it's possible to derive the recursive instance.
+-- This is an /OVERLAPPABLE/ instance, because we want to be able to add new instances through
+-- transformers in a stack.
 --
 -- @
 -- deriving via Elevator t1 (t2 (m :: * -> *))
---   instance
+--   instance {-# OVERLAPPABLE #-}
 --     ( Monad (t1 (t2 m))
 --     , MonadTransControl t1
 --     , MonadCustom (t2 m)
@@ -180,13 +216,13 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   complicatedMethod = undefined
 -- @
 --
--- To add an instance that takes priority over the recursive instance, we need an /OVERLAPPING/ instance.
+-- To add an instance that takes priority over the recursive instance /FlexibleInstances/ are required.
 --
 -- @
 -- deriving via CustomT (t2 (m :: * -> *))
---   instance {-# OVERLAPPING #-}
+--   instance
 --     ( Monad (t2 m)
---     ) => MonadCustom ((CustomT |. t2) m)
+--     ) => MonadCustom ((ComposeT CustomT t2) m)
 -- @
 
 -- ** Example 3: Build a transformer stack
@@ -200,8 +236,6 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- type Stack = StateT Int |. ReaderT Char |. CustomT |. ReaderT Bool |. IdentityT
 -- newtype StackT m a = StackT { unStackT :: Stack m a }
 --   deriving newtype (Functor, Applicative, Monad)
---   deriving newtype (MonadTrans, MonadTransControl)
---   deriving newtype (MonadBase, MonadBaseControl)
 -- @
 --
 -- Now we can simply derive just the instances, that we want.

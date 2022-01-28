@@ -77,7 +77,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --
 -- @
 -- newtype StackT m a = StackT { unStackT :: ReaderT Char (ReaderT Bool m) a }
---   deriving newtype (Functor, Applicative Monad)
+--   deriving newtype (Functor, Applicative, Monad)
 -- @
 --
 -- Now you want to expose the inner @('MonadReader' 'Bool')@ instance with @(StackT m)@.
@@ -86,7 +86,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- the inner transformer.
 --
 -- @
---   deriving (MonadReader Bool) via (Elevator (ReaderT Char) (ReaderT Bool m))
+--   deriving (MonadReader Bool) via Elevator (ReaderT Char) (ReaderT Bool m)
 -- @
 
 -- ** Example 2: Custom transformer without boilerplate
@@ -97,7 +97,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --
 -- @
 -- newtype CustomT m a = CustomT { unComposeT :: IdentityT m a }
---   deriving newtype (Functor, Applicative Monad)
+--   deriving newtype (Functor, Applicative, Monad)
 --   deriving newtype (MonadTrans, MonadTransControl)
 --
 -- runCustomT :: CustomT m a -> m a
@@ -107,9 +107,8 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- Now you want to use this monad transformer in a transformer stack.
 --
 -- @
--- newtype StackT m a = { unStackT :: CustomT (ReaderT Bool m) a }
+-- newtype StackT m a = StackT { unStackT :: CustomT (ReaderT Bool m) a }
 --   deriving newtype (Functor, Applicative Monad)
---   deriving newtype (MonadTrans, MonadTransControl)
 -- @
 --
 -- Unfortunately we can't derive a @('Monad' m => 'MonadReader' 'Bool' (StackT m))@ instance with
@@ -130,7 +129,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- @
 -- class Monad m => MonadCustom m where
 --   simpleMethod :: a -> m a
---   complicatedMethod :: (a -> m a) -> m a
+--   complicatedMethod :: (a -> m b) -> m b
 -- @
 --
 -- A simple way to allow a type class to be lifted through other monad transformers is by adding an
