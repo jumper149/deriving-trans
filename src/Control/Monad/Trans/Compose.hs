@@ -3,18 +3,12 @@
 module Control.Monad.Trans.Compose where
 
 import Control.Monad.Base
-import Control.Monad.Error.Class
-import Control.Monad.IO.Class
-import Control.Monad.Reader.Class
-import Control.Monad.State.Class
-import Control.Monad.Trans
+import Control.Monad.Except
+import Control.Monad.Reader
+import Control.Monad.State
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Elevator
-import Control.Monad.Trans.Except
-import Control.Monad.Trans.Reader
-import Control.Monad.Trans.State
-import Control.Monad.Trans.Writer
-import Control.Monad.Writer.Class
+import Control.Monad.Writer
 import Data.Kind
 
 -- * 'ComposeT'
@@ -242,7 +236,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --
 -- @
 --   deriving newtype (MonadState Int) -- TODO: Does this actually work or not?
---   deriving newtype (MonadCustom)
+--   deriving newtype MonadCustom
 -- @
 --
 -- We can even use 'Elevator' to access instances, that have been shadowed in the stack.
@@ -275,7 +269,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --       bool <- ask
 --       let char = if bool
 --                     then \'Y\'
---                     then \'N\'
+--                     else \'N\'
 --       runReaderT tma char
 --
 --     runStateT' :: MonadReader Char m => StateT Int m a -> m (a, Int)
