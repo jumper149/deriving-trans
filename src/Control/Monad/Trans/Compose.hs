@@ -241,21 +241,19 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- Now we can simply derive just the instances, that we want.
 --
 -- @
---   deriving newtype (MonadState Int)
+--   deriving newtype (MonadState Int) -- TODO: Does this actually work or not?
 --   deriving newtype (MonadCustom)
 -- @
 --
 -- We can even use 'Elevator' to access instances, that have been shadowed in the stack.
 --
 -- @
---   deriving (MonadReader Bool) via ( (           StateT Int
---                                     |. Elevator (ReaderT Char)
---                                     |.          CustomT
---                                     |.          ReaderT Bool
---                                     |.          IdentityT
---                                     )
---                                     m
---                                   )
+--   deriving (MonadReader Bool) via
+--     ( Elevator  (StateT Int)
+--     ( Elevator  (ReaderT Char)
+--     ( Elevator  CustomT
+--     (           ReaderT Bool
+--     (           IdentityT m)))))
 -- @
 
 -- ** Example 4: Run a transformer stack
