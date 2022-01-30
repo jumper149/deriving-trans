@@ -232,6 +232,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   deriving newtype (Functor, Applicative, Monad)
 -- @
 --
+-- We are adding 'IdentityT' to the stack, so that all the other transformer instances end up in the stack.
 -- Now we can simply derive just the instances, that we want.
 --
 -- @
