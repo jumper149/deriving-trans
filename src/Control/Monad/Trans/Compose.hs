@@ -235,7 +235,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- Now we can simply derive just the instances, that we want.
 --
 -- @
---   deriving newtype (MonadState Int) -- TODO: Does this actually work or not?
+--   deriving newtype (MonadState Int)
 --   deriving newtype MonadCustom
 -- @
 --
