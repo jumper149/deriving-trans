@@ -1,5 +1,10 @@
 # Revision history for deriving-trans
 
+## 0.2.2.0 *30 Jan 2022*
+
+* Add "base-case" instances for mtl's type classes to `ComposeT`.
+* Add Haddock examples and improve comments.
+
 ## 0.2.1.0 *27 Jan 2022*
 
 * Add `MonadTrans` and `MonadTransControl` instances to `Elevator`.
