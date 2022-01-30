@@ -243,9 +243,9 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --
 -- @
 --   deriving (MonadReader Bool) via
---     ( Elevator  (StateT Int)
+--     (           (StateT Int)
 --     ( Elevator  (ReaderT Char)
---     ( Elevator  CustomT
+--     (           CustomT
 --     (           ReaderT Bool
 --     (           IdentityT m)))))
 -- @
