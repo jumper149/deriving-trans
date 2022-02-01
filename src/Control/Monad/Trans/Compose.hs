@@ -166,7 +166,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- $example1
 --
 -- When creating a new type class that supports 'ComposeT', you want to add recursive instances for
--- `ComposeT`.
+-- 'ComposeT'.
 --
 -- @
 -- class Monad m => MonadCustom m where
