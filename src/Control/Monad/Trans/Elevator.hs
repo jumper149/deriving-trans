@@ -22,15 +22,15 @@ import Data.Kind
 
 -- | A newtype wrapper for monad transformers.
 --
--- Access instances of the inner monad 'm'.
+-- Access instances of the inner monad @m@.
 --
 -- ==== Type level arguments
--- [@'t' :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] monad transformer
--- [@'m' :: 'Type' -> 'Type'@] monad
--- [@'a' :: 'Type'@] value
-type Elevator :: ((Type -> Type) -> Type -> Type) -- ^ 't'
-              -> (Type -> Type) -- ^ 'm'
-              -> Type -- ^ 'a'
+-- [@t :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] monad transformer
+-- [@m :: 'Type' -> 'Type'@] monad
+-- [@a :: 'Type'@] value
+type Elevator :: ((Type -> Type) -> Type -> Type) -- ^ @t@
+              -> (Type -> Type) -- ^ @m@
+              -> Type -- ^ @a@
               -> Type
 newtype Elevator t m a = Ascend { descend :: t m a }
   deriving newtype (Applicative, Functor, Monad)

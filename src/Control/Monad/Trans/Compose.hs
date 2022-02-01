@@ -22,18 +22,18 @@ import Data.Kind
 
 -- | A newtype wrapper for two stacked monad transformers.
 --
--- Access instances of the intermediate monad @('t2' 'm')@, whenever 't1' implements
+-- Access instances of the intermediate monad @(t2 m)@, whenever @t1@ implements
 -- 'MonadTrans' / 'MonadTransControl'.
 --
 -- ==== Type level arguments
--- [@'t1' :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] outer monad transformer
--- [@'t2' :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] inner monad transformer
--- [@'m' :: 'Type' -> 'Type'@] monad
--- [@'a' :: 'Type'@] value
-type ComposeT :: ((Type -> Type) -> Type -> Type) -- ^ 't1'
-              -> ((Type -> Type) -> Type -> Type) -- ^ 't2'
-              -> (Type -> Type) -- ^ 'm'
-              -> Type -- ^ 'a'
+-- [@t1 :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] outer monad transformer
+-- [@t2 :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] inner monad transformer
+-- [@m :: 'Type' -> 'Type'@] monad
+-- [@a :: 'Type'@] value
+type ComposeT :: ((Type -> Type) -> Type -> Type) -- ^ @t1@
+              -> ((Type -> Type) -> Type -> Type) -- ^ @t2@
+              -> (Type -> Type) -- ^ @m@
+              -> Type -- ^ @a@
               -> Type
 newtype ComposeT t1 t2 m a = ComposeT { deComposeT :: t1 (t2 m) a }
   deriving newtype (Applicative, Functor, Monad)
@@ -46,7 +46,7 @@ instance (forall m. Monad m => Monad (t2 m), MonadTransControl t1, MonadTransCon
   liftWith f = defaultLiftWith2 ComposeT deComposeT $ \ x -> f x
   restoreT = defaultRestoreT2 ComposeT
 
--- | Elevated to 'm'.
+-- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
     ( Monad (t1 (t2 m))
@@ -54,7 +54,7 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadIO m
     ) => MonadIO (ComposeT t1 t2 m)
 
--- | Elevated to 'm'.
+-- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
     ( Monad (t1 (t2 m))
@@ -62,7 +62,7 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadBase b m
     ) => MonadBase b (ComposeT t1 t2 m)
 
--- | Elevated to 'm'.
+-- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
     ( Monad (t1 (t2 m))
@@ -71,7 +71,7 @@ deriving via Elevator (ComposeT t1 t2) m
     ) => MonadBaseControl b (ComposeT t1 t2 m)
 
 -- | /OVERLAPPABLE/.
--- Elevated to @('t2' 'm')@.
+-- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: * -> *))
   instance {-# OVERLAPPABLE #-}
     ( Monad (t1 (t2 m))
@@ -86,7 +86,7 @@ deriving via ExceptT e (t2 (m :: * -> *))
     ) => MonadError e ((ComposeT (ExceptT e) t2) m)
 
 -- | /OVERLAPPABLE/.
--- Elevated to @('t2' 'm')@.
+-- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: * -> *))
   instance {-# OVERLAPPABLE #-}
     ( Monad (t1 (t2 m))
@@ -101,7 +101,7 @@ deriving via ReaderT r (t2 (m :: * -> *))
     ) => MonadReader r ((ComposeT (ReaderT r) t2) m)
 
 -- | /OVERLAPPABLE/.
--- Elevated to @('t2' 'm')@.
+-- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: * -> *))
   instance {-# OVERLAPPABLE #-}
     ( Monad (t1 (t2 m))
@@ -116,7 +116,7 @@ deriving via StateT s (t2 (m :: * -> *))
     ) => MonadState s ((ComposeT (StateT s) t2) m)
 
 -- | /OVERLAPPABLE/.
--- Elevated to @('t2' 'm')@.
+-- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: * -> *))
   instance {-# OVERLAPPABLE #-}
     ( Monad (t1 (t2 m))
