@@ -169,7 +169,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- 'ComposeT'.
 --
 -- @
--- class Monad m => MonadCustom m where
+-- class 'Monad' m => MonadCustom m where
 --   simpleMethod :: a -> m a
 --   complicatedMethod :: (a -> m a) -> m a
 -- @
@@ -181,12 +181,12 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- transformers in a stack.
 --
 -- @
--- deriving via Elevator t1 (t2 (m :: * -> *))
+-- deriving via 'Elevator' t1 (t2 (m :: * -> *))
 --   instance {-# OVERLAPPABLE #-}
---     ( Monad (t1 (t2 m))
---     , MonadTransControl t1
+--     ( 'Monad' (t1 (t2 m))
+--     , 'MonadTransControl' t1
 --     , MonadCustom (t2 m)
---     ) => MonadCustom (ComposeT t1 t2 m)
+--     ) => MonadCustom ('ComposeT' t1 t2 m)
 -- @
 
 -- ** Example 2: Add an instance
@@ -196,25 +196,25 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- Add a type class instance for a new monad transformer, when there already is a recursive instance for 'ComposeT'.
 --
 -- @
--- newtype CustomT m a = CustomT { unCustomT :: IdentityT m a }
---   deriving newtype (Functor, Applicative, Monad)
---   deriving newtype (MonadTrans, MonadTransControl)
+-- newtype CustomT m a = CustomT { unCustomT :: 'Control.Monad.Trans.Identity.IdentityT' m a }
+--   deriving newtype ('Functor', 'Applicative', 'Monad')
+--   deriving newtype ('MonadTrans', 'MonadTransControl')
 -- @
 --
 -- First we need the regular instance.
 -- The method implementations are 'undefined' here, because they are not related to 'ComposeT'.
 --
 -- @
--- instance Monad m => MonadCustom (CustomT m) where
---   simpleMethod = undefined
---   complicatedMethod = undefined
+-- instance 'Monad' m => MonadCustom (CustomT m) where
+--   simpleMethod = 'undefined'
+--   complicatedMethod = 'undefined'
 -- @
 --
 -- To add an instance that takes priority over the recursive instance /FlexibleInstances/ are required.
 --
 -- @
 -- deriving via CustomT (t2 (m :: * -> *))
---   instance Monad (t2 m) => MonadCustom ((ComposeT CustomT t2) m)
+--   instance 'Monad' (t2 m) => MonadCustom (('ComposeT' CustomT t2) m)
 -- @
 
 -- ** Example 3: Build a transformer stack
@@ -224,24 +224,24 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- Create a monad transformer stack and wrap it using a newtype.
 --
 -- @
--- type (|.) = ComposeT
--- type Stack = StateT Int |. ReaderT Char |. CustomT |. ReaderT Bool |. IdentityT
+-- type (|.) = 'ComposeT'
+-- type Stack = 'StateT' 'Int' |. 'ReaderT' 'Char' |. CustomT |. 'ReaderT' 'Bool' |. 'Control.Monad.Trans.Identity.IdentityT'
 -- newtype StackT m a = StackT { unStackT :: Stack m a }
---   deriving newtype (Functor, Applicative, Monad)
+--   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- We are adding 'IdentityT' to the stack, so that all the other transformer instances end up in the stack.
+-- We are adding 'Control.Monad.Trans.Identity.IdentityT' to the stack, so that all the other transformer instances end up in the stack.
 -- Now we can simply derive just the instances, that we want.
 --
 -- @
---   deriving newtype (MonadState Int)
+--   deriving newtype ('MonadState' 'Int')
 --   deriving newtype MonadCustom
 -- @
 --
 -- We can even access instances, that would have been shadowed in a regular transformer stack.
 --
 -- @
---   deriving newtype (MonadReader Bool)
+--   deriving newtype ('MonadReader' 'Bool')
 -- @
 
 -- ** Example 4: Run a transformer stack
@@ -249,31 +249,31 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- $example4
 --
 -- This is the part, that actually contains your application logic.
--- Because of the setup with `ComposeT`, we won't have to worry about 'lift'ing during the
+-- Because of the setup with 'ComposeT', we won't have to worry about 'lift'ing during the
 -- initialization.
 --
 -- @
--- runStackT :: MonadBaseControl IO m
+-- runStackT :: 'MonadBaseControl' 'IO' m
 --           => StackT m a
 --           -> m (StT StackT a)
 -- runStackT stackTma =
 --   runStateT' |.
 --     runReaderT' |.
 --       runCustomT |.
---         (\\ tma -> runReaderT tma True) |.
---           runIdentityT $ unStackT stackTma
+--         (\\ tma -> 'runReaderT' tma 'True') |.
+--           'Control.Monad.Trans.Identity.runIdentityT' $ unStackT stackTma
 --   where
---     runReaderT' :: MonadReader Bool m => ReaderT Char m a -> m a
+--     runReaderT' :: 'MonadReader' 'Bool' m => 'ReaderT' 'Char' m a -> m a
 --     runReaderT' tma = do
---       bool <- ask
+--       bool <- 'ask'
 --       let char = if bool
 --                     then \'Y\'
 --                     else \'N\'
---       runReaderT tma char
+--       'runReaderT' tma char
 --
---     runStateT' :: MonadReader Char m => StateT Int m a -> m (a, Int)
+--     runStateT' :: 'MonadReader' 'Char' m => 'StateT' 'Int' m a -> m (a, 'Int')
 --     runStateT' tma = do
---       char <- ask
---       let num = fromEnum char
---       runStateT tma num
+--       char <- 'ask'
+--       let num = 'fromEnum' char
+--       'runStateT' tma num
 -- @

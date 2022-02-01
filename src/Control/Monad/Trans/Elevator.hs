@@ -76,8 +76,8 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- Let's assume you want to define a monad transformer stack.
 --
 -- @
--- newtype StackT m a = StackT { unStackT :: ReaderT Char (ReaderT Bool m) a }
---   deriving newtype (Functor, Applicative, Monad)
+-- newtype StackT m a = StackT { unStackT :: 'Control.Monad.Trans.Reader.ReaderT' 'Char' ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m) a }
+--   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
 -- Now you want to expose the inner @('MonadReader' 'Bool')@ instance with @(StackT m)@.
@@ -86,7 +86,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- the inner transformer.
 --
 -- @
---   deriving (MonadReader Bool) via Elevator (ReaderT Char) (ReaderT Bool m)
+--   deriving ('MonadReader' 'Bool') via 'Elevator' ('Control.Monad.Trans.Reader.ReaderT' 'Char') ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m)
 -- @
 
 -- ** Example 2: Custom transformer without boilerplate
@@ -96,19 +96,19 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- Let's assume you have defined a monad transformer.
 --
 -- @
--- newtype CustomT m a = CustomT { unComposeT :: IdentityT m a }
---   deriving newtype (Functor, Applicative, Monad)
---   deriving newtype (MonadTrans, MonadTransControl)
+-- newtype CustomT m a = CustomT { unCustomT :: 'Control.Monad.Trans.Identity.IdentityT' m a }
+--   deriving newtype ('Functor', 'Applicative', 'Monad')
+--   deriving newtype ('MonadTrans', 'MonadTransControl')
 --
 -- runCustomT :: CustomT m a -> m a
--- runCustomT = runIdentityT . unComposeT
+-- runCustomT = 'Control.Monad.Trans.Identity.runIdentityT' . unCustomT
 -- @
 --
 -- Now you want to use this monad transformer in a transformer stack.
 --
 -- @
--- newtype StackT m a = StackT { unStackT :: CustomT (ReaderT Bool m) a }
---   deriving newtype (Functor, Applicative Monad)
+-- newtype StackT m a = StackT { unStackT :: CustomT ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m) a }
+--   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
 -- Unfortunately we can't derive a @('Monad' m => 'MonadReader' 'Bool' (StackT m))@ instance with
@@ -117,7 +117,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- To still derive this trivial instance we can use 'Elevator' with /DerivingVia/.
 --
 -- @
---   deriving (MonadReader Bool) via (Elevator CustomT (ReaderT Bool m))
+--   deriving ('MonadReader' 'Bool') via ('Elevator' CustomT ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m))
 -- @
 
 -- ** Example 3: Adding an instance for 'Elevator'
@@ -127,7 +127,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- Suppose you define a new type class.
 --
 -- @
--- class Monad m => MonadCustom m where
+-- class 'Monad' m => MonadCustom m where
 --   simpleMethod :: a -> m a
 --   complicatedMethod :: (a -> m b) -> m b
 -- @
@@ -139,9 +139,9 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- 'MonadTransControl'.
 --
 -- @
--- instance (MonadCustom m, MonadTrans t) => MonadCustom (Elevator t m) where
---   simpleMethod = lift . simpleMethod
---   complicatedMethod f = (restoreT . pure =\<\<) $ liftWith $ \\ runT ->
+-- instance (MonadCustom m, 'MonadTransControl' t) => MonadCustom ('Elevator' t m) where
+--   simpleMethod = 'lift' . simpleMethod
+--   complicatedMethod f = ('restoreT' . 'pure' '=<<') $ 'liftWith' $ \\ runT ->
 --     complicatedMethod $ runT . f
 -- @
 --
