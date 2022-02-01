@@ -214,9 +214,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --
 -- @
 -- deriving via CustomT (t2 (m :: * -> *))
---   instance
---     ( Monad (t2 m)
---     ) => MonadCustom ((ComposeT CustomT t2) m)
+--   instance Monad (t2 m) => MonadCustom ((ComposeT CustomT t2) m)
 -- @
 
 -- ** Example 3: Build a transformer stack
