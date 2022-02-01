@@ -22,8 +22,8 @@ import Data.Kind
 
 -- | A newtype wrapper for two stacked monad transformers.
 --
--- Access instances of the intermediate monad @(t2 m)@, whenever @t1@ implements
--- 'MonadTrans' / 'MonadTransControl'.
+-- Access instances of the intermediate monad @(t2 m)@, whenever @t1@ implements 'MonadTrans' /
+-- 'MonadTransControl'.
 --
 -- ==== Type level arguments
 -- [@t1 :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] outer monad transformer
@@ -194,7 +194,8 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --
 -- $example2
 --
--- Add a type class instance for a new monad transformer, when there already is a recursive instance for 'ComposeT'.
+-- Add a type class instance for a new monad transformer, when there already is a recursive instance
+-- for 'ComposeT'.
 --
 -- @
 -- newtype CustomT m a = CustomT { unCustomT :: 'Control.Monad.Trans.Identity.IdentityT' m a }
@@ -203,7 +204,8 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- @
 --
 -- First we need the regular instance.
--- The method implementations are 'undefined' here, because they would only distract from 'ComposeT'.
+-- The method implementations are 'undefined' here, because they would only distract from
+-- 'ComposeT'.
 --
 -- @
 -- instance 'Monad' m => MonadCustom (CustomT m) where
@@ -211,7 +213,8 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   complicatedMethod = 'undefined'
 -- @
 --
--- To add a "base-case" instance, that takes priority over the recursive instance, /FlexibleInstances/ are required.
+-- To add a "base-case" instance, that takes priority over the recursive instance,
+-- /FlexibleInstances/ are required.
 --
 -- @
 -- deriving via CustomT (t2 (m :: * -> *))
@@ -231,7 +234,8 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- We are adding 'Control.Monad.Trans.Identity.IdentityT' to the end of the stack, so that all the other transformer instances end up in the stack.
+-- We are adding 'Control.Monad.Trans.Identity.IdentityT' to the end of the stack, so that all the
+-- other transformer instances end up in the stack.
 -- Now we can simply derive just the instances, that we want.
 --
 -- @

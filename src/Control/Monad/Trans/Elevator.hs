@@ -82,8 +82,8 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --
 -- Now you want to expose the inner @('MonadReader' 'Bool')@ instance with @(StackT m)@.
 --
--- Normally it's shadowed by the @('MonadReader' 'Char')@ instance, but we can use 'Elevator' to access
--- the inner transformer.
+-- Normally it's shadowed by the @('MonadReader' 'Char')@ instance, but we can use 'Elevator' to
+-- access the inner transformer.
 --
 -- @
 --   deriving ('MonadReader' 'Bool') via 'Elevator' ('Control.Monad.Trans.Reader.ReaderT' 'Char') ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m)
@@ -145,4 +145,6 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --     complicatedMethod $ runT . f
 -- @
 --
--- Some useful examples (or exercises) are the instances for [mtl](https://hackage.haskell.org/package/mtl)'s type classes ('MonadError', 'MonadReader', 'MonadState', 'MonadWriter').
+-- Some useful examples (or exercises) are the instances for
+-- [mtl](https://hackage.haskell.org/package/mtl)'s type classes ('MonadError', 'MonadReader',
+-- 'MonadState', 'MonadWriter').
