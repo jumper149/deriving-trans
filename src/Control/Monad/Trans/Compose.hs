@@ -240,15 +240,10 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   deriving newtype MonadCustom
 -- @
 --
--- We can even use 'Elevator' to access instances, that have been shadowed in the stack.
+-- We can even access instances, that would have been shadowed in a regular transformer stack.
 --
 -- @
---   deriving (MonadReader Bool) via
---     (           (StateT Int)
---     ( Elevator  (ReaderT Char)
---     (           CustomT
---     (           ReaderT Bool
---     (           IdentityT m)))))
+--   deriving newtype (MonadReader Bool)
 -- @
 
 -- ** Example 4: Run a transformer stack
