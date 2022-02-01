@@ -145,9 +145,4 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --     complicatedMethod $ runT . f
 -- @
 --
--- Some useful examples (or exercises) are the instances for [mtl](https://hackage.haskell.org/package/mtl)'s type classes:
---
--- * 'MonadError'
--- * 'MonadReader'
--- * 'MonadState'
--- * 'MonadWriter'
+-- Some useful examples (or exercises) are the instances for [mtl](https://hackage.haskell.org/package/mtl)'s type classes ('MonadError', 'MonadReader', 'MonadState', 'MonadWriter').
