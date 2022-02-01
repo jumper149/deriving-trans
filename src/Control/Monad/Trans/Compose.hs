@@ -23,7 +23,7 @@ import Data.Kind
 -- | A newtype wrapper for two stacked monad transformers.
 --
 -- Access instances of the intermediate monad @('t2' 'm')@, whenever 't1' implements
--- 'MonadTrans'/'MonadTransControl'.
+-- 'MonadTrans' / 'MonadTransControl'.
 --
 -- ==== Type level arguments
 -- [@'t1' :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] outer monad transformer
