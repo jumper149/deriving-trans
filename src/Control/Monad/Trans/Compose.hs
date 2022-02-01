@@ -15,7 +15,7 @@ import Data.Kind
 --
 -- $composet
 --
--- 'ComposeT' can be used in monad transformer stacks to derive instances in a clean way.
+-- 'ComposeT' can be used in monad transformer stacks to derive instances.
 --
 -- This also allows the usage of these instances, while in the middle of the transformer stack.
 -- This proves particularly useful, when writing a runner for a transformer stack.
