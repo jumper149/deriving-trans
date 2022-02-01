@@ -175,6 +175,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- @
 --
 -- You can easily derive those instances, after implementing an instance for 'Elevator'.
+-- This is explained in "Control.Monad.Trans.Elevator".
 --
 -- Then it's possible to derive the recursive instance.
 -- This is an /OVERLAPPABLE/ instance, because we want to be able to add new instances through
