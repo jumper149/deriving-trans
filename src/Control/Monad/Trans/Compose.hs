@@ -258,8 +258,13 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- runStackT :: MonadBaseControl IO m
 --           => StackT m a
 --           -> m (StT StackT a)
--- runStackT stackTma = do
---   let
+-- runStackT stackTma =
+--   runStateT' |.
+--     runReaderT' |.
+--       runCustomT |.
+--         (\\ tma -> runReaderT tma True) |.
+--           runIdentityT $ unStackT stackTma
+--   where
 --     runReaderT' :: MonadReader Bool m => ReaderT Char m a -> m a
 --     runReaderT' tma = do
 --       bool <- ask
@@ -273,6 +278,4 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --       char <- ask
 --       let num = fromEnum char
 --       runStateT tma num
---
---   runStateT' |. runReaderT' |. runCustomT |. (\\ tma -> runReaderT tma True) |. runIdentityT $ unStackT stackTma
 -- @
