@@ -178,8 +178,8 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- This is explained in "Control.Monad.Trans.Elevator".
 --
 -- Then it's possible to derive the recursive instance.
--- This is an /OVERLAPPABLE/ instance, because we want to be able to add new instances through
--- transformers in a stack.
+-- This is an /OVERLAPPABLE/ instance, because we want to be able to add new "base-case" instances
+-- through transformers in a stack.
 --
 -- @
 -- deriving via 'Elevator' t1 (t2 (m :: * -> *))
@@ -203,7 +203,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- @
 --
 -- First we need the regular instance.
--- The method implementations are 'undefined' here, because they are not related to 'ComposeT'.
+-- The method implementations are 'undefined' here, because they would only distract from 'ComposeT'.
 --
 -- @
 -- instance 'Monad' m => MonadCustom (CustomT m) where
@@ -211,7 +211,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   complicatedMethod = 'undefined'
 -- @
 --
--- To add an instance that takes priority over the recursive instance /FlexibleInstances/ are required.
+-- To add a "base-case" instance, that takes priority over the recursive instance, /FlexibleInstances/ are required.
 --
 -- @
 -- deriving via CustomT (t2 (m :: * -> *))
@@ -231,7 +231,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- We are adding 'Control.Monad.Trans.Identity.IdentityT' to the stack, so that all the other transformer instances end up in the stack.
+-- We are adding 'Control.Monad.Trans.Identity.IdentityT' to the end of the stack, so that all the other transformer instances end up in the stack.
 -- Now we can simply derive just the instances, that we want.
 --
 -- @
