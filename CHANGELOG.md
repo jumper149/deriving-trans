@@ -1,5 +1,9 @@
 # Revision history for deriving-trans
 
+## 0.2.2.1 *01 Feb 2022*
+
+* Polish Haddock comments.
+
 ## 0.2.2.0 *30 Jan 2022*
 
 * Add "base-case" instances for mtl's type classes to `ComposeT`.
