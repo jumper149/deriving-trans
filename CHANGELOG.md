@@ -1,5 +1,15 @@
 # Revision history for deriving-trans
 
+## 0.3.0.0 *04 Feb 2022*
+
+* Add "base-case" instances for both lazy and strict transformers (from mtl) to `ComposeT`.
+* Add `Alternative` and `MonadPlus` instances to `Elevator`.
+* Add `MonadFail` instance to `Elevator`.
+* Add `MonadCont` instances to `Elevator` and `ComposeT`.
+* Add `MonadCont` "base-case" instance for `ContT` to `ComposeT`.
+* Add `MonadRWS` instances to `Elevator` and `ComposeT`. It's not quite clear, whether this is necessary
+* Add "base-case" instances for `RWST` to `ComposeT`.
+
 ## 0.2.2.1 *01 Feb 2022*
 
 * Polish Haddock comments.
