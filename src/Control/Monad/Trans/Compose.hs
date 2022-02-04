@@ -3,6 +3,7 @@
 module Control.Monad.Trans.Compose where
 
 import Control.Monad.Base
+import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
 import Control.Monad.IO.Class
 import Control.Monad.Reader.Class
@@ -11,6 +12,7 @@ import Control.Monad.State.Class
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Elevator
+import qualified Control.Monad.Trans.Cont as T
 import qualified Control.Monad.Trans.Except as T
 import qualified Control.Monad.Trans.RWS.Lazy as LT
 import qualified Control.Monad.Trans.RWS.Strict as ST
@@ -80,6 +82,21 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadTransControl (ComposeT t1 t2)
     , MonadBaseControl b m
     ) => MonadBaseControl b (ComposeT t1 t2 m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: * -> *))
+  instance {-# OVERLAPPABLE #-}
+    ( Monad (t1 (t2 m))
+    , MonadTransControl t1
+    , MonadCont (t2 m)
+    ) => MonadCont (ComposeT t1 t2 m)
+
+-- | Set by 'T.ContT'.
+deriving via T.ContT r (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    ) => MonadCont (ComposeT (T.ContT r) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
