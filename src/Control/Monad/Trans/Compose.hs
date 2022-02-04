@@ -6,11 +6,14 @@ import Control.Monad.Base
 import Control.Monad.Error.Class
 import Control.Monad.IO.Class
 import Control.Monad.Reader.Class
+import Control.Monad.RWS.Class (MonadRWS)
 import Control.Monad.State.Class
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Elevator
 import qualified Control.Monad.Trans.Except as T
+import qualified Control.Monad.Trans.RWS.Lazy as LT
+import qualified Control.Monad.Trans.RWS.Strict as ST
 import qualified Control.Monad.Trans.Reader as T
 import qualified Control.Monad.Trans.State.Lazy as LT
 import qualified Control.Monad.Trans.State.Strict as ST
@@ -108,6 +111,43 @@ deriving via T.ReaderT r (t2 (m :: * -> *))
     ( Monad (t2 m)
     ) => MonadReader r ((ComposeT (T.ReaderT r) t2) m)
 
+-- | Set by 'LT.RWST'.
+deriving via LT.RWST r w s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadReader r ((ComposeT (LT.RWST r w s) t2) m)
+
+-- | Set by 'ST.RWST'.
+deriving via ST.RWST r w s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadReader r ((ComposeT (ST.RWST r w s) t2) m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: * -> *))
+  instance {-# OVERLAPPABLE #-}
+    ( Monad (t1 (t2 m))
+    , MonadTransControl t1
+    , MonadRWS r w s (t2 m)
+    ) => MonadRWS r w s (ComposeT t1 t2 m)
+
+-- | Set by 'LT.RWST'.
+deriving via LT.RWST r w s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadRWS r w s ((ComposeT (LT.RWST r w s) t2) m)
+
+-- | Set by 'ST.RWST'.
+deriving via ST.RWST r w s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadRWS r w s ((ComposeT (ST.RWST r w s) t2) m)
+
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: * -> *))
@@ -128,6 +168,20 @@ deriving via ST.StateT s (t2 (m :: * -> *))
   instance
     ( Monad (t2 m)
     ) => MonadState s ((ComposeT (ST.StateT s) t2) m)
+
+-- | Set by 'LT.RWST'.
+deriving via LT.RWST r w s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadState s ((ComposeT (LT.RWST r w s) t2) m)
+
+-- | Set by 'ST.RWST'.
+deriving via ST.RWST r w s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadState s ((ComposeT (ST.RWST r w s) t2) m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
@@ -151,6 +205,20 @@ deriving via ST.WriterT w (t2 (m :: * -> *))
     ( Monad (t2 m)
     , Monoid w
     ) => MonadWriter w ((ComposeT (ST.WriterT w) t2) m)
+
+-- | Set by 'LT.RWST'.
+deriving via LT.RWST r w s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadWriter w ((ComposeT (LT.RWST r w s) t2) m)
+
+-- | Set by 'ST.RWST'.
+deriving via ST.RWST r w s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadWriter w ((ComposeT (ST.RWST r w s) t2) m)
 
 
 -- ** Run 'ComposeT'
