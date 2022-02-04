@@ -3,6 +3,7 @@
 module Control.Monad.Trans.Elevator where
 
 import Control.Applicative
+import Control.Monad
 import Control.Monad.Base
 import Control.Monad.Error.Class
 import Control.Monad.Reader.Class
@@ -55,6 +56,8 @@ instance (Monad (t m), MonadTrans t, MonadFail m) => MonadFail (Elevator t m) wh
 
 instance (Monad (t m), MonadTrans t, MonadIO m) => MonadIO (Elevator t m) where
   liftIO = lift . liftIO
+
+instance (Monad (t m), Monad m, MonadTransControl t, Alternative m) => MonadPlus (Elevator t m)
 
 instance (Monad (t m), MonadTransControl t, MonadError e m) => MonadError e (Elevator t m) where
   throwError = lift . throwError
