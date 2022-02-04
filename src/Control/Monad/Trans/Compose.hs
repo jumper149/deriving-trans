@@ -3,12 +3,18 @@
 module Control.Monad.Trans.Compose where
 
 import Control.Monad.Base
-import Control.Monad.Except
-import Control.Monad.Reader
-import Control.Monad.State
+import Control.Monad.Error.Class
+import Control.Monad.IO.Class
+import Control.Monad.Reader.Class
+import Control.Monad.State.Class
+import Control.Monad.Trans.Class
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Elevator
-import Control.Monad.Writer
+import qualified Control.Monad.Trans.Except as T
+import qualified Control.Monad.Trans.Reader as T
+import qualified Control.Monad.Trans.State as T
+import qualified Control.Monad.Trans.Writer as T
+import Control.Monad.Writer.Class
 import Data.Kind
 
 -- * 'ComposeT'
@@ -79,11 +85,11 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadError e (t2 m)
     ) => MonadError e (ComposeT t1 t2 m)
 
--- | Set by 'ExceptT'.
-deriving via ExceptT e (t2 (m :: * -> *))
+-- | Set by 'T.ExceptT'.
+deriving via T.ExceptT e (t2 (m :: * -> *))
   instance
     ( Monad (t2 m)
-    ) => MonadError e ((ComposeT (ExceptT e) t2) m)
+    ) => MonadError e ((ComposeT (T.ExceptT e) t2) m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
@@ -94,11 +100,11 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadReader r (t2 m)
     ) => MonadReader r (ComposeT t1 t2 m)
 
--- | Set by 'ReaderT'.
-deriving via ReaderT r (t2 (m :: * -> *))
+-- | Set by 'T.ReaderT'.
+deriving via T.ReaderT r (t2 (m :: * -> *))
   instance
     ( Monad (t2 m)
-    ) => MonadReader r ((ComposeT (ReaderT r) t2) m)
+    ) => MonadReader r ((ComposeT (T.ReaderT r) t2) m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
@@ -109,11 +115,11 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadState s (t2 m)
     ) => MonadState s (ComposeT t1 t2 m)
 
--- | Set by 'StateT'.
-deriving via StateT s (t2 (m :: * -> *))
+-- | Set by 'T.StateT'.
+deriving via T.StateT s (t2 (m :: * -> *))
   instance
     ( Monad (t2 m)
-    ) => MonadState s ((ComposeT (StateT s) t2) m)
+    ) => MonadState s ((ComposeT (T.StateT s) t2) m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
@@ -124,12 +130,12 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadWriter w (t2 m)
     ) => MonadWriter w (ComposeT t1 t2 m)
 
--- | Set by 'WriterT'.
-deriving via WriterT w (t2 (m :: * -> *))
+-- | Set by 'T.WriterT'.
+deriving via T.WriterT w (t2 (m :: * -> *))
   instance
     ( Monad (t2 m)
     , Monoid w
-    ) => MonadWriter w ((ComposeT (WriterT w) t2) m)
+    ) => MonadWriter w ((ComposeT (T.WriterT w) t2) m)
 
 
 -- ** Run 'ComposeT'
@@ -229,7 +235,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --
 -- @
 -- type (|.) = 'ComposeT'
--- type Stack = 'StateT' 'Int' |. 'ReaderT' 'Char' |. CustomT |. 'ReaderT' 'Bool' |. 'Control.Monad.Trans.Identity.IdentityT'
+-- type Stack = 'T.StateT' 'Int' |. 'T.ReaderT' 'Char' |. CustomT |. 'T.ReaderT' 'Bool' |. 'Control.Monad.Trans.Identity.IdentityT'
 -- newtype StackT m a = StackT { unStackT :: Stack m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
@@ -265,20 +271,20 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   runStateT' |.
 --     runReaderT' |.
 --       runCustomT |.
---         (\\ tma -> 'runReaderT' tma 'True') |.
+--         (\\ tma -> 'T.runReaderT' tma 'True') |.
 --           'Control.Monad.Trans.Identity.runIdentityT' $ unStackT stackTma
 --   where
---     runReaderT' :: 'MonadReader' 'Bool' m => 'ReaderT' 'Char' m a -> m a
+--     runReaderT' :: 'MonadReader' 'Bool' m => 'T.ReaderT' 'Char' m a -> m a
 --     runReaderT' tma = do
 --       bool <- 'ask'
 --       let char = if bool
 --                     then \'Y\'
 --                     else \'N\'
---       'runReaderT' tma char
+--       'T.runReaderT' tma char
 --
---     runStateT' :: 'MonadReader' 'Char' m => 'StateT' 'Int' m a -> m (a, 'Int')
+--     runStateT' :: 'MonadReader' 'Char' m => 'T.StateT' 'Int' m a -> m (a, 'Int')
 --     runStateT' tma = do
 --       char <- 'ask'
 --       let num = 'fromEnum' char
---       'runStateT' tma num
+--       'T.runStateT' tma num
 -- @
