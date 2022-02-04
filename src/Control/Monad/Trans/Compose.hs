@@ -12,7 +12,8 @@ import Control.Monad.Trans.Control
 import Control.Monad.Trans.Elevator
 import qualified Control.Monad.Trans.Except as T
 import qualified Control.Monad.Trans.Reader as T
-import qualified Control.Monad.Trans.State as T
+import qualified Control.Monad.Trans.State.Lazy as LT
+import qualified Control.Monad.Trans.State.Strict as ST
 import qualified Control.Monad.Trans.Writer as T
 import Control.Monad.Writer.Class
 import Data.Kind
@@ -115,11 +116,17 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadState s (t2 m)
     ) => MonadState s (ComposeT t1 t2 m)
 
--- | Set by 'T.StateT'.
-deriving via T.StateT s (t2 (m :: * -> *))
+-- | Set by 'LT.StateT'.
+deriving via LT.StateT s (t2 (m :: * -> *))
   instance
     ( Monad (t2 m)
-    ) => MonadState s ((ComposeT (T.StateT s) t2) m)
+    ) => MonadState s ((ComposeT (LT.StateT s) t2) m)
+
+-- | Set by 'ST.StateT'.
+deriving via ST.StateT s (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    ) => MonadState s ((ComposeT (ST.StateT s) t2) m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
@@ -235,7 +242,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --
 -- @
 -- type (|.) = 'ComposeT'
--- type Stack = 'T.StateT' 'Int' |. 'T.ReaderT' 'Char' |. CustomT |. 'T.ReaderT' 'Bool' |. 'Control.Monad.Trans.Identity.IdentityT'
+-- type Stack = 'LT.StateT' 'Int' |. 'T.ReaderT' 'Char' |. CustomT |. 'T.ReaderT' 'Bool' |. 'Control.Monad.Trans.Identity.IdentityT'
 -- newtype StackT m a = StackT { unStackT :: Stack m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
@@ -282,9 +289,9 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --                     else \'N\'
 --       'T.runReaderT' tma char
 --
---     runStateT' :: 'MonadReader' 'Char' m => 'T.StateT' 'Int' m a -> m (a, 'Int')
+--     runStateT' :: 'MonadReader' 'Char' m => 'LT.StateT' 'Int' m a -> m (a, 'Int')
 --     runStateT' tma = do
 --       char <- 'ask'
 --       let num = 'fromEnum' char
---       'T.runStateT' tma num
+--       'LT.runStateT' tma num
 -- @
