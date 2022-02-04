@@ -47,7 +47,7 @@ instance (Monad (t m), MonadTransControl t, MonadBaseControl b m) => MonadBaseCo
   liftBaseWith f = liftWith $ \ runT -> liftBaseWith $ \ runInBase -> f $ runInBase . runT
   restoreM = restoreT . restoreM
 
-instance (Monad (t m), Monad m, MonadTransControl t, Alternative m) => Alternative (Elevator t m) where
+instance (Monad (t m), MonadTransControl t, Monad m, Alternative m) => Alternative (Elevator t m) where
   empty = lift empty
   (<|>) x y = (restoreT . pure =<<) $ liftWith $ \ runT -> runT x <|> runT y
 
@@ -57,7 +57,7 @@ instance (Monad (t m), MonadTrans t, MonadFail m) => MonadFail (Elevator t m) wh
 instance (Monad (t m), MonadTrans t, MonadIO m) => MonadIO (Elevator t m) where
   liftIO = lift . liftIO
 
-instance (Monad (t m), Monad m, MonadTransControl t, Alternative m) => MonadPlus (Elevator t m)
+instance (Monad (t m), MonadTransControl t, MonadPlus m) => MonadPlus (Elevator t m)
 
 instance (Monad (t m), MonadTransControl t, MonadError e m) => MonadError e (Elevator t m) where
   throwError = lift . throwError
