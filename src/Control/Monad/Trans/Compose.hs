@@ -14,7 +14,8 @@ import qualified Control.Monad.Trans.Except as T
 import qualified Control.Monad.Trans.Reader as T
 import qualified Control.Monad.Trans.State.Lazy as LT
 import qualified Control.Monad.Trans.State.Strict as ST
-import qualified Control.Monad.Trans.Writer as T
+import qualified Control.Monad.Trans.Writer.Lazy as LT
+import qualified Control.Monad.Trans.Writer.Strict as ST
 import Control.Monad.Writer.Class
 import Data.Kind
 
@@ -137,12 +138,19 @@ deriving via Elevator t1 (t2 (m :: * -> *))
     , MonadWriter w (t2 m)
     ) => MonadWriter w (ComposeT t1 t2 m)
 
--- | Set by 'T.WriterT'.
-deriving via T.WriterT w (t2 (m :: * -> *))
+-- | Set by 'LT.WriterT'.
+deriving via LT.WriterT w (t2 (m :: * -> *))
   instance
     ( Monad (t2 m)
     , Monoid w
-    ) => MonadWriter w ((ComposeT (T.WriterT w) t2) m)
+    ) => MonadWriter w ((ComposeT (LT.WriterT w) t2) m)
+
+-- | Set by 'ST.WriterT'.
+deriving via ST.WriterT w (t2 (m :: * -> *))
+  instance
+    ( Monad (t2 m)
+    , Monoid w
+    ) => MonadWriter w ((ComposeT (ST.WriterT w) t2) m)
 
 
 -- ** Run 'ComposeT'
