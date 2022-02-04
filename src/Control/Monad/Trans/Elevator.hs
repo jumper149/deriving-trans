@@ -5,6 +5,7 @@ module Control.Monad.Trans.Elevator where
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Base
+import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
 import Control.Monad.Reader.Class
 import Control.Monad.RWS.Class (MonadRWS)
@@ -58,6 +59,10 @@ instance (Monad (t m), MonadTrans t, MonadIO m) => MonadIO (Elevator t m) where
   liftIO = lift . liftIO
 
 instance (Monad (t m), MonadTransControl t, MonadPlus m) => MonadPlus (Elevator t m)
+
+instance (Monad (t m), MonadTransControl t, MonadCont m) => MonadCont (Elevator t m) where
+  callCC f = (restoreT . pure =<<) $ liftWith $ \ runT ->
+    callCC $ \ c -> runT $ f $ \ a -> restoreT $ c =<< runT (pure a)
 
 instance (Monad (t m), MonadTransControl t, MonadError e m) => MonadError e (Elevator t m) where
   throwError = lift . throwError
