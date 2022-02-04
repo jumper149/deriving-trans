@@ -2,6 +2,7 @@
 
 module Control.Monad.Trans.Elevator where
 
+import Control.Applicative
 import Control.Monad.Base
 import Control.Monad.Error.Class
 import Control.Monad.Reader.Class
@@ -44,6 +45,10 @@ instance (Monad (t m), MonadTransControl t, MonadBaseControl b m) => MonadBaseCo
   type StM (Elevator t m) a = StM m (StT t a)
   liftBaseWith f = liftWith $ \ runT -> liftBaseWith $ \ runInBase -> f $ runInBase . runT
   restoreM = restoreT . restoreM
+
+instance (Monad (t m), Monad m, MonadTransControl t, Alternative m) => Alternative (Elevator t m) where
+  empty = lift empty
+  (<|>) x y = (restoreT . pure =<<) $ liftWith $ \ runT -> runT x <|> runT y
 
 instance (Monad (t m), MonadTrans t, MonadFail m) => MonadFail (Elevator t m) where
   fail = lift . fail
