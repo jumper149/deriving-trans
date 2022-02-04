@@ -5,6 +5,7 @@ module Control.Monad.Trans.Elevator where
 import Control.Monad.Base
 import Control.Monad.Error.Class
 import Control.Monad.Reader.Class
+import Control.Monad.RWS.Class (MonadRWS)
 import Control.Monad.State.Class
 import Control.Monad.Trans
 import Control.Monad.Trans.Control
@@ -59,6 +60,8 @@ instance (Monad (t m), MonadTransControl t, MonadReader r m) => MonadReader r (E
   ask = lift ask
   local f tma = (restoreT . pure =<<) $ liftWith $ \ runT ->
     local f $ runT tma
+
+instance (Monad (t m), MonadTransControl t, MonadRWS r w s m) => MonadRWS r w s (Elevator t m)
 
 instance (Monad (t m), MonadTrans t, MonadState s m) => MonadState s (Elevator t m) where
   get = lift get
