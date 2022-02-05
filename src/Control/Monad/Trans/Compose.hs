@@ -289,7 +289,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --
 -- @
 -- deriving via 'Elevator' t1 (t2 (m :: * -> *))
---   instance {-# OVERLAPPABLE #-}
+--   instance {-\# OVERLAPPABLE \#-}
 --     ( 'Monad' (t1 (t2 m))
 --     , 'MonadTransControl' t1
 --     , MonadCustom (t2 m)
