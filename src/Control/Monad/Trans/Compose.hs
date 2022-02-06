@@ -11,6 +11,7 @@ import Control.Monad.RWS.Class (MonadRWS)
 import Control.Monad.State.Class
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Control
+import Control.Monad.Trans.Control.Identity
 import Control.Monad.Trans.Elevator
 import qualified Control.Monad.Trans.Cont as T
 import qualified Control.Monad.Trans.Except as T
@@ -59,6 +60,10 @@ instance (forall m. Monad m => Monad (t2 m), MonadTransControl t1, MonadTransCon
   liftWith f = defaultLiftWith2 ComposeT deComposeT $ \ x -> f x
   restoreT = defaultRestoreT2 ComposeT
 
+instance (forall m. Monad m => Monad (t2 m), MonadTransControlIdentity t1, MonadTransControlIdentity t2) => MonadTransControlIdentity (ComposeT t1 t2) where
+  liftWithIdentity inner = ComposeT $ liftWithIdentity $ \ runId1 ->
+    liftWithIdentity $ \ runId2 -> inner $ runId2 . runId1 . deComposeT
+
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
@@ -82,6 +87,14 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadTransControl (ComposeT t1 t2)
     , MonadBaseControl b m
     ) => MonadBaseControl b (ComposeT t1 t2 m)
+
+-- | Elevated to @m@.
+deriving via Elevator (ComposeT t1 t2) m
+  instance
+    ( Monad (t1 (t2 m))
+    , MonadTransControlIdentity (ComposeT t1 t2)
+    , MonadBaseControlIdentity b m
+    ) => MonadBaseControlIdentity b (ComposeT t1 t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
