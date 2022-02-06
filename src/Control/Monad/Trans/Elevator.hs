@@ -13,6 +13,7 @@ import Control.Monad.RWS.Class (MonadRWS)
 import Control.Monad.State.Class
 import Control.Monad.Trans
 import Control.Monad.Trans.Control
+import Control.Monad.Trans.Control.Identity
 import Control.Monad.Writer.Class
 import Data.Kind
 
@@ -39,7 +40,7 @@ type Elevator :: ((Type -> Type) -> Type -> Type) -- ^ @t@
               -> Type
 newtype Elevator t m a = Ascend { descend :: t m a }
   deriving newtype (Applicative, Functor, Monad)
-  deriving newtype (MonadTrans, MonadTransControl)
+  deriving newtype (MonadTrans, MonadTransControl, MonadTransControlIdentity)
 
 instance (Monad (t m), MonadTrans t, MonadBase b m) => MonadBase b (Elevator t m) where
   liftBase = lift . liftBase
@@ -48,6 +49,9 @@ instance (Monad (t m), MonadTransControl t, MonadBaseControl b m) => MonadBaseCo
   type StM (Elevator t m) a = StM m (StT t a)
   liftBaseWith f = liftWith $ \ runT -> liftBaseWith $ \ runInBase -> f $ runInBase . runT
   restoreM = restoreT . restoreM
+
+instance (Monad (t m), MonadTransControlIdentity t, MonadBaseControlIdentity b m) => MonadBaseControlIdentity b (Elevator t m) where
+  liftBaseWithIdentity = defaultLiftBaseWithIdentity
 
 instance (Monad (t m), MonadTransControl t, Monad m, Alternative m) => Alternative (Elevator t m) where
   empty = lift empty
