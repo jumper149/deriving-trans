@@ -7,6 +7,7 @@ import Control.Monad
 import Control.Monad.Base
 import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
+import Control.Monad.Fix
 import Control.Monad.Reader.Class
 import Control.Monad.RWS.Class (MonadRWS)
 import Control.Monad.State.Class
@@ -54,6 +55,10 @@ instance (Monad (t m), MonadTransControl t, Monad m, Alternative m) => Alternati
 
 instance (Monad (t m), MonadTrans t, MonadFail m) => MonadFail (Elevator t m) where
   fail = lift . fail
+
+instance (Monad (t m), MonadTransControl t, MonadFix m) => MonadFix (Elevator t m) where
+  mfix f = (restoreT . pure =<<) $ liftWith $ \ runT ->
+    mfix $ \ x -> runT $ (f =<<) $ restoreT $ pure x
 
 instance (Monad (t m), MonadTrans t, MonadIO m) => MonadIO (Elevator t m) where
   liftIO = lift . liftIO
