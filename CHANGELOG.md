@@ -1,5 +1,9 @@
 # Revision history for deriving-trans
 
+## 0.3.1.0 *08 Feb 2022*
+
+* Add `MonadFix` instance to `Elevator`.
+
 ## 0.3.0.0 *04 Feb 2022*
 
 * Add "base-case" instances for both lazy and strict transformers (from mtl) to `ComposeT`.
