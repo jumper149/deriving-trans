@@ -15,6 +15,7 @@ import Control.Monad.Trans
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Control.Identity
 import Control.Monad.Writer.Class
+import Control.Monad.Zip
 import Data.Kind
 
 -- * 'Elevator'
@@ -68,6 +69,10 @@ instance (Monad (t m), MonadTrans t, MonadIO m) => MonadIO (Elevator t m) where
   liftIO = lift . liftIO
 
 instance (Monad (t m), MonadTransControl t, MonadPlus m) => MonadPlus (Elevator t m)
+
+instance (Monad (t m), MonadTransControlIdentity t, MonadZip m) => MonadZip (Elevator t m) where
+  mzip x y = liftWithIdentity $ \ runT ->
+    mzip (runT x) (runT y)
 
 instance (Monad (t m), MonadTransControl t, MonadCont m) => MonadCont (Elevator t m) where
   callCC f = (restoreT . pure =<<) $ liftWith $ \ runT ->
