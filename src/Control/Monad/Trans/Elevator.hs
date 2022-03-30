@@ -61,9 +61,8 @@ instance (Monad (t m), MonadTransControl t, Monad m, Alternative m) => Alternati
 instance (Monad (t m), MonadTrans t, MonadFail m) => MonadFail (Elevator t m) where
   fail = lift . fail
 
-instance (Monad (t m), MonadTransControl t, MonadFix m) => MonadFix (Elevator t m) where
-  mfix f = (restoreT . pure =<<) $ liftWith $ \ runT ->
-    mfix $ \ x -> runT $ (f =<<) $ restoreT $ pure x
+instance (Monad (t m), MonadTransControlIdentity t, MonadFix m) => MonadFix (Elevator t m) where
+  mfix f = liftWithIdentity $ \ runT -> mfix $ \ x -> runT $ f x
 
 instance (Monad (t m), MonadTrans t, MonadIO m) => MonadIO (Elevator t m) where
   liftIO = lift . liftIO
