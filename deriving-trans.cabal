@@ -30,7 +30,7 @@ library
     Control.Monad.Trans.Elevator
   --other-modules:
   build-depends:
-    , base
+    , base < 5
     , monad-control
     , mtl
     , transformers
