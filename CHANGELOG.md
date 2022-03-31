@@ -1,5 +1,9 @@
 # Revision history for deriving-trans
 
+## 0.3.2.0 *31 Mar 2022*
+
+* Remove version boundaries of dependencies.
+
 ## 0.3.1.0 *08 Feb 2022*
 
 * Add `MonadFix` instance to `Elevator`.
