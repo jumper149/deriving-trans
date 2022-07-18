@@ -32,6 +32,7 @@
       with import nixpkgs { system = "x86_64-linux"; };
       haskellPackages.shellFor {
         buildInputs = with haskellPackages; [
+          cabal-install
           ghcid
           haskell-language-server
           hlint
