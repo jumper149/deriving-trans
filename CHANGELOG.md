@@ -1,5 +1,12 @@
 # Revision history for deriving-trans
 
+## 0.4.0.0 *18 Jul 2022*
+
+* Add dependency on monad-control-identity.
+* Add instances for `MonadTransControlIdentity` and `MonadBaseControlIdentity`.
+* Add `MonadZip` instance to `Elevator`.
+* Constrain the `MonadFix` instance for `Elevator` with `MonadTransControlIdentity`.
+
 ## 0.3.2.0 *31 Mar 2022*
 
 * Remove version boundaries of dependencies.

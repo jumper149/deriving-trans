@@ -1,6 +1,6 @@
 cabal-version:       3.0
 name:                deriving-trans
-version:             0.3.2.0
+version:             0.4.0.0
 synopsis:            Derive instances for monad transformer stacks
 description:         Implementing instances for monad transformer stacks can be tedious.
                      <https://hackage.haskell.org/package/mtl mtl> defines each instance for each
