@@ -31,7 +31,8 @@ import Data.Kind
 --
 -- Access instances of the inner monad @m@.
 --
--- ==== Type level arguments
+-- __Type level arguments:__
+--
 -- [@t :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] monad transformer
 -- [@m :: 'Type' -> 'Type'@] monad
 -- [@a :: 'Type'@] value

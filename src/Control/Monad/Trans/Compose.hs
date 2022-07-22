@@ -39,7 +39,8 @@ import Data.Kind
 -- Access instances of the intermediate monad @(t2 m)@, whenever @t1@ implements 'MonadTrans' /
 -- 'MonadTransControl'.
 --
--- ==== Type level arguments
+-- __Type level arguments:__
+--
 -- [@t1 :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] outer monad transformer
 -- [@t2 :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] inner monad transformer
 -- [@m :: 'Type' -> 'Type'@] monad
