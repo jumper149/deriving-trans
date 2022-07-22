@@ -1,6 +1,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE TypeFamilyDependencies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# OPTIONS -Wno-unticked-promoted-constructors #-}
 
 module Control.Monad.Trans.Compose.Stack where
 
@@ -20,8 +21,8 @@ infixl 1 :||>
 -- | An isomorphism between a 'Stack' and the corresponding monad transformer, which can be built
 -- using 'ComposeT'.
 type family StackT (ts :: Stack) = (t :: (Type -> Type) -> Type -> Type) | t -> ts where
-  StackT 'NilT = TransparentT
-  StackT (ts ':||> t) = ComposeT t (StackT ts)
+  StackT NilT = TransparentT
+  StackT (ts :||> t) = ComposeT t (StackT ts)
 
 -- | A data type representing the runner function of a monad transformer stack.
 --
@@ -29,8 +30,8 @@ type family StackT (ts :: Stack) = (t :: (Type -> Type) -> Type -> Type) | t -> 
 --
 -- 'RunStackT' can only be used for monad transformer stacks without monadic state t'Control.Monad.Trans.Control.StT'.
 data RunStackT :: Stack -> (Type -> Type) -> Type -> Type where
-  RunNilT :: RunStackT 'NilT m a
-  (:..>) :: RunStackT ts m a -> (t (StackT ts m) a -> StackT ts m a) -> RunStackT (ts ':||> t) m a
+  RunNilT :: RunStackT NilT m a
+  (:..>) :: RunStackT ts m a -> (t (StackT ts m) a -> StackT ts m a) -> RunStackT (ts :||> t) m a
 
 infixl 1 :..>
 
