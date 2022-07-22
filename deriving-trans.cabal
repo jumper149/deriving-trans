@@ -27,6 +27,8 @@ extra-source-files:  CHANGELOG.md
 library
   exposed-modules:
     Control.Monad.Trans.Compose
+    Control.Monad.Trans.Compose.Stack
+    Control.Monad.Trans.Compose.Transparent
     Control.Monad.Trans.Elevator
   --other-modules:
   build-depends:
@@ -61,6 +63,7 @@ library
     StandaloneKindSignatures
     TypeApplications
     TypeFamilies
+    TypeOperators
   ghc-options:
     -Wall
     -Wunused-packages
