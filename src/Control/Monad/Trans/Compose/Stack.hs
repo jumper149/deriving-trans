@@ -9,24 +9,24 @@ import Control.Monad.Trans.Compose
 import Control.Monad.Trans.Compose.Transparent
 import Data.Kind
 
--- | A data kind, which represents a monad transformer stack.
+-- | A data kind representing a monad transformer stack.
 --
 -- This is basically a type-level list of monad transformers.
 data Stack where
   -- | an empty monad transformer stack
   NilT :: Stack
   -- | add a monad transformer to a stack
-  (:||>) :: Stack -- ^ remaining stack
+  (:.|>) :: Stack -- ^ remaining stack
          -> ((Type -> Type) -> Type -> Type) -- ^ next monad transformer
          -> Stack
 
-infixl 1 :||>
+infixl 1 :.|>
 
 -- | An isomorphism between a 'Stack' and the corresponding monad transformer, which can be built
 -- using 'ComposeT'.
 type family StackT (ts :: Stack) = (t :: (Type -> Type) -> Type -> Type) | t -> ts where
   StackT NilT = TransparentT
-  StackT (ts :||> t) = ComposeT t (StackT ts)
+  StackT (ts :.|> t) = ComposeT t (StackT ts)
 
 -- | A data type representing the runner function of a monad transformer stack.
 --
@@ -39,7 +39,7 @@ data RunStackT :: Stack -> (Type -> Type) -> Type -> Type where
   -- | run the next monad transformer on a stack
   (:..>) :: RunStackT ts m a -- ^ run remaining stack
          -> (t (StackT ts m) a -> StackT ts m a) -- ^ run next monad transformer
-         -> RunStackT (ts :||> t) m a
+         -> RunStackT (ts :.|> t) m a
 
 infixl 1 :..>
 
