@@ -1,5 +1,12 @@
 # Revision history for deriving-trans
 
+## 0.5.0.0 *25 Jul 2022*
+
+* Add module `Control.Monad.Trans.Compose.Infix`.
+* Add module `Control.Monad.Trans.Compose.Stack`.
+* Add module `Control.Monad.Trans.Compose.Transparent`.
+* Improve and update Haddock documentation and examples.
+
 ## 0.4.0.0 *18 Jul 2022*
 
 * Add dependency on monad-control-identity.
