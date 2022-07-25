@@ -259,7 +259,7 @@ deriving via ST.RWST r w s (t2 (m :: Type -> Type))
 --
 -- You have to run the composed monad transformers to get back into the base monad at some point.
 
--- | Run a transformer stack.
+-- | Run two stacked monad transformers.
 --
 -- This function takes the two individual monad transformer runners as arguments.
 runComposeT :: (forall a. t1 (t2 m) a -> t2 m (StT t1 a)) -- ^ run @t1@
