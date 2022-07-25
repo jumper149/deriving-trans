@@ -3,6 +3,10 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS -Wno-unticked-promoted-constructors #-}
 
+-- | This module gives an alternative interface to define and run monad transformer stacks.
+--
+-- Using this approach is supposed to improve error messages and reduce errors, such as forgetting
+-- to add 'TransparentT' at the bottom of the stack.
 module Control.Monad.Trans.Compose.Stack where
 
 import Control.Monad.Trans.Compose
@@ -17,6 +21,9 @@ import Data.Kind
 
 -- | An isomorphism between a 'Stack' and the corresponding monad transformer, which can be built
 -- using 'ComposeT'.
+--
+-- An additional 'TransparentT' will automatically be used at the bottom of the stack.
+-- You only have to worry about the semantically relevant transformers.
 type family StackT (ts :: Stack) = (t :: (Type -> Type) -> Type -> Type) | t -> ts where
   StackT NilT = TransparentT
   StackT (ts :.|> t) = ComposeT t (StackT ts)
