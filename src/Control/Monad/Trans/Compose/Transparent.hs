@@ -15,13 +15,13 @@ import Control.Monad.Trans.Identity
 type TransparentT = Elevator NoT
 
 runTransparentT :: TransparentT m a -> m a
-runTransparentT = runIdentityT . runNoT . descend
+runTransparentT = runIdentityT . unNoT . descend
 
 -- | A newtype wrapper around 'IdentityT'.
 --
 -- This is used in 'TransparentT' to encourage the use of 'runTransparentT'.
-newtype NoT m a = MkNoT {runNoT :: IdentityT m a}
+newtype NoT m a = MkNoT {unNoT :: IdentityT m a}
   deriving newtype (Functor, Applicative, Monad)
   deriving newtype (MonadTrans, MonadTransControl, MonadTransControlIdentity)
 
-{-# WARNING NoT, MkNoT, runNoT "This is an implementation detail of 'TransparentT'." #-}
+{-# WARNING NoT, MkNoT, unNoT "This is an implementation detail of 'TransparentT'." #-}
