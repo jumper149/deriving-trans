@@ -377,6 +377,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- This is the part, that actually contains your application logic.
 -- Because of the setup with 'ComposeT', we won't have to worry about 'lift'ing during the
 -- initialization.
+-- With 'Control.Monad.Trans.Compose.Infix...>' we can use the order of initialization again.
 --
 -- @
 -- runStackT :: 'MonadBaseControl' 'IO' m
