@@ -348,14 +348,15 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- Create a monad transformer stack and wrap it using a newtype.
 --
 -- @
--- type (|.) = 'ComposeT'
--- type Stack = 'LT.StateT' 'Int' |. 'T.ReaderT' 'Char' |. CustomT |. 'T.ReaderT' 'Bool' |. 'Control.Monad.Trans.Identity.IdentityT'
+-- type Stack = 'Control.Monad.Trans.Compose.Transparent.TransparentT' 'Control.Monad.Trans.Compose.Infix..|>' 'T.ReaderT' 'Bool' 'Control.Monad.Trans.Compose.Infix..|>' CustomT 'Control.Monad.Trans.Compose.Infix..|>' 'T.ReaderT' 'Char' 'Control.Monad.Trans.Compose.Infix..|>' 'LT.StateT' 'Int'
 -- newtype StackT m a = StackT { unStackT :: Stack m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- We are adding 'Control.Monad.Trans.Identity.IdentityT' to the end of the stack, so that all the
--- other transformer instances end up in the stack.
+-- Using 'Control.Monad.Trans.Compose.Infix..|>' we can write @Stack@ in the order of initialization.
+--
+-- We are adding 'Control.Monad.Trans.Compose.Transparent.TransparentT' to the bottom of the stack,
+-- so that all the other transformer instances actually end up in the stack.
 -- Now we can simply derive just the instances, that we want.
 --
 -- @
@@ -382,23 +383,24 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --           => StackT m a
 --           -> m (StT StackT a)
 -- runStackT stackTma =
---   runStateT' |.
---     runReaderT' |.
---       runCustomT |.
---         (\\ tma -> 'T.runReaderT' tma 'True') |.
---           'Control.Monad.Trans.Identity.runIdentityT' $ unStackT stackTma
---   where
---     runReaderT' :: 'MonadReader' 'Bool' m => 'T.ReaderT' 'Char' m a -> m a
---     runReaderT' tma = do
---       bool <- 'ask'
---       let char = if bool
---                     then \'Y\'
---                     else \'N\'
---       'T.runReaderT' tma char
+--   'Control.Monad.Trans.Compose.Transparent.runTransparentT'
+--     ./> (\\ tma -> 'T.runReaderT' tma 'True')
+--     ./> runCustomT
+--     ./> runReaderT'
+--     ./> runStateT'
+--     $ unStackT stackTma
+--  where
+--   runReaderT' :: 'MonadReader' 'Bool' m => 'T.ReaderT' 'Char' m a -> m a
+--   runReaderT' tma = do
+--     bool <- 'ask'
+--     let char = if bool
+--                   then \'Y\'
+--                   else \'N\'
+--     'T.runReaderT' tma char
 --
---     runStateT' :: 'MonadReader' 'Char' m => 'LT.StateT' 'Int' m a -> m (a, 'Int')
---     runStateT' tma = do
---       char <- 'ask'
---       let num = 'fromEnum' char
---       'LT.runStateT' tma num
+--   runStateT' :: 'MonadReader' 'Char' m => 'LT.StateT' 'Int' m a -> m (a, 'Int')
+--   runStateT' tma = do
+--     char <- 'ask'
+--     let num = 'fromEnum' char
+--     'LT.runStateT' tma num
 -- @
