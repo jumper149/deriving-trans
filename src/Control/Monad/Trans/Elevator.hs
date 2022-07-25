@@ -23,9 +23,10 @@ import Data.Kind
 -- $elevator
 --
 -- 'Elevator' can be used to lift instances through monad transformers as long as they implement
--- 'MonadTrans' and 'MonadTransControl' instances.
+-- a 'MonadTrans' \/ 'MonadTransControl' \/ 'MonadTransControlIdentity' instance.
 --
 -- 'MonadTransControl' is only necessary when there is atleast one method with a monadic argument.
+-- 'MonadTransControlIdentity' is even stronger and only required for a few specific instances.
 
 -- | A newtype wrapper for monad transformers.
 --

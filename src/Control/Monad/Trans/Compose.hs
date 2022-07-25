@@ -36,8 +36,8 @@ import Data.Kind
 
 -- | A newtype wrapper for two stacked monad transformers.
 --
--- Access instances of the intermediate monad @(t2 m)@, whenever @t1@ implements 'MonadTrans' /
--- 'MonadTransControl'.
+-- Access instances of the intermediate monad @(t2 m)@, whenever @t1@ implements 'MonadTrans' \/
+-- 'MonadTransControl' \/ 'MonadTransControlIdentity'.
 --
 -- __Type level arguments:__
 --
@@ -320,7 +320,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- @
 -- newtype CustomT m a = CustomT { unCustomT :: t'Control.Monad.Trans.Identity.IdentityT' m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
---   deriving newtype ('MonadTrans', 'MonadTransControl')
+--   deriving newtype ('MonadTrans', 'MonadTransControl', 'MonadTransControlIdentity')
 -- @
 --
 -- First we need the regular instance.
