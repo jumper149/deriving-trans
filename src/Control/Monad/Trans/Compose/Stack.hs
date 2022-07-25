@@ -9,24 +9,36 @@ import Control.Monad.Trans.Compose
 import Control.Monad.Trans.Compose.Transparent
 import Data.Kind
 
--- | A data kind representing a monad transformer stack.
+-- * 'StackT'
 --
--- This is basically a type-level list of monad transformers.
-data Stack where
-  -- | an empty monad transformer stack
-  NilT :: Stack
-  -- | add a monad transformer to a stack
-  (:.|>) :: Stack -- ^ remaining stack
-         -> ((Type -> Type) -> Type -> Type) -- ^ next monad transformer
-         -> Stack
-
-infixl 1 :.|>
+-- $stackt
+--
+-- 'StackT' is a more ergonomic way to define a monad transformer stack.
 
 -- | An isomorphism between a 'Stack' and the corresponding monad transformer, which can be built
 -- using 'ComposeT'.
 type family StackT (ts :: Stack) = (t :: (Type -> Type) -> Type -> Type) | t -> ts where
   StackT NilT = TransparentT
   StackT (ts :.|> t) = ComposeT t (StackT ts)
+
+-- ** 'runStackT' and 'RunStackT'
+--
+-- $runStackt
+--
+-- Monad transformer stacks, that only consist of t'Control.Monad.Trans.Identity.IdentityT' and
+-- t'Control.Monad.Trans.Reader.ReaderT', can be run with 'runStackT'.
+--
+-- If your transformer stack contains monadic state t'Control.Monad.Trans.Control.StT', you will have to use 'runComposeT' or 'Control.Monad.Trans.Compose.Infix../>'!
+-- You can still use 'StackT' for the type definition.
+
+-- | Run a monad transformer stack.
+--
+-- This takes a 'RunStackT' as an argument containing the individual runners.
+--
+-- 'runStackT' can only be used for monad transformer stacks without monadic state t'Control.Monad.Trans.Control.StT'.
+runStackT :: RunStackT ts m a -> StackT ts m a -> m a
+runStackT RunNilT = runTransparentT
+runStackT (runRemainingStackT :..> runNextT) = runStackT runRemainingStackT . runNextT . deComposeT
 
 -- | A data type representing the runner function of a monad transformer stack.
 --
@@ -43,11 +55,21 @@ data RunStackT :: Stack -> (Type -> Type) -> Type -> Type where
 
 infixl 1 :..>
 
--- | Run a monad transformer stack.
+-- * 'Stack'
 --
--- This takes a 'RunStackT' as an argument containing the individual runners.
+-- $stack
 --
--- 'runStackT' can only be used for monad transformer stacks without monadic state t'Control.Monad.Trans.Control.StT'.
-runStackT :: RunStackT ts m a -> StackT ts m a -> m a
-runStackT RunNilT = runTransparentT
-runStackT (runRemainingStackT :..> runNextT) = runStackT runRemainingStackT . runNextT . deComposeT
+-- 'Stack' is used to define monad transformer stacks with 'StackT'.
+
+-- | A data kind representing a monad transformer stack.
+--
+-- This is basically a type-level list of monad transformers.
+data Stack where
+  -- | an empty monad transformer stack
+  NilT :: Stack
+  -- | add a monad transformer to a stack
+  (:.|>) :: Stack -- ^ remaining stack
+         -> ((Type -> Type) -> Type -> Type) -- ^ next monad transformer
+         -> Stack
+
+infixl 1 :.|>
