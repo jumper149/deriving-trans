@@ -13,8 +13,8 @@ import Data.Kind
 --
 -- This is basically a type-level list of monad transformers.
 data Stack
-  = NilT
-  | Stack :||> ((Type -> Type) -> Type -> Type)
+  = NilT -- ^ an empty monad transformer stack
+  | Stack :||> ((Type -> Type) -> Type -> Type) -- ^ add a monad transformer to a stack
 
 infixl 1 :||>
 
@@ -30,7 +30,9 @@ type family StackT (ts :: Stack) = (t :: (Type -> Type) -> Type -> Type) | t -> 
 --
 -- 'RunStackT' can only be used for monad transformer stacks without monadic state t'Control.Monad.Trans.Control.StT'.
 data RunStackT :: Stack -> (Type -> Type) -> Type -> Type where
+  -- | run an empty monad transformer stack
   RunNilT :: RunStackT NilT m a
+  -- | run the next monad transformer on a stack
   (:..>) :: RunStackT ts m a -> (t (StackT ts m) a -> StackT ts m a) -> RunStackT (ts :||> t) m a
 
 infixl 1 :..>
