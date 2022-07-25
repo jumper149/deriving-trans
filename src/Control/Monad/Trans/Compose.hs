@@ -360,6 +360,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- Now we can simply derive just the instances, that we want.
 --
 -- @
+--   deriving newtype ('MonadTrans', 'MonadTransControl')
 --   deriving newtype ('MonadState' 'Int')
 --   deriving newtype MonadCustom
 -- @

@@ -3,7 +3,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS -Wno-unticked-promoted-constructors #-}
 
--- | This module gives an alternative interface to define and run monad transformer stacks.
+-- | This module gives an alternative interface to build and run monad transformer stacks.
 --
 -- Using this approach is supposed to improve error messages and reduce errors, such as forgetting
 -- to add 'TransparentT' at the bottom of the stack.
@@ -80,3 +80,52 @@ data Stack where
          -> Stack
 
 infixl 1 :.|>
+
+-- * Examples
+--
+-- $examples
+--
+-- Feel free to compare these examples to the ones in "Control.Monad.Trans.Compose".
+
+-- TODO: Qualified identifiers such as 'Control.Monad.Trans.Class.MonadTrans' need a "t"-prefix to
+--       work correctly, but it doesn't work with a leading opening parenthesis "(".
+
+-- ** Example 1: Build a transformer stack
+--
+-- $example1
+--
+-- Apply the type family 'StackT' to a type of kind 'Stack' and generate a monad transformer stack built with 'ComposeT'.
+--
+-- @
+-- type AppStack = 'NilT' ':.|>' t'Control.Monad.Trans.Reader.ReaderT' 'Bool' ':.|>' CustomT ':.|>' t'Control.Monad.Trans.Reader.ReaderT' 'Char'
+-- newtype AppStackT m a = AppStackT { unAppStackT :: StackT AppStack m a }
+--   deriving newtype ('Functor', 'Applicative', 'Monad')
+--   deriving newtype ('Control.Monad.Trans.Class.MonadTrans', t'Control.Monad.Trans.Control.MonadTransControl', t'Control.Monad.Trans.Control.Identity.MonadTransControlIdentity')
+--   deriving newtype MonadCustom
+--   deriving newtype ('Control.Monad.Reader.Class.MonadReader' 'Bool')
+-- @
+
+-- ** Example 2: Run a transformer stack
+--
+-- $example2
+--
+-- Use 'runStackT' and supply it with a 'RunStackT' argument.
+--
+-- @
+-- runAppStackT :: t'Control.Monad.Trans.Control.MonadBaseControl' 'IO' m
+--              => AppStackT m a
+--              -> m a
+-- runAppStackT stackTma = runStackT runAccStackT $ unStackT stackTma
+--  where
+--   runAccStackT :: RunStackT AppStack
+--   runAccStackT = RunNilT
+--     :..> (\\ tma -> 'Control.Monad.Trans.Reader.runReaderT' tma 'True')
+--     :..> runCustomT
+--     :..> runReaderT'
+--
+--   runReaderT' :: t'Control.Monad.Reader.Class.MonadReader' 'Bool' m => t'Control.Monad.Trans.Reader.ReaderT' 'Char' m a -> m a
+--   runReaderT' tma = do
+--     bool <- 'ask'
+--     let char = if bool then \'Y\' else \'N\'
+--     'Control.Monad.Trans.Reader.runReaderT' tma char
+-- @
