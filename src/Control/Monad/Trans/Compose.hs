@@ -393,9 +393,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --   runReaderT' :: 'MonadReader' 'Bool' m => 'T.ReaderT' 'Char' m a -> m a
 --   runReaderT' tma = do
 --     bool <- 'ask'
---     let char = if bool
---                   then \'Y\'
---                   else \'N\'
+--     let char = if bool then \'Y\' else \'N\'
 --     'T.runReaderT' tma char
 --
 --   runStateT' :: 'MonadReader' 'Char' m => 'LT.StateT' 'Int' m a -> m (a, 'Int')
