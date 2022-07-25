@@ -12,9 +12,13 @@ import Data.Kind
 -- | A data kind, which represents a monad transformer stack.
 --
 -- This is basically a type-level list of monad transformers.
-data Stack
-  = NilT -- ^ an empty monad transformer stack
-  | Stack :||> ((Type -> Type) -> Type -> Type) -- ^ add a monad transformer to a stack
+data Stack where
+  -- | an empty monad transformer stack
+  NilT :: Stack
+  -- | add a monad transformer to a stack
+  (:||>) :: Stack -- ^ remaining stack
+         -> ((Type -> Type) -> Type -> Type) -- ^ next monad transformer
+         -> Stack
 
 infixl 1 :||>
 
@@ -33,11 +37,13 @@ data RunStackT :: Stack -> (Type -> Type) -> Type -> Type where
   -- | run an empty monad transformer stack
   RunNilT :: RunStackT NilT m a
   -- | run the next monad transformer on a stack
-  (:..>) :: RunStackT ts m a -> (t (StackT ts m) a -> StackT ts m a) -> RunStackT (ts :||> t) m a
+  (:..>) :: RunStackT ts m a -- ^ run remaining stack
+         -> (t (StackT ts m) a -> StackT ts m a) -- ^ run next monad transformer
+         -> RunStackT (ts :||> t) m a
 
 infixl 1 :..>
 
--- | Run a transformer stack.
+-- | Run a monad transformer stack.
 --
 -- This takes a 'RunStackT' as an argument containing the individual runners.
 --
