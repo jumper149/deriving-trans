@@ -112,9 +112,7 @@ infixl 1 :.|>
 -- Use 'runStackT' and supply it with a 'RunStackT' argument.
 --
 -- @
--- runAppT :: t'Control.Monad.Trans.Control.MonadBaseControl' 'IO' m
---         => AppT m a
---         -> m a
+-- runAppT :: AppT m a -> m a
 -- runAppT appTma = runStackT runAccStackT $ unAppT appTma
 --  where
 --   runAccStackT :: RunStackT AppStack

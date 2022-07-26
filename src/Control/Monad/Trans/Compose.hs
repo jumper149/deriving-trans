@@ -381,9 +381,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- With 'Control.Monad.Trans.Compose.Infix...>' we can use the order of initialization again.
 --
 -- @
--- runAppT :: 'MonadBaseControl' 'IO' m
---         => AppT m a
---         -> m ('StT' AppT a)
+-- runAppT :: AppT m a -> m ('StT' AppT a)
 -- runAppT appTma =
 --   'Control.Monad.Trans.Compose.Transparent.runTransparentT'
 --     'Control.Monad.Trans.Compose.Infix../>' (\\ tma -> 'T.runReaderT' tma 'True')
