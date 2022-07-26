@@ -349,12 +349,12 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- Create a monad transformer stack and wrap it using a newtype.
 --
 -- @
--- type Stack = t'Control.Monad.Trans.Compose.Transparent.TransparentT' t'Control.Monad.Trans.Compose.Infix..|>' 'T.ReaderT' 'Bool' t'Control.Monad.Trans.Compose.Infix..|>' CustomT t'Control.Monad.Trans.Compose.Infix..|>' 'T.ReaderT' 'Char' t'Control.Monad.Trans.Compose.Infix..|>' 'LT.StateT' 'Int'
--- newtype StackT m a = StackT { unStackT :: Stack m a }
+-- type AppStackT = t'Control.Monad.Trans.Compose.Transparent.TransparentT' t'Control.Monad.Trans.Compose.Infix..|>' 'T.ReaderT' 'Bool' t'Control.Monad.Trans.Compose.Infix..|>' CustomT t'Control.Monad.Trans.Compose.Infix..|>' 'T.ReaderT' 'Char' t'Control.Monad.Trans.Compose.Infix..|>' 'LT.StateT' 'Int'
+-- newtype AppT m a = AppT { unAppT :: AppStackT m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- Using t'Control.Monad.Trans.Compose.Infix..|>' we can write @Stack@ in the order of initialization.
+-- Using t'Control.Monad.Trans.Compose.Infix..|>' we can write @AppStackT@ in the order of initialization.
 -- We are adding t'Control.Monad.Trans.Compose.Transparent.TransparentT' to the bottom of the stack,
 -- so that all the other transformer instances actually end up in the stack.
 -- Now we can simply derive just the instances, that we want.
@@ -381,16 +381,16 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- With 'Control.Monad.Trans.Compose.Infix...>' we can use the order of initialization again.
 --
 -- @
--- runStackT :: 'MonadBaseControl' 'IO' m
---           => StackT m a
---           -> m ('StT' StackT a)
--- runStackT stackTma =
+-- runAppT :: 'MonadBaseControl' 'IO' m
+--         => AppT m a
+--         -> m ('StT' AppT a)
+-- runAppT appTma =
 --   'Control.Monad.Trans.Compose.Transparent.runTransparentT'
 --     'Control.Monad.Trans.Compose.Infix../>' (\\ tma -> 'T.runReaderT' tma 'True')
 --     'Control.Monad.Trans.Compose.Infix../>' runCustomT
 --     'Control.Monad.Trans.Compose.Infix../>' runReaderT'
 --     'Control.Monad.Trans.Compose.Infix../>' runStateT'
---     $ unStackT stackTma
+--     $ unAppT appTma
 --  where
 --   runReaderT' :: 'MonadReader' 'Bool' m => 'T.ReaderT' 'Char' m a -> m a
 --   runReaderT' tma = do

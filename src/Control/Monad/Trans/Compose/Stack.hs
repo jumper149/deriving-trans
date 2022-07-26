@@ -98,7 +98,7 @@ infixl 1 :.|>
 --
 -- @
 -- type AppStack = 'NilT' ':.|>' t'Control.Monad.Trans.Reader.ReaderT' 'Bool' ':.|>' CustomT ':.|>' t'Control.Monad.Trans.Reader.ReaderT' 'Char'
--- newtype AppStackT m a = AppStackT { unAppStackT :: StackT AppStack m a }
+-- newtype AppT m a = AppT { unAppT :: StackT AppStack m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 --   deriving newtype ('Control.Monad.Trans.Class.MonadTrans', t'Control.Monad.Trans.Control.MonadTransControl', t'Control.Monad.Trans.Control.Identity.MonadTransControlIdentity')
 --   deriving newtype MonadCustom
@@ -112,10 +112,10 @@ infixl 1 :.|>
 -- Use 'runStackT' and supply it with a 'RunStackT' argument.
 --
 -- @
--- runAppStackT :: t'Control.Monad.Trans.Control.MonadBaseControl' 'IO' m
---              => AppStackT m a
---              -> m a
--- runAppStackT stackTma = runStackT runAccStackT $ unStackT stackTma
+-- runAppT :: t'Control.Monad.Trans.Control.MonadBaseControl' 'IO' m
+--         => AppT m a
+--         -> m a
+-- runAppT appTma = runStackT runAccStackT $ unAppT appTma
 --  where
 --   runAccStackT :: RunStackT AppStack
 --   runAccStackT = RunNilT
