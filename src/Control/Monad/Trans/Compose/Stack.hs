@@ -113,10 +113,9 @@ infixl 1 :.|>
 --
 -- @
 -- runAppT :: AppT m a -> m a
--- runAppT appTma = runStackT runAccStackT $ unAppT appTma
+-- runAppT appTma = runStackT runAppStackT $ unAppT appTma
 --  where
---   runAccStackT :: RunStackT AppStack
---   runAccStackT = RunNilT
+--   runAppStackT = RunNilT
 --     :..> (\\ tma -> 'Control.Monad.Trans.Reader.runReaderT' tma 'True')
 --     :..> runCustomT
 --     :..> runReaderT'
