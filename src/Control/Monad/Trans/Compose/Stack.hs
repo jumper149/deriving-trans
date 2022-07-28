@@ -122,7 +122,7 @@ infixl 1 :.|>
 --
 --   runReaderT' :: t'Control.Monad.Reader.Class.MonadReader' 'Bool' m => t'Control.Monad.Trans.Reader.ReaderT' 'Char' m a -> m a
 --   runReaderT' tma = do
---     bool <- 'ask'
+--     bool <- 'Control.Monad.Trans.Reader.ask'
 --     let char = if bool then \'Y\' else \'N\'
 --     'Control.Monad.Trans.Reader.runReaderT' tma char
 -- @
