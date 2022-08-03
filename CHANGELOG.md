@@ -1,5 +1,9 @@
 # Revision history for deriving-trans
 
+## 0.5.0.1 *04 Aug 2022*
+
+* Improve Haddock examples.
+
 ## 0.5.0.0 *25 Jul 2022*
 
 * Add module `Control.Monad.Trans.Compose.Infix`.
