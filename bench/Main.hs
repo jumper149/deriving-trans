@@ -1,4 +1,8 @@
+{-# LANGUAGE CPP #-}
+
 module Main (main) where
+
+import Test.Tasty.Bench
 
 import Countdown
 
