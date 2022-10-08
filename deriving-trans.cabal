@@ -41,6 +41,7 @@ common language
     FlexibleInstances
     FunctionalDependencies
     GeneralizedNewtypeDeriving
+    LambdaCase
     MultiParamTypeClasses
     NamedFieldPuns
     OverloadedStrings
@@ -79,6 +80,7 @@ executable bench
   hs-source-dirs: bench
   main-is: Main.hs
   other-modules:
+    Countdown
   build-depends:
     , base < 5
     , monad-control
@@ -95,6 +97,7 @@ executable bench
 
     , cleff
     , effectful
+    , effectful-core
     , freer-simple
     , fused-effects
     , polysemy
