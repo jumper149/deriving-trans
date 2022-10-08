@@ -87,4 +87,8 @@ countdown n = bgroup (show n)
     , bench "deep"    $ nf countdownPolysemyDeep n
     ]
 #endif
+  , bgroup "deriving-trans"
+    [ bench "shallow" $ nf countdownDerivingTrans n
+    , bench "deep"    $ nf countdownDerivingTransDeep n
+    ]
   ]

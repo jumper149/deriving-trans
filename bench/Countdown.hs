@@ -52,6 +52,11 @@ import qualified Polysemy.Reader as P
 import qualified Polysemy.State as P
 #endif
 
+import qualified Control.Monad.Trans.Compose as DT
+import qualified Control.Monad.Trans.Compose.Infix as DT
+import qualified Control.Monad.Trans.Compose.Transparent as DT
+import qualified Control.Monad.Trans.Elevator as DT
+
 ----------------------------------------
 -- reference
 
@@ -440,3 +445,29 @@ countdownFreerSimpleDeep n = FS.run
     runR = FS.runReader ()
 
 #endif
+
+----------------------------------------
+-- deriving-trans
+
+countdownDerivingTrans :: Integer -> (Integer, Integer)
+countdownDerivingTrans n = runIdentity $
+  (DT.runTransparentT DT../> (`M.runStateT` n)) programMtl
+
+countdownDerivingTransDeep :: Integer -> (Integer, Integer)
+countdownDerivingTransDeep n = runIdentity $
+  (DT.runTransparentT
+    DT../> runR
+    DT../> runR
+    DT../> runR
+    DT../> runR
+    DT../> runR
+    DT../> (`M.runStateT` n)
+    DT../> runR
+    DT../> runR
+    DT../> runR
+    DT../> runR
+    DT../> runR
+  )
+  programMtl
+  where
+    runR = flip M.runReaderT ()

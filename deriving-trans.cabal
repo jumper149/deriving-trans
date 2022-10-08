@@ -101,6 +101,7 @@ executable bench
     , freer-simple
     , fused-effects
     , polysemy
+    , deriving-trans
   ghc-options:
     -threaded
     -rtsopts
