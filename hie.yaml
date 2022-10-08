@@ -2,3 +2,9 @@ cradle:
   cabal:
     - path: "src"
       component: "lib:deriving-trans"
+
+    - path: "bench/Main.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown.hs"
+      component: "deriving-trans:exe:bench"
