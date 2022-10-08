@@ -81,6 +81,7 @@ executable bench
   main-is: Main.hs
   other-modules:
     Countdown
+    DerivingTrans.Internal
   build-depends:
     , base < 5
     , monad-control
