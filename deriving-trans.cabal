@@ -84,25 +84,10 @@ executable bench
     DerivingTrans.Internal
   build-depends:
     , base < 5
-    , monad-control
-    , monad-control-identity
-    , mtl
-    , transformers
-    , transformers-base
-
-    , async
-    , tasty-bench
-    , unix
-    , unliftio
-    , text
-
-    , cleff
-    , effectful
-    , effectful-core
-    , freer-simple
-    , fused-effects
-    , polysemy
     , deriving-trans
+    , mtl
+    , tasty-bench
+    , transformers
   ghc-options:
     -threaded
     -rtsopts
