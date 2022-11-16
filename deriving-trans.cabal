@@ -81,6 +81,10 @@ executable bench
   main-is: Main.hs
   other-modules:
     Countdown
+    Countdown.DerivingTrans
+    Countdown.Mtl
+    Countdown.Reference
+    Countdown.ST
     DerivingTrans.Internal
   build-depends:
     , base < 5

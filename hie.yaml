@@ -8,3 +8,18 @@ cradle:
 
     - path: "bench/Countdown.hs"
       component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown/DerivingTrans.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown/Mtl.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown/Reference.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown/ST.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/DerivingTrans/Internal.hs"
+      component: "deriving-trans:exe:bench"
