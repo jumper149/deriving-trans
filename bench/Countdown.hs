@@ -22,5 +22,7 @@ countdown n = bgroup (show n)
     , bench "deep" $ nf Countdown.DerivingTrans.countdownDerivingTransDeep n
     , bench "shallow STM" $ nfAppIO Countdown.DerivingTrans.countdownDerivingTransSTM n
     , bench "deep STM" $ nfAppIO Countdown.DerivingTrans.countdownDerivingTransSTMDeep n
+    , bench "shallow stack STM" $ nfAppIO Countdown.DerivingTrans.countdownDerivingTransSTMStack n
+    , bench "deep stack STM" $ nfAppIO Countdown.DerivingTrans.countdownDerivingTransSTMStackDeep n
     ]
   ]

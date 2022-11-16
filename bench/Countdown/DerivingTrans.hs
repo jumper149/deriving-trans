@@ -12,6 +12,7 @@ import qualified Transformers.AsyncState as AsyncState
 
 import qualified Control.Monad.Trans.Compose as DT
 import qualified Control.Monad.Trans.Compose.Infix as DT
+import qualified Control.Monad.Trans.Compose.Stack as DT
 import qualified Control.Monad.Trans.Compose.Transparent as DT
 import qualified Control.Monad.Trans.Elevator as DT
 
@@ -62,6 +63,37 @@ countdownDerivingTransSTMDeep n = do
       DT../> runR
       DT../> runR
     )
+    programMtlReaderTVar
+  tvarResult <- readTVarIO tvar
+  pure (result, tvarResult)
+  where
+    runR = flip T.runReaderT ()
+
+countdownDerivingTransSTMStack :: Integer -> IO (Integer, Integer)
+countdownDerivingTransSTMStack n = do
+    tvar <- newTVarIO n
+    result <- DT.runStackT (DT.RunNilT DT.:..> (`AsyncState.runReaderTVarT` tvar)) programMtlReaderTVar
+    tvarResult <- readTVarIO tvar
+    pure (result, tvarResult)
+
+countdownDerivingTransSTMStackDeep :: Integer -> IO (Integer, Integer)
+countdownDerivingTransSTMStackDeep n = do
+  tvar <- newTVarIO n
+  result <-
+    DT.runStackT
+      (DT.RunNilT
+        DT.:..> runR
+        DT.:..> runR
+        DT.:..> runR
+        DT.:..> runR
+        DT.:..> runR
+        DT.:..> (`AsyncState.runReaderTVarT` tvar)
+        DT.:..> runR
+        DT.:..> runR
+        DT.:..> runR
+        DT.:..> runR
+        DT.:..> runR
+      )
     programMtlReaderTVar
   tvarResult <- readTVarIO tvar
   pure (result, tvarResult)
