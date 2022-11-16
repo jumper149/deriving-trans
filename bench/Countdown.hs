@@ -1,15 +1,12 @@
-{-# LANGUAGE CPP #-}
 module Countdown where
 
 import Control.Monad.ST
 import Data.STRef
 
 -- mtl
-#ifdef VERSION_mtl
 import qualified Control.Monad.Reader as M
 import qualified Control.Monad.State as M
 import Data.Functor.Identity
-#endif
 
 import qualified Control.Monad.Trans.Compose as DT
 import qualified Control.Monad.Trans.Compose.Infix as DT
@@ -46,8 +43,6 @@ countdownST n = runST $ do
 ----------------------------------------
 -- mtl
 
-#ifdef VERSION_mtl
-
 programMtl :: M.MonadState Integer m => m Integer
 programMtl = do
   n <- M.get @Integer
@@ -69,8 +64,6 @@ countdownMtlDeep n = runIdentity
   $ programMtl
   where
     runR = flip M.runReaderT ()
-
-#endif
 
 ----------------------------------------
 -- deriving-trans
