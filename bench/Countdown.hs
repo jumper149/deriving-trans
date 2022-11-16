@@ -14,11 +14,13 @@ countdown n = bgroup (show n)
   , bgroup "mtl"
     [ bench "shallow" $ nf Countdown.Mtl.countdownMtl n
     , bench "deep" $ nf Countdown.Mtl.countdownMtlDeep n
-    , bench "shallow IO" $ nfAppIO Countdown.Mtl.countdownMtlSTM n
-    , bench "deep IO" $ nfAppIO Countdown.Mtl.countdownMtlSTMDeep n
+    , bench "shallow STM" $ nfAppIO Countdown.Mtl.countdownMtlSTM n
+    , bench "deep STM" $ nfAppIO Countdown.Mtl.countdownMtlSTMDeep n
     ]
   , bgroup "deriving-trans"
     [ bench "shallow" $ nf Countdown.DerivingTrans.countdownDerivingTrans n
     , bench "deep" $ nf Countdown.DerivingTrans.countdownDerivingTransDeep n
+    , bench "shallow STM" $ nfAppIO Countdown.DerivingTrans.countdownDerivingTransSTM n
+    , bench "deep STM" $ nfAppIO Countdown.DerivingTrans.countdownDerivingTransSTMDeep n
     ]
   ]

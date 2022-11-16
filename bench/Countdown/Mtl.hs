@@ -6,6 +6,7 @@ import Data.Functor.Identity
 
 import qualified Transformers.AsyncState.Class as AsyncState
 import qualified Transformers.AsyncState as AsyncState
+
 import Control.Monad.IO.Class
 import GHC.Conc
 
