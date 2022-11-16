@@ -9,6 +9,7 @@ type (.|>) t2 t1 = ComposeT t1 t2
 infixl 1 .|>
 
 -- | A 'flip'ped infix operator for 'runComposeT'.
+{-# INLINE (./>) #-}
 (./>) :: (forall a. t2 m a -> m (StT t2 a)) -- ^ run @t2@
       -> (forall a. t1 (t2 m) a -> t2 m (StT t1 a)) -- ^ run @t1@
       -> (forall a. (t2 .|> t1) m a -> m (StT t2 (StT t1 a)))
@@ -17,6 +18,7 @@ infixl 1 .|>
 infixl 1 ./>
 
 -- | A 'flip'ped infix operator for 'runComposeT''.
+{-# INLINE (..>) #-}
 (..>) :: (t2 m a -> m a) -- ^ run @t2@
       -> (t1 (t2 m) a -> t2 m a) -- ^ run @t1@
       -> ((t2 .|> t1) m a -> m a)

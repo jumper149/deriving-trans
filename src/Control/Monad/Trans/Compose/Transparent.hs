@@ -14,6 +14,7 @@ import Control.Monad.Trans.Identity
 -- 'Elevator' to work for 'TransparentT'.
 type TransparentT = Elevator NoT
 
+{-# INLINE runTransparentT #-}
 runTransparentT :: TransparentT m a -> m a
 runTransparentT = runIdentityT . unNoT . descend
 

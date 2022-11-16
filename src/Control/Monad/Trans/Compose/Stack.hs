@@ -43,6 +43,7 @@ type family StackT (ts :: Stack) = (t :: (Type -> Type) -> Type -> Type) | t -> 
 -- This takes a 'RunStackT' as an argument containing the individual runners.
 --
 -- 'runStackT' can only be used for monad transformer stacks without monadic state t'Control.Monad.Trans.Control.StT'.
+{-# INLINE runStackT #-}
 runStackT :: RunStackT ts m a -> StackT ts m a -> m a
 runStackT RunNilT = runTransparentT
 runStackT (runRemainingStackT :..> runNextT) = runStackT runRemainingStackT . runNextT . deComposeT

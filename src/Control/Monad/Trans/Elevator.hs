@@ -48,59 +48,79 @@ newtype Elevator t m a = Ascend { descend :: t m a }
   deriving newtype (MonadTrans, MonadTransControl, MonadTransControlIdentity)
 
 instance (Monad (t m), MonadTrans t, MonadBase b m) => MonadBase b (Elevator t m) where
+  {-# INLINE liftBase #-}
   liftBase = lift . liftBase
 
 instance (Monad (t m), MonadTransControl t, MonadBaseControl b m) => MonadBaseControl b (Elevator t m) where
   type StM (Elevator t m) a = StM m (StT t a)
+  {-# INLINE liftBaseWith #-}
   liftBaseWith f = liftWith $ \ runT -> liftBaseWith $ \ runInBase -> f $ runInBase . runT
+  {-# INLINE restoreM #-}
   restoreM = restoreT . restoreM
 
 instance (Monad (t m), MonadTransControlIdentity t, MonadBaseControlIdentity b m) => MonadBaseControlIdentity b (Elevator t m) where
+  {-# INLINE liftBaseWithIdentity #-}
   liftBaseWithIdentity = defaultLiftBaseWithIdentity
 
 instance (Monad (t m), MonadTransControl t, Monad m, Alternative m) => Alternative (Elevator t m) where
+  {-# INLINE empty #-}
   empty = lift empty
+  {-# INLINE (<|>) #-}
   (<|>) x y = (restoreT . pure =<<) $ liftWith $ \ runT -> runT x <|> runT y
 
 instance (Monad (t m), MonadTrans t, MonadFail m) => MonadFail (Elevator t m) where
+  {-# INLINE fail #-}
   fail = lift . fail
 
 instance (Monad (t m), MonadTransControlIdentity t, MonadFix m) => MonadFix (Elevator t m) where
+  {-# INLINE mfix #-}
   mfix f = liftWithIdentity $ \ runT -> mfix $ \ x -> runT $ f x
 
 instance (Monad (t m), MonadTrans t, MonadIO m) => MonadIO (Elevator t m) where
+  {-# INLINE liftIO #-}
   liftIO = lift . liftIO
 
 instance (Monad (t m), MonadTransControl t, MonadPlus m) => MonadPlus (Elevator t m)
 
 instance (Monad (t m), MonadTransControlIdentity t, MonadZip m) => MonadZip (Elevator t m) where
+  {-# INLINE mzip #-}
   mzip x y = liftWithIdentity $ \ runT ->
     mzip (runT x) (runT y)
 
 instance (Monad (t m), MonadTransControl t, MonadCont m) => MonadCont (Elevator t m) where
+  {-# INLINE callCC #-}
   callCC f = (restoreT . pure =<<) $ liftWith $ \ runT ->
     callCC $ \ c -> runT $ f $ \ a -> restoreT $ c =<< runT (pure a)
 
 instance (Monad (t m), MonadTransControl t, MonadError e m) => MonadError e (Elevator t m) where
+  {-# INLINE throwError #-}
   throwError = lift . throwError
+  {-# INLINE catchError #-}
   catchError throwing catching = (restoreT . pure =<<) $ liftWith $ \ runT ->
     catchError (runT throwing) (runT . catching)
 
 instance (Monad (t m), MonadTransControl t, MonadReader r m) => MonadReader r (Elevator t m) where
+  {-# INLINE ask #-}
   ask = lift ask
+  {-# INLINE local #-}
   local f tma = (restoreT . pure =<<) $ liftWith $ \ runT ->
     local f $ runT tma
 
 instance (Monad (t m), MonadTransControl t, MonadRWS r w s m) => MonadRWS r w s (Elevator t m)
 
 instance (Monad (t m), MonadTrans t, MonadState s m) => MonadState s (Elevator t m) where
+  {-# INLINE get #-}
   get = lift get
+  {-# INLINE put #-}
   put = lift . put
 
 instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (Elevator t m) where
+  {-# INLINE tell #-}
   tell = lift . tell
+  {-# INLINE listen #-}
   listen tma = liftWith (\ runT -> listen $ runT tma) >>= \ (sta, w) ->
     (, w) <$> restoreT (pure sta)
+  {-# INLINE pass #-}
   pass tma = lift . pass . pure =<< tma
 
 -- * Examples

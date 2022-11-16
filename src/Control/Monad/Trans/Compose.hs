@@ -55,14 +55,18 @@ newtype ComposeT t1 t2 m a = ComposeT { deComposeT :: t1 (t2 m) a }
   deriving newtype (Applicative, Functor, Monad)
 
 instance (forall m. Monad m => Monad (t2 m), MonadTrans t1, MonadTrans t2) => MonadTrans (ComposeT t1 t2) where
+  {-# INLINE lift #-}
   lift = ComposeT . lift . lift
 
 instance (forall m. Monad m => Monad (t2 m), MonadTransControl t1, MonadTransControl t2) => MonadTransControl (ComposeT t1 t2) where
   type StT (ComposeT t1 t2) a = StT t2 (StT t1 a)
+  {-# INLINE liftWith #-}
   liftWith f = defaultLiftWith2 ComposeT deComposeT $ \ x -> f x
+  {-# INLINE restoreT #-}
   restoreT = defaultRestoreT2 ComposeT
 
 instance (forall m. Monad m => Monad (t2 m), MonadTransControlIdentity t1, MonadTransControlIdentity t2) => MonadTransControlIdentity (ComposeT t1 t2) where
+  {-# INLINE liftWithIdentity #-}
   liftWithIdentity inner = ComposeT $ liftWithIdentity $ \ runId1 ->
     liftWithIdentity $ \ runId2 -> inner $ runId2 . runId1 . deComposeT
 
@@ -262,6 +266,7 @@ deriving via ST.RWST r w s (t2 (m :: Type -> Type))
 -- | Run two stacked monad transformers.
 --
 -- This function takes the two individual monad transformer runners as arguments.
+{-# INLINE runComposeT #-}
 runComposeT :: (forall a. t1 (t2 m) a -> t2 m (StT t1 a)) -- ^ run @t1@
             -> (forall a. t2 m a -> m (StT t2 a)) -- ^ run @t2@
             -> (forall a. ComposeT t1 t2 m a -> m (StT t2 (StT t1 a)))
@@ -275,6 +280,7 @@ runComposeT runT1 runT2 = runT2 . runT1 . deComposeT
 -- @
 --
 -- This can be used to improve error messages when modifying a monad transformer stack.
+{-# INLINE runComposeT' #-}
 runComposeT' :: (t1 (t2 m) a -> t2 m a) -- ^ run @t1@
              -> (t2 m a -> m a) -- ^ run @t2@
              -> (ComposeT t1 t2 m a -> m a)
