@@ -86,9 +86,13 @@ executable bench
     Countdown.Reference
     Countdown.ST
     DerivingTrans.Internal
+    Transformers.AsyncState
+    Transformers.AsyncState.Class
   build-depends:
     , base < 5
     , deriving-trans
+    , monad-control
+    , monad-control-identity
     , mtl
     , tasty-bench
     , transformers

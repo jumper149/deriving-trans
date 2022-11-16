@@ -23,3 +23,9 @@ cradle:
 
     - path: "bench/DerivingTrans/Internal.hs"
       component: "deriving-trans:exe:bench"
+
+    - path: "bench/Transformers/AsyncState.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Transformers/AsyncState/Class.hs"
+      component: "deriving-trans:exe:bench"
