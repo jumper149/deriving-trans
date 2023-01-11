@@ -29,6 +29,11 @@ flag mtl
   description:
     Implement instances for mtl's type classes.
 
+flag unliftio
+  default: True
+  description:
+    Implement instances for 'Control.Monad.IO.Unlift.MonadUnliftIO'.
+
 library
   exposed-modules:
     Control.Monad.Trans.Compose
@@ -46,6 +51,9 @@ library
   if flag(mtl)
     build-depends:
       , mtl
+  if flag(unliftio)
+    build-depends:
+      , unliftio-core
   hs-source-dirs: src
   default-language: Haskell2010
   default-extensions:
