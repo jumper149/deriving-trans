@@ -12,6 +12,11 @@ import Control.Monad.Trans.Control.Identity
 import Control.Monad.Trans.Elevator
 import Data.Kind
 
+#if defined(VERSION_exceptions)
+import Control.Monad.Catch
+import qualified Control.Monad.Catch.Pure as T
+#endif
+
 #if defined(VERSION_mtl)
 import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
@@ -105,6 +110,38 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadTransControlIdentity (ComposeT t1 t2)
     , MonadBaseControlIdentity b m
     ) => MonadBaseControlIdentity b (ComposeT t1 t2 m)
+
+#if defined(VERSION_exceptions)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( Monad (t1 (t2 m))
+    , MonadTrans t1
+    , MonadThrow (t2 m)
+    ) => MonadThrow (ComposeT t1 t2 m)
+
+-- | Set by 'T.CatchT'.
+deriving via T.CatchT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => MonadThrow (ComposeT T.CatchT t2 m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( Monad (t1 (t2 m))
+    , MonadTransControl t1
+    , MonadCatch (t2 m)
+    ) => MonadCatch (ComposeT t1 t2 m)
+
+-- | Set by 'T.CatchT'.
+deriving via T.CatchT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => MonadCatch (ComposeT T.CatchT t2 m)
+#endif
 
 #if defined(VERSION_mtl)
 -- | /OVERLAPPABLE/.
