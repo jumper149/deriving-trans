@@ -27,7 +27,7 @@ extra-source-files:  CHANGELOG.md
 flag exceptions
   default: True
   description:
-    Implement instances for 'Control.Monad.Catch.MonadThrow' and 'Control.Monad.Catch.MonadCatch'.
+    Implement instances for 'MonadThrow' and 'MonadCatch'.
 
 flag mtl
   default: True
@@ -37,7 +37,7 @@ flag mtl
 flag unliftio
   default: True
   description:
-    Implement instances for 'Control.Monad.IO.Unlift.MonadUnliftIO'.
+    Implement instances for 'MonadUnliftIO'.
 
 library
   exposed-modules:
