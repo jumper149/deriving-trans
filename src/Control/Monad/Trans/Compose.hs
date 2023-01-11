@@ -419,14 +419,14 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --
 -- @
 --   deriving newtype ('MonadTrans', 'MonadTransControl')
---   deriving newtype ('MonadState' 'Int')
+--   deriving newtype ('Control.Monad.State.Class.MonadState' 'Int')
 --   deriving newtype MonadCustom
 -- @
 --
 -- We can even access instances, that would have been shadowed in a regular transformer stack.
 --
 -- @
---   deriving newtype ('MonadReader' 'Bool')
+--   deriving newtype ('Control.Monad.Reader.Class.MonadReader' 'Bool')
 -- @
 
 -- ** Example 4: Run a transformer stack
@@ -448,15 +448,15 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --     'Control.Monad.Trans.Compose.Infix../>' runStateT'
 --     $ unAppT appTma
 --  where
---   runReaderT' :: 'MonadReader' 'Bool' m => 'T.ReaderT' 'Char' m a -> m a
+--   runReaderT' :: 'Control.Monad.Reader.Class.MonadReader' 'Bool' m => 'T.ReaderT' 'Char' m a -> m a
 --   runReaderT' tma = do
---     bool <- 'ask'
+--     bool <- 'Control.Monad.Reader.Class.ask'
 --     let char = if bool then \'Y\' else \'N\'
 --     'T.runReaderT' tma char
 --
---   runStateT' :: 'MonadReader' 'Char' m => 'LT.StateT' 'Int' m a -> m (a, 'Int')
+--   runStateT' :: 'Control.Monad.Reader.Class.MonadReader' 'Char' m => 'LT.StateT' 'Int' m a -> m (a, 'Int')
 --   runStateT' tma = do
---     char <- 'ask'
+--     char <- 'Control.Monad.Reader.Class.ask'
 --     let num = 'fromEnum' char
 --     'LT.runStateT' tma num
 -- @
