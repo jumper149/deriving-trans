@@ -1,7 +1,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE TupleSections #-}
 
 module Control.Monad.Trans.Elevator where
 

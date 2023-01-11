@@ -86,6 +86,7 @@ library
     RankNTypes
     StandaloneDeriving
     StandaloneKindSignatures
+    TupleSections
     TypeApplications
     TypeFamilies
     TypeOperators
