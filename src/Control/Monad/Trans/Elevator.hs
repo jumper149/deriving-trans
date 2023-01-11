@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TupleSections #-}
@@ -7,18 +8,22 @@ module Control.Monad.Trans.Elevator where
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Base
+import Control.Monad.Fix
+import Control.Monad.IO.Class
+import Control.Monad.Trans.Class
+import Control.Monad.Trans.Control
+import Control.Monad.Trans.Control.Identity
+import Control.Monad.Zip
+import Data.Kind
+
+#if defined(VERSION_mtl)
 import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
-import Control.Monad.Fix
 import Control.Monad.Reader.Class
 import Control.Monad.RWS.Class (MonadRWS)
 import Control.Monad.State.Class
-import Control.Monad.Trans
-import Control.Monad.Trans.Control
-import Control.Monad.Trans.Control.Identity
 import Control.Monad.Writer.Class
-import Control.Monad.Zip
-import Data.Kind
+#endif
 
 -- * 'Elevator'
 --
@@ -77,6 +82,7 @@ instance (Monad (t m), MonadTransControlIdentity t, MonadZip m) => MonadZip (Ele
   mzip x y = liftWithIdentity $ \ runT ->
     mzip (runT x) (runT y)
 
+#if defined(VERSION_mtl)
 instance (Monad (t m), MonadTransControl t, MonadCont m) => MonadCont (Elevator t m) where
   callCC f = (restoreT . pure =<<) $ liftWith $ \ runT ->
     callCC $ \ c -> runT $ f $ \ a -> restoreT $ c =<< runT (pure a)
@@ -102,6 +108,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
   listen tma = liftWith (\ runT -> listen $ runT tma) >>= \ (sta, w) ->
     (, w) <$> restoreT (pure sta)
   pass tma = lift . pass . pure =<< tma
+#endif
 
 -- * Examples
 
