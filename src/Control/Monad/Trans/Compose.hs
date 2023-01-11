@@ -1,19 +1,23 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Control.Monad.Trans.Compose where
 
 import Control.Monad.Base
-import Control.Monad.Cont.Class
-import Control.Monad.Error.Class
 import Control.Monad.IO.Class
-import Control.Monad.Reader.Class
-import Control.Monad.RWS.Class (MonadRWS)
-import Control.Monad.State.Class
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Control.Identity
 import Control.Monad.Trans.Elevator
+import Data.Kind
+
+#if defined(VERSION_mtl)
+import Control.Monad.Cont.Class
+import Control.Monad.Error.Class
+import Control.Monad.Reader.Class
+import Control.Monad.RWS.Class (MonadRWS)
+import Control.Monad.State.Class
 import qualified Control.Monad.Trans.Cont as T
 import qualified Control.Monad.Trans.Except as T
 import qualified Control.Monad.Trans.RWS.Lazy as LT
@@ -24,7 +28,7 @@ import qualified Control.Monad.Trans.State.Strict as ST
 import qualified Control.Monad.Trans.Writer.Lazy as LT
 import qualified Control.Monad.Trans.Writer.Strict as ST
 import Control.Monad.Writer.Class
-import Data.Kind
+#endif
 
 -- * 'ComposeT'
 --
@@ -98,6 +102,7 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadBaseControlIdentity b m
     ) => MonadBaseControlIdentity b (ComposeT t1 t2 m)
 
+#if defined(VERSION_mtl)
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
@@ -251,6 +256,7 @@ deriving via ST.RWST r w s (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     , Monoid w
     ) => MonadWriter w (ComposeT (ST.RWST r w s) t2 m)
+#endif
 
 
 -- ** Run 'ComposeT'
