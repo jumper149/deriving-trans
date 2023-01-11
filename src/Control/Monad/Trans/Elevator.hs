@@ -145,13 +145,13 @@ instance (Monad (t m), MonadTransControlIdentity t, MonadUnliftIO m) => MonadUnl
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- Now you want to expose the inner @('MonadReader' 'Bool')@ instance with @(StackT m)@.
+-- Now you want to expose the inner @('Control.Monad.Reader.Class.MonadReader' 'Bool')@ instance with @(StackT m)@.
 --
--- Normally it's shadowed by the @('MonadReader' 'Char')@ instance, but we can use 'Elevator' to
+-- Normally it's shadowed by the @('Control.Monad.Reader.Class.MonadReader' 'Char')@ instance, but we can use 'Elevator' to
 -- access the inner transformer.
 --
 -- @
---   deriving ('MonadReader' 'Bool') via 'Elevator' ('Control.Monad.Trans.Reader.ReaderT' 'Char') ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m)
+--   deriving ('Control.Monad.Reader.Class.MonadReader' 'Bool') via 'Elevator' ('Control.Monad.Trans.Reader.ReaderT' 'Char') ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m)
 -- @
 
 -- ** Example 2: Custom transformer without boilerplate
@@ -176,13 +176,13 @@ instance (Monad (t m), MonadTransControlIdentity t, MonadUnliftIO m) => MonadUnl
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- Unfortunately we can't derive a @('Monad' m => 'MonadReader' 'Bool' (StackT m))@ instance with
+-- Unfortunately we can't derive a @('Monad' m => 'Control.Monad.Reader.Class.MonadReader' 'Bool' (StackT m))@ instance with
 -- /GeneralizedNewtypeDeriving/, without also adding the instance to @CustomT@.
 --
 -- To still derive this trivial instance we can use 'Elevator' with /DerivingVia/.
 --
 -- @
---   deriving ('MonadReader' 'Bool') via ('Elevator' CustomT ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m))
+--   deriving ('Control.Monad.Reader.Class.MonadReader' 'Bool') via ('Elevator' CustomT ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m))
 -- @
 
 -- ** Example 3: Adding an instance for 'Elevator'
@@ -211,5 +211,5 @@ instance (Monad (t m), MonadTransControlIdentity t, MonadUnliftIO m) => MonadUnl
 -- @
 --
 -- Some useful examples (or exercises) are the instances for
--- [mtl](https://hackage.haskell.org/package/mtl)'s type classes ('MonadError', 'MonadReader',
--- 'MonadState', 'MonadWriter').
+-- [mtl](https://hackage.haskell.org/package/mtl)'s type classes ('Control.Monad.Error.Class.MonadError', 'Control.Monad.Reader.Class.MonadReader',
+-- 'Control.Monad.State.Class.MonadState', 'Control.Monad.Writer.Class.MonadWriter').
