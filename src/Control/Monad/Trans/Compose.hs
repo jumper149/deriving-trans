@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE QuantifiedConstraints #-}
+{-# LANGUAGE UnboxedTuples #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Control.Monad.Trans.Compose where
@@ -33,6 +34,10 @@ import qualified Control.Monad.Trans.State.Strict as ST
 import qualified Control.Monad.Trans.Writer.Lazy as LT
 import qualified Control.Monad.Trans.Writer.Strict as ST
 import Control.Monad.Writer.Class
+#endif
+
+#if defined(VERSION_primitive)
+import Control.Monad.Primitive
 #endif
 
 #if defined(VERSION_unliftio_core)
@@ -297,6 +302,17 @@ deriving via ST.RWST r w s (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     , Monoid w
     ) => MonadWriter w (ComposeT (ST.RWST r w s) t2 m)
+#endif
+
+#if defined(VERSION_primitive)
+-- | Elevated to @m@.
+deriving via Elevator (ComposeT t1 t2) m
+  instance
+    ( Monad (t1 (t2 m))
+    , MonadTrans (ComposeT t1 t2)
+    , PrimMonad m
+    ) =>
+    PrimMonad (ComposeT t1 t2 m)
 #endif
 
 #if defined(VERSION_unliftio_core)

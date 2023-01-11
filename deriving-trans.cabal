@@ -35,6 +35,11 @@ flag mtl
   description:
     Implement instances for mtl's type classes.
 
+flag primitive
+  default: True
+  description:
+    Implement instances for `PrimMonad`.
+
 flag unliftio
   default: True
   description:
@@ -60,6 +65,9 @@ library
   if flag(mtl)
     build-depends:
       , mtl
+  if flag(primitive)
+    build-depends:
+      , primitive
   if flag(unliftio)
     build-depends:
       , unliftio-core

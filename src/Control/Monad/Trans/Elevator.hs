@@ -28,6 +28,10 @@ import Control.Monad.State.Class
 import Control.Monad.Writer.Class
 #endif
 
+#if defined(VERSION_primitive)
+import Control.Monad.Primitive
+#endif
+
 #if defined(VERSION_unliftio_core)
 import Control.Monad.IO.Unlift
 #endif
@@ -124,6 +128,12 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
   listen tma = liftWith (\ runT -> listen $ runT tma) >>= \ (sta, w) ->
     (, w) <$> restoreT (pure sta)
   pass tma = lift . pass . pure =<< tma
+#endif
+
+#if defined(VERSION_primitive)
+instance (Monad (t m), MonadTrans t, PrimMonad m) => PrimMonad (Elevator t m) where
+  type PrimState (Elevator t m) = PrimState m
+  primitive = lift . primitive
 #endif
 
 #if defined(VERSION_unliftio_core)
