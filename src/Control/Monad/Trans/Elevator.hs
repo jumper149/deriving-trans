@@ -16,6 +16,10 @@ import Control.Monad.Trans.Control.Identity
 import Control.Monad.Zip
 import Data.Kind
 
+#if defined(VERSION_exceptions)
+import Control.Monad.Catch
+#endif
+
 #if defined(VERSION_mtl)
 import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
@@ -85,6 +89,15 @@ instance (Monad (t m), MonadTransControl t, MonadPlus m) => MonadPlus (Elevator 
 instance (Monad (t m), MonadTransControlIdentity t, MonadZip m) => MonadZip (Elevator t m) where
   mzip x y = liftWithIdentity $ \ runT ->
     mzip (runT x) (runT y)
+
+#if defined(VERSION_exceptions)
+instance (Monad (t m), MonadTrans t, MonadThrow m) => MonadThrow (Elevator t m) where
+  throwM = lift . throwM
+
+instance (Monad (t m), MonadTransControl t, MonadCatch m) => MonadCatch (Elevator t m) where
+  catch throwing catching = (restoreT . pure =<<) $ liftWith $ \ runT ->
+    catch (runT throwing) (runT . catching)
+#endif
 
 #if defined(VERSION_mtl)
 instance (Monad (t m), MonadTransControl t, MonadCont m) => MonadCont (Elevator t m) where
