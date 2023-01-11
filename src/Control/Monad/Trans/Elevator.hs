@@ -25,6 +25,10 @@ import Control.Monad.State.Class
 import Control.Monad.Writer.Class
 #endif
 
+#if defined(VERSION_unliftio_core)
+import Control.Monad.IO.Unlift
+#endif
+
 -- * 'Elevator'
 --
 -- $elevator
@@ -108,6 +112,11 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
   listen tma = liftWith (\ runT -> listen $ runT tma) >>= \ (sta, w) ->
     (, w) <$> restoreT (pure sta)
   pass tma = lift . pass . pure =<< tma
+#endif
+
+#if defined(VERSION_unliftio_core)
+instance (Monad (t m), MonadTransControlIdentity t, MonadUnliftIO m) => MonadUnliftIO (Elevator t m) where
+  withRunInIO f = liftWithIdentity $ \runT -> withRunInIO $ \runInIO -> f $ runInIO . runT
 #endif
 
 -- * Examples

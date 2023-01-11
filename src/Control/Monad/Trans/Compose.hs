@@ -30,6 +30,10 @@ import qualified Control.Monad.Trans.Writer.Strict as ST
 import Control.Monad.Writer.Class
 #endif
 
+#if defined(VERSION_unliftio_core)
+import Control.Monad.IO.Unlift
+#endif
+
 -- * 'ComposeT'
 --
 -- $composet
@@ -256,6 +260,17 @@ deriving via ST.RWST r w s (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     , Monoid w
     ) => MonadWriter w (ComposeT (ST.RWST r w s) t2 m)
+#endif
+
+#if defined(VERSION_unliftio_core)
+-- | Elevated to @m@.
+deriving via Elevator (ComposeT t1 t2) m
+  instance
+    ( Monad (t1 (t2 m))
+    , MonadTransControlIdentity (ComposeT t1 t2)
+    , MonadUnliftIO m
+    ) =>
+    MonadUnliftIO (ComposeT t1 t2 m)
 #endif
 
 
