@@ -1,5 +1,13 @@
 # Revision history for deriving-trans
 
+## 0.5.1.0 *11 Jan 2023*
+
+* Introduce cabal flags `exceptions`, `mtl` and `unliftio`.
+  These flags enable the dependency on additional optional packages, to reduce the requirement of orphan instances.
+* Add `MonadUnliftIO` instances to `Elevator` and `ComposeT`.
+* Add `MonadThrow` and `MonadCatch` instances to `Elevator` and `ComposeT`.
+* Add `MonadThrow` and `MonadCatch` "base-case" instances for `CatchT` to `ComposeT`.
+
 ## 0.5.0.1 *04 Aug 2022*
 
 * Improve Haddock examples.
