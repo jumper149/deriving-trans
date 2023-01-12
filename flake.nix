@@ -25,6 +25,10 @@
         src = nix-gitignore.gitignoreSource [] ./.;
         overlay = self: super: {
           monad-control-identity = self.callCabal2nix "monad-control-identity" monad-control-identity.outPath {};
+          base-orphans = pkgs.haskell.lib.dontCheck super.base-orphans;
+          exceptions = super.exceptions_0_10_7;
+          mtl = super.mtl_2_3_1;
+          transformers = super.transformers_0_6_0_4;
         };
       in (haskellPackages.extend overlay).callCabal2nix "deriving-trans" src {};
 
