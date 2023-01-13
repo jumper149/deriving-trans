@@ -64,7 +64,7 @@ library
       , exceptions
   if flag(mtl)
     build-depends:
-      , mtl
+      , mtl >= 2.3
   if flag(primitive)
     build-depends:
       , primitive

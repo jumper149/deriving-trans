@@ -20,10 +20,12 @@ import Control.Monad.Catch
 #endif
 
 #if defined(VERSION_mtl)
+import Control.Monad.Accum
 import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
 import Control.Monad.Reader.Class
 import Control.Monad.RWS.Class (MonadRWS)
+import Control.Monad.Select
 import Control.Monad.State.Class
 import Control.Monad.Writer.Class
 #endif
@@ -103,6 +105,10 @@ instance (MonadCatch m, MonadTransControl t) => MonadCatch (Elevator t m) where
 #endif
 
 #if defined(VERSION_mtl)
+instance (MonadAccum w m, MonadTrans t) => MonadAccum w (Elevator t m) where
+  look = lift look
+  add = lift . add
+
 instance (MonadCont m, MonadTransControl t) => MonadCont (Elevator t m) where
   callCC f = (restoreT . pure =<<) $ liftWith $ \ runT ->
     callCC $ \ c -> runT $ f $ \ a -> restoreT $ c =<< runT (pure a)
@@ -118,6 +124,9 @@ instance (MonadReader r m, MonadTransControl t) => MonadReader r (Elevator t m) 
     local f $ runT tma
 
 instance (MonadRWS r w s m, MonadTransControl t) => MonadRWS r w s (Elevator t m)
+
+instance (MonadSelect r m, MonadTrans t) => MonadSelect r (Elevator t m) where
+  select = lift . select
 
 instance (MonadState s m, MonadTrans t) => MonadState s (Elevator t m) where
   get = lift get
