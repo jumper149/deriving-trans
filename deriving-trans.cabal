@@ -52,7 +52,6 @@ library
     Control.Monad.Trans.Compose.Stack
     Control.Monad.Trans.Compose.Transparent
     Control.Monad.Trans.Elevator
-  --other-modules:
   build-depends:
     , base < 5
     , monad-control
@@ -63,6 +62,9 @@ library
     build-depends:
       , exceptions
   if flag(mtl)
+    other-modules:
+      Control.Monad.Accum.OrphanInstances
+      Control.Monad.Select.OrphanInstances
     build-depends:
       , mtl >= 2.3
   if flag(primitive)
