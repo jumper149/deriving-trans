@@ -20,22 +20,27 @@ import qualified Control.Monad.Catch.Pure as T
 
 #if defined(VERSION_mtl)
 import Control.Monad.Accum
+import Control.Monad.Accum.OrphanInstances ()
 import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
 import Control.Monad.Reader.Class
 import Control.Monad.RWS.Class (MonadRWS)
 import Control.Monad.Select
+import Control.Monad.Select.OrphanInstances ()
 import Control.Monad.State.Class
+import qualified Control.Monad.Trans.Accum as T
 import qualified Control.Monad.Trans.Cont as T
 import qualified Control.Monad.Trans.Except as T
 import qualified Control.Monad.Trans.RWS.Lazy as LT
 import qualified Control.Monad.Trans.RWS.Strict as ST
 import qualified Control.Monad.Trans.Reader as T
+import qualified Control.Monad.Trans.Select as T
 import qualified Control.Monad.Trans.State.Lazy as LT
 import qualified Control.Monad.Trans.State.Strict as ST
 import qualified Control.Monad.Trans.Writer.Lazy as LT
 import qualified Control.Monad.Trans.Writer.Strict as ST
 import Control.Monad.Writer.Class
+import Data.Functor.Identity
 #endif
 
 #if defined(VERSION_primitive)
@@ -153,6 +158,13 @@ deriving via Elevator t1 (t2 (m :: Type -> Type))
     , MonadTrans t1
     ) => MonadAccum w (ComposeT t1 t2 m)
 
+-- | Set by 'T.AccumT'.
+deriving via T.AccumT w (t2 (m :: Type -> Type))
+  instance
+    ( Monoid w
+    , Monad (t2 m)
+    ) => MonadAccum w (ComposeT (T.AccumT w) t2 m)
+
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
@@ -236,6 +248,12 @@ deriving via Elevator t1 (t2 (m :: Type -> Type))
     ( MonadSelect r (t2 m)
     , MonadTrans t1
     ) => MonadSelect r (ComposeT t1 t2 m)
+
+-- | Set by 'T.SelectT'.
+deriving via T.SelectT r (t2 (m :: Type -> Type))
+  instance
+    ( MonadBaseControlIdentity Identity (t2 m)
+    ) => MonadSelect r (ComposeT (T.SelectT r) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
