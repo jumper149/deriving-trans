@@ -19,10 +19,12 @@ import qualified Control.Monad.Catch.Pure as T
 #endif
 
 #if defined(VERSION_mtl)
+import Control.Monad.Accum
 import Control.Monad.Cont.Class
 import Control.Monad.Error.Class
 import Control.Monad.Reader.Class
 import Control.Monad.RWS.Class (MonadRWS)
+import Control.Monad.Select
 import Control.Monad.State.Class
 import qualified Control.Monad.Trans.Cont as T
 import qualified Control.Monad.Trans.Except as T
@@ -147,6 +149,14 @@ deriving via T.CatchT (t2 (m :: Type -> Type))
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
+    ( MonadAccum w (t2 m)
+    , MonadTrans t1
+    ) => MonadAccum w (ComposeT t1 t2 m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
     ( MonadCont (t2 m)
     , MonadTransControl t1
     ) => MonadCont (ComposeT t1 t2 m)
@@ -218,6 +228,14 @@ deriving via ST.RWST r w s (t2 (m :: Type -> Type))
     ( Monoid w
     , Monad (t2 m)
     ) => MonadRWS r w s (ComposeT (ST.RWST r w s) t2 m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadSelect r (t2 m)
+    , MonadTrans t1
+    ) => MonadSelect r (ComposeT t1 t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
