@@ -87,29 +87,29 @@ instance (MonadTransControlIdentity t1, MonadTransControlIdentity t2) => MonadTr
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( MonadTrans (ComposeT t1 t2)
-    , MonadIO m
+    ( MonadIO m
+    , MonadTrans (ComposeT t1 t2)
     ) => MonadIO (ComposeT t1 t2 m)
 
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( MonadTrans (ComposeT t1 t2)
-    , MonadBase b m
+    ( MonadBase b m
+    , MonadTrans (ComposeT t1 t2)
     ) => MonadBase b (ComposeT t1 t2 m)
 
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( MonadTransControl (ComposeT t1 t2)
-    , MonadBaseControl b m
+    ( MonadBaseControl b m
+    , MonadTransControl (ComposeT t1 t2)
     ) => MonadBaseControl b (ComposeT t1 t2 m)
 
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( MonadTransControlIdentity (ComposeT t1 t2)
-    , MonadBaseControlIdentity b m
+    ( MonadBaseControlIdentity b m
+    , MonadTransControlIdentity (ComposeT t1 t2)
     ) => MonadBaseControlIdentity b (ComposeT t1 t2 m)
 
 #if defined(VERSION_exceptions)
@@ -117,8 +117,8 @@ deriving via Elevator (ComposeT t1 t2) m
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadTrans t1
-    , MonadThrow (t2 m)
+    ( MonadThrow (t2 m)
+    , MonadTrans t1
     ) => MonadThrow (ComposeT t1 t2 m)
 
 -- | Set by 'T.CatchT'.
@@ -131,8 +131,8 @@ deriving via T.CatchT (t2 (m :: Type -> Type))
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadTransControl t1
-    , MonadCatch (t2 m)
+    ( MonadCatch (t2 m)
+    , MonadTransControl t1
     ) => MonadCatch (ComposeT t1 t2 m)
 
 -- | Set by 'T.CatchT'.
@@ -147,8 +147,8 @@ deriving via T.CatchT (t2 (m :: Type -> Type))
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadTransControl t1
-    , MonadCont (t2 m)
+    ( MonadCont (t2 m)
+    , MonadTransControl t1
     ) => MonadCont (ComposeT t1 t2 m)
 
 -- | Set by 'T.ContT'.
@@ -159,8 +159,8 @@ deriving via T.ContT r (t2 (m :: Type -> Type))
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadTransControl t1
-    , MonadError e (t2 m)
+    ( MonadError e (t2 m)
+    , MonadTransControl t1
     ) => MonadError e (ComposeT t1 t2 m)
 
 -- | Set by 'T.ExceptT'.
@@ -173,8 +173,8 @@ deriving via T.ExceptT e (t2 (m :: Type -> Type))
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadTransControl t1
-    , MonadReader r (t2 m)
+    ( MonadReader r (t2 m)
+    , MonadTransControl t1
     ) => MonadReader r (ComposeT t1 t2 m)
 
 -- | Set by 'T.ReaderT'.
@@ -186,45 +186,45 @@ deriving via T.ReaderT r (t2 (m :: Type -> Type))
 -- | Set by 'LT.RWST'.
 deriving via LT.RWST r w s (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadReader r (ComposeT (LT.RWST r w s) t2 m)
 
 -- | Set by 'ST.RWST'.
 deriving via ST.RWST r w s (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadReader r (ComposeT (ST.RWST r w s) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadTransControl t1
-    , MonadRWS r w s (t2 m)
+    ( MonadRWS r w s (t2 m)
+    , MonadTransControl t1
     ) => MonadRWS r w s (ComposeT t1 t2 m)
 
 -- | Set by 'LT.RWST'.
 deriving via LT.RWST r w s (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadRWS r w s (ComposeT (LT.RWST r w s) t2 m)
 
 -- | Set by 'ST.RWST'.
 deriving via ST.RWST r w s (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadRWS r w s (ComposeT (ST.RWST r w s) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadTrans t1
-    , MonadState s (t2 m)
+    ( MonadState s (t2 m)
+    , MonadTrans t1
     ) => MonadState s (ComposeT t1 t2 m)
 
 -- | Set by 'LT.StateT'.
@@ -242,51 +242,51 @@ deriving via ST.StateT s (t2 (m :: Type -> Type))
 -- | Set by 'LT.RWST'.
 deriving via LT.RWST r w s (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadState s (ComposeT (LT.RWST r w s) t2 m)
 
 -- | Set by 'ST.RWST'.
 deriving via ST.RWST r w s (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadState s (ComposeT (ST.RWST r w s) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadTransControl t1
-    , MonadWriter w (t2 m)
+    ( MonadWriter w (t2 m)
+    , MonadTransControl t1
     ) => MonadWriter w (ComposeT t1 t2 m)
 
 -- | Set by 'LT.WriterT'.
 deriving via LT.WriterT w (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadWriter w (ComposeT (LT.WriterT w) t2 m)
 
 -- | Set by 'ST.WriterT'.
 deriving via ST.WriterT w (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadWriter w (ComposeT (ST.WriterT w) t2 m)
 
 -- | Set by 'LT.RWST'.
 deriving via LT.RWST r w s (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadWriter w (ComposeT (LT.RWST r w s) t2 m)
 
 -- | Set by 'ST.RWST'.
 deriving via ST.RWST r w s (t2 (m :: Type -> Type))
   instance
-    ( Monad (t2 m)
-    , Monoid w
+    ( Monoid w
+    , Monad (t2 m)
     ) => MonadWriter w (ComposeT (ST.RWST r w s) t2 m)
 #endif
 
@@ -294,8 +294,8 @@ deriving via ST.RWST r w s (t2 (m :: Type -> Type))
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( MonadTrans (ComposeT t1 t2)
-    , PrimMonad m
+    ( PrimMonad m
+    , MonadTrans (ComposeT t1 t2)
     ) =>
     PrimMonad (ComposeT t1 t2 m)
 #endif
@@ -304,8 +304,8 @@ deriving via Elevator (ComposeT t1 t2) m
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( MonadTransControlIdentity (ComposeT t1 t2)
-    , MonadUnliftIO m
+    ( MonadUnliftIO m
+    , MonadTransControlIdentity (ComposeT t1 t2)
     ) =>
     MonadUnliftIO (ComposeT t1 t2 m)
 #endif
