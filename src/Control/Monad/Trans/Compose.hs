@@ -31,12 +31,14 @@ import Control.Monad.State.Class
 import qualified Control.Monad.Trans.Accum as T
 import qualified Control.Monad.Trans.Cont as T
 import qualified Control.Monad.Trans.Except as T
+import qualified Control.Monad.Trans.RWS.CPS as CPST
 import qualified Control.Monad.Trans.RWS.Lazy as LT
 import qualified Control.Monad.Trans.RWS.Strict as ST
 import qualified Control.Monad.Trans.Reader as T
 import qualified Control.Monad.Trans.Select as T
 import qualified Control.Monad.Trans.State.Lazy as LT
 import qualified Control.Monad.Trans.State.Strict as ST
+import qualified Control.Monad.Trans.Writer.CPS as CPST
 import qualified Control.Monad.Trans.Writer.Lazy as LT
 import qualified Control.Monad.Trans.Writer.Strict as ST
 import Control.Monad.Writer.Class
@@ -205,6 +207,13 @@ deriving via T.ReaderT r (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     ) => MonadReader r (ComposeT (T.ReaderT r) t2 m)
 
+-- | Set by 'CPST.RWST'.
+deriving via CPST.RWST r w s (t2 (m :: Type -> Type))
+  instance
+    ( Monoid w
+    , Monad (t2 m)
+    ) => MonadReader r (ComposeT (CPST.RWST r w s) t2 m)
+
 -- | Set by 'LT.RWST'.
 deriving via LT.RWST r w s (t2 (m :: Type -> Type))
   instance
@@ -226,6 +235,13 @@ deriving via Elevator t1 (t2 (m :: Type -> Type))
     ( MonadRWS r w s (t2 m)
     , MonadTransControl t1
     ) => MonadRWS r w s (ComposeT t1 t2 m)
+
+-- | Set by 'CPST.RWST'.
+deriving via CPST.RWST r w s (t2 (m :: Type -> Type))
+  instance
+    ( Monoid w
+    , Monad (t2 m)
+    ) => MonadRWS r w s (ComposeT (CPST.RWST r w s) t2 m)
 
 -- | Set by 'LT.RWST'.
 deriving via LT.RWST r w s (t2 (m :: Type -> Type))
@@ -275,6 +291,13 @@ deriving via ST.StateT s (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     ) => MonadState s (ComposeT (ST.StateT s) t2 m)
 
+-- | Set by 'CPST.RWST'.
+deriving via CPST.RWST r w s (t2 (m :: Type -> Type))
+  instance
+    ( Monoid w
+    , Monad (t2 m)
+    ) => MonadState s (ComposeT (CPST.RWST r w s) t2 m)
+
 -- | Set by 'LT.RWST'.
 deriving via LT.RWST r w s (t2 (m :: Type -> Type))
   instance
@@ -297,6 +320,13 @@ deriving via Elevator t1 (t2 (m :: Type -> Type))
     , MonadTransControl t1
     ) => MonadWriter w (ComposeT t1 t2 m)
 
+-- | Set by 'CPST.WriterT'.
+deriving via CPST.WriterT w (t2 (m :: Type -> Type))
+  instance
+    ( Monoid w
+    , Monad (t2 m)
+    ) => MonadWriter w (ComposeT (CPST.WriterT w) t2 m)
+
 -- | Set by 'LT.WriterT'.
 deriving via LT.WriterT w (t2 (m :: Type -> Type))
   instance
@@ -310,6 +340,13 @@ deriving via ST.WriterT w (t2 (m :: Type -> Type))
     ( Monoid w
     , Monad (t2 m)
     ) => MonadWriter w (ComposeT (ST.WriterT w) t2 m)
+
+-- | Set by 'CPST.RWST'.
+deriving via CPST.RWST r w s (t2 (m :: Type -> Type))
+  instance
+    ( Monoid w
+    , Monad (t2 m)
+    ) => MonadWriter w (ComposeT (CPST.RWST r w s) t2 m)
 
 -- | Set by 'LT.RWST'.
 deriving via LT.RWST r w s (t2 (m :: Type -> Type))
