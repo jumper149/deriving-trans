@@ -3,10 +3,8 @@
 module Control.Monad.Select.OrphanInstances where
 
 import Control.Monad.Select
-import Control.Monad.Trans.Control.Identity
+import Control.Monad.Turn
 import qualified Control.Monad.Trans.Select as T
-import Data.Functor.Identity
 
-instance MonadBaseControlIdentity Identity m => MonadSelect r (T.SelectT r m) where
-  select f = T.SelectT $ \ k -> liftBaseWithIdentity $ \runInIdentity ->
-    Identity $ f $ runIdentity . runInIdentity . k
+instance MonadTurn m => MonadSelect r (T.SelectT r m) where
+  select f = T.SelectT $ \ k -> returnWith $ \turn -> f $ turn . k

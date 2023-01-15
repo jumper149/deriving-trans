@@ -40,7 +40,6 @@ import qualified Control.Monad.Trans.State.Strict as ST
 import qualified Control.Monad.Trans.Writer.Lazy as LT
 import qualified Control.Monad.Trans.Writer.Strict as ST
 import Control.Monad.Writer.Class
-import Data.Functor.Identity
 #endif
 
 #if defined(VERSION_primitive)
@@ -49,6 +48,7 @@ import Control.Monad.Primitive
 
 #if defined(VERSION_unliftio_core)
 import Control.Monad.IO.Unlift
+import Control.Monad.Turn
 #endif
 
 -- * 'ComposeT'
@@ -252,7 +252,7 @@ deriving via Elevator t1 (t2 (m :: Type -> Type))
 -- | Set by 'T.SelectT'.
 deriving via T.SelectT r (t2 (m :: Type -> Type))
   instance
-    ( MonadBaseControlIdentity Identity (t2 m)
+    ( MonadTurn (t2 m)
     ) => MonadSelect r (ComposeT (T.SelectT r) t2 m)
 
 -- | /OVERLAPPABLE/.

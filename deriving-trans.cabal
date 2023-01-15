@@ -47,6 +47,7 @@ flag unliftio
 
 library
   exposed-modules:
+    Control.Monad.Turn
     Control.Monad.Trans.Compose
     Control.Monad.Trans.Compose.Infix
     Control.Monad.Trans.Compose.Stack
