@@ -1,5 +1,7 @@
 # Revision history for deriving-trans
 
+* Drop support for `GHC < 9.6`.
+
 ## 0.8.1.0 *20 Feb 2023*
 
 * Support new optional dependency logict `>= 0.8.0.0`.
