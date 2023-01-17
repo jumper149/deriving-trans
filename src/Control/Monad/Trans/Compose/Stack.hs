@@ -1,4 +1,5 @@
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE TypeData #-}
 {-# LANGUAGE TypeFamilyDependencies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS -Wno-unticked-promoted-constructors #-}
@@ -52,7 +53,7 @@ runStackT (runRemainingStackT :..> runNextT) = runStackT runRemainingStackT . ru
 -- This is basically a heterogeneous list of monad transformer runners.
 --
 -- 'RunStackT' can only be used for monad transformer stacks without monadic state t'Control.Monad.Trans.Control.StT'.
-data RunStackT :: Stack -> (Type -> Type) -> Type -> Type where
+type data RunStackT :: Stack -> (Type -> Type) -> Type -> Type where
   -- | run an empty monad transformer stack
   RunNilT :: RunStackT NilT m a
   -- | run the next monad transformer on a stack
@@ -71,7 +72,7 @@ infixl 1 :..>
 -- | A data kind representing a monad transformer stack.
 --
 -- This is basically a type-level list of monad transformers.
-data Stack where
+type data Stack where
   -- | an empty monad transformer stack
   NilT :: Stack
   -- | add a monad transformer to a stack
