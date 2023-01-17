@@ -1,5 +1,18 @@
 # Revision history for deriving-trans
 
+## 0.6.0.0 *TODO*
+
+* Update dependencies:
+  - transformers `>= 0.6`
+  - exceptions (optional)
+  - mtl `>= 2.3` (optional)
+  - primitive (optional)
+  - unliftio (optional)
+* Add `MonadAccum` and `MonadSelect` instances to `Elevator` and `ComposeT`.
+* Add "base-case" instances for `AccumT` and `SelectT`.
+* Add "base-case" instances for the CPS versions of `WriterT` and `RWST`.
+* Remove `Monad m` constraint from "base-case" instance for `ContT`.
+
 ## 0.5.2.0 *17 Jan 2023*
 
 * Add optional dependency `primitive`.
