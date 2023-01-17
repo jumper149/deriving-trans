@@ -1,4 +1,5 @@
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE TypeData #-}
 {-# LANGUAGE TypeFamilyDependencies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS -Wno-unticked-promoted-constructors #-}
@@ -71,7 +72,7 @@ infixl 1 :..>
 -- | A data kind representing a monad transformer stack.
 --
 -- This is basically a type-level list of monad transformers.
-data Stack where
+type data Stack where
   -- | an empty monad transformer stack
   NilT :: Stack
   -- | add a monad transformer to a stack
