@@ -1,5 +1,10 @@
 # Revision history for deriving-trans
 
+## 0.5.2.0 *17 Jan 2023*
+
+* Add optional dependency `primitive`.
+* Add `MonadPrim` instances to `Elevator` and `ComposeT`.
+
 ## 0.5.1.0 *11 Jan 2023*
 
 * Introduce cabal flags `exceptions`, `mtl` and `unliftio`.
