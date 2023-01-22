@@ -34,6 +34,10 @@ import Control.Monad.Writer.Class
 import Control.Monad.Primitive
 #endif
 
+#if defined(VERSION_resourcet)
+import Control.Monad.Trans.Resource
+#endif
+
 #if defined(VERSION_unliftio_core)
 import Control.Monad.IO.Unlift
 #endif
@@ -143,6 +147,11 @@ instance (MonadWriter w m, MonadTransControl t) => MonadWriter w (Elevator t m) 
 instance (PrimMonad m, MonadTrans t) => PrimMonad (Elevator t m) where
   type PrimState (Elevator t m) = PrimState m
   primitive = lift . primitive
+#endif
+
+#if defined(VERSION_resourcet)
+instance (MonadResource m, MonadTrans t) => MonadResource (Elevator t m) where
+  liftResourceT = lift . liftResourceT
 #endif
 
 #if defined(VERSION_unliftio_core)

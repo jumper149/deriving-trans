@@ -49,6 +49,13 @@ import Data.Functor.Identity
 import Control.Monad.Primitive
 #endif
 
+#if defined(VERSION_resourcet)
+import Control.Monad.Trans.Resource
+  ( MonadResource
+  , ResourceT
+  )
+#endif
+
 #if defined(VERSION_unliftio_core)
 import Control.Monad.IO.Unlift
 #endif
@@ -371,6 +378,25 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadTrans (ComposeT t1 t2)
     ) =>
     PrimMonad (ComposeT t1 t2 m)
+#endif
+
+#if defined(VERSION_resourcet)
+-- | Elevated to @m@.
+deriving via Elevator (ComposeT t1 t2) m
+  instance
+    ( MonadResource m
+    , MonadTrans (ComposeT t1 t2)
+    ) =>
+    MonadResource (ComposeT t1 t2 m)
+
+-- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
+-- | Set by 'ResourceT'.
+deriving via ResourceT (t2 (m :: Type -> Type))
+  instance
+    ( MonadIO (t2 m)
+    , MonadIO m
+    , MonadTrans t2
+    ) => MonadResource (ComposeT ResourceT t2 m)
 #endif
 
 #if defined(VERSION_unliftio_core)

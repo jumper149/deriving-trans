@@ -28,6 +28,7 @@
           base-orphans = pkgs.haskell.lib.dontCheck super.base-orphans;
           exceptions = super.exceptions_0_10_7;
           mtl = super.mtl_2_3_1;
+          resourcet = pkgs.haskell.lib.dontCheck super.resourcet;
           transformers = super.transformers_0_6_0_4;
         };
       in (haskellPackages.extend overlay).callCabal2nix "deriving-trans" src {};

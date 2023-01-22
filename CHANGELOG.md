@@ -7,6 +7,7 @@
   - exceptions (optional)
   - mtl `>= 2.3` (optional)
   - primitive (optional)
+  - resourcet `>= 1.2` (optional)
   - unliftio (optional)
 * Add `MonadAccum` and `MonadSelect` instances to `Elevator` and `ComposeT`.
 * Add "base-case" instances for `AccumT` and `SelectT`.
