@@ -14,50 +14,47 @@ import Control.Monad.Trans.Elevator
 import Data.Kind
 
 #if defined(VERSION_exceptions)
-import Control.Monad.Catch
-import qualified Control.Monad.Catch.Pure as T
+import Control.Monad.Catch qualified as Exceptions
+import Control.Monad.Catch.Pure qualified as Exceptions.T
 #endif
 
 #if defined(VERSION_mtl)
-import Control.Monad.Accum
-import Control.Monad.Accum.OrphanInstances ()
-import Control.Monad.Cont.Class
-import Control.Monad.Error.Class
-import Control.Monad.Reader.Class
-import Control.Monad.RWS.Class (MonadRWS)
-import Control.Monad.Select
-import Control.Monad.Select.OrphanInstances ()
-import Control.Monad.State.Class
-import qualified Control.Monad.Trans.Accum as T
-import qualified Control.Monad.Trans.Cont as T
-import qualified Control.Monad.Trans.Except as T
-import qualified Control.Monad.Trans.RWS.CPS as CPST
-import qualified Control.Monad.Trans.RWS.Lazy as LT
-import qualified Control.Monad.Trans.RWS.Strict as ST
-import qualified Control.Monad.Trans.Reader as T
-import qualified Control.Monad.Trans.Select as T
-import qualified Control.Monad.Trans.State.Lazy as LT
-import qualified Control.Monad.Trans.State.Strict as ST
-import qualified Control.Monad.Trans.Writer.CPS as CPST
-import qualified Control.Monad.Trans.Writer.Lazy as LT
-import qualified Control.Monad.Trans.Writer.Strict as ST
-import Control.Monad.Writer.Class
-import Data.Functor.Identity
+import Control.Monad.Accum qualified as Mtl
+import Control.Monad.Accum.OrphanInstances qualified as Mtl ()
+import Control.Monad.Cont.Class qualified as Mtl
+import Control.Monad.Error.Class qualified as Mtl
+import Control.Monad.Reader.Class qualified as Mtl
+import Control.Monad.RWS.Class qualified as Mtl (MonadRWS)
+import Control.Monad.Select qualified as Mtl
+import Control.Monad.Select.OrphanInstances qualified as Mtl ()
+import Control.Monad.State.Class qualified as Mtl
+import Control.Monad.Trans.Accum qualified as Mtl.T
+import Control.Monad.Trans.Cont qualified as Mtl.T
+import Control.Monad.Trans.Except qualified as Mtl.T
+import Control.Monad.Trans.RWS.CPS qualified as Mtl.CPST
+import Control.Monad.Trans.RWS.Lazy qualified as Mtl.LT
+import Control.Monad.Trans.RWS.Strict qualified as Mtl.ST
+import Control.Monad.Trans.Reader qualified as Mtl.T
+import Control.Monad.Trans.Select qualified as Mtl.T
+import Control.Monad.Trans.State.Lazy qualified as Mtl.LT
+import Control.Monad.Trans.State.Strict qualified as Mtl.ST
+import Control.Monad.Trans.Writer.CPS qualified as Mtl.CPST
+import Control.Monad.Trans.Writer.Lazy qualified as Mtl.LT
+import Control.Monad.Trans.Writer.Strict qualified as Mtl.ST
+import Control.Monad.Writer.Class qualified as Mtl
+import Data.Functor.Identity qualified as Mtl
 #endif
 
 #if defined(VERSION_primitive)
-import Control.Monad.Primitive
+import Control.Monad.Primitive qualified as Primitive
 #endif
 
 #if defined(VERSION_resourcet)
-import Control.Monad.Trans.Resource
-  ( MonadResource
-  , ResourceT
-  )
+import Control.Monad.Trans.Resource qualified as ResourceT
 #endif
 
 #if defined(VERSION_unliftio_core)
-import Control.Monad.IO.Unlift
+import Control.Monad.IO.Unlift qualified as UnliftIO
 #endif
 
 -- * 'ComposeT'
@@ -133,29 +130,29 @@ deriving via Elevator (ComposeT t1 t2) m
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadThrow (t2 m)
+    ( Exceptions.MonadThrow (t2 m)
     , MonadTrans t1
-    ) => MonadThrow (ComposeT t1 t2 m)
+    ) => Exceptions.MonadThrow (ComposeT t1 t2 m)
 
--- | Set by 'T.CatchT'.
-deriving via T.CatchT (t2 (m :: Type -> Type))
+-- | Set by 'Exceptions.T.CatchT'.
+deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
-    ) => MonadThrow (ComposeT T.CatchT t2 m)
+    ) => Exceptions.MonadThrow (ComposeT Exceptions.T.CatchT t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadCatch (t2 m)
+    ( Exceptions.MonadCatch (t2 m)
     , MonadTransControl t1
-    ) => MonadCatch (ComposeT t1 t2 m)
+    ) => Exceptions.MonadCatch (ComposeT t1 t2 m)
 
--- | Set by 'T.CatchT'.
-deriving via T.CatchT (t2 (m :: Type -> Type))
+-- | Set by 'Exceptions.T.CatchT'.
+deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
-    ) => MonadCatch (ComposeT T.CatchT t2 m)
+    ) => Exceptions.MonadCatch (ComposeT Exceptions.T.CatchT t2 m)
 #endif
 
 #if defined(VERSION_mtl)
@@ -163,250 +160,253 @@ deriving via T.CatchT (t2 (m :: Type -> Type))
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadAccum w (t2 m)
+    ( Mtl.MonadAccum w (t2 m)
     , MonadTrans t1
-    ) => MonadAccum w (ComposeT t1 t2 m)
+    ) => Mtl.MonadAccum w (ComposeT t1 t2 m)
 
--- | Set by 'T.AccumT'.
-deriving via T.AccumT w (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.T.AccumT'.
+deriving via Mtl.T.AccumT w (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadAccum w (ComposeT (T.AccumT w) t2 m)
+    ) => Mtl.MonadAccum w (ComposeT (Mtl.T.AccumT w) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadCont (t2 m)
+    ( Mtl.MonadCont (t2 m)
     , MonadTransControl t1
-    ) => MonadCont (ComposeT t1 t2 m)
+    ) => Mtl.MonadCont (ComposeT t1 t2 m)
 
--- | Set by 'T.ContT'.
-deriving via T.ContT r (t2 (m :: Type -> Type))
-  instance MonadCont (ComposeT (T.ContT r) t2 m)
+-- | Set by 'Mtl.T.ContT'.
+deriving via Mtl.T.ContT r (t2 (m :: Type -> Type))
+  instance Mtl.MonadCont (ComposeT (Mtl.T.ContT r) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadError e (t2 m)
+    ( Mtl.MonadError e (t2 m)
     , MonadTransControl t1
-    ) => MonadError e (ComposeT t1 t2 m)
+    ) => Mtl.MonadError e (ComposeT t1 t2 m)
 
--- | Set by 'T.ExceptT'.
-deriving via T.ExceptT e (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.T.ExceptT'.
+deriving via Mtl.T.ExceptT e (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
-    ) => MonadError e (ComposeT (T.ExceptT e) t2 m)
+    ) => Mtl.MonadError e (ComposeT (Mtl.T.ExceptT e) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadReader r (t2 m)
+    ( Mtl.MonadReader r (t2 m)
     , MonadTransControl t1
-    ) => MonadReader r (ComposeT t1 t2 m)
+    ) => Mtl.MonadReader r (ComposeT t1 t2 m)
 
--- | Set by 'T.ReaderT'.
-deriving via T.ReaderT r (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.T.ReaderT'.
+deriving via Mtl.T.ReaderT r (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
-    ) => MonadReader r (ComposeT (T.ReaderT r) t2 m)
+    ) => Mtl.MonadReader r (ComposeT (Mtl.T.ReaderT r) t2 m)
 
--- | Set by 'CPST.RWST'.
-deriving via CPST.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.CPST.RWST'.
+deriving via Mtl.CPST.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadReader r (ComposeT (CPST.RWST r w s) t2 m)
+    ) => Mtl.MonadReader r (ComposeT (Mtl.CPST.RWST r w s) t2 m)
 
--- | Set by 'LT.RWST'.
-deriving via LT.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.LT.RWST'.
+deriving via Mtl.LT.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadReader r (ComposeT (LT.RWST r w s) t2 m)
+    ) => Mtl.MonadReader r (ComposeT (Mtl.LT.RWST r w s) t2 m)
 
--- | Set by 'ST.RWST'.
-deriving via ST.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.ST.RWST'.
+deriving via Mtl.ST.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadReader r (ComposeT (ST.RWST r w s) t2 m)
+    ) => Mtl.MonadReader r (ComposeT (Mtl.ST.RWST r w s) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadRWS r w s (t2 m)
+    ( Mtl.MonadRWS r w s (t2 m)
     , MonadTransControl t1
-    ) => MonadRWS r w s (ComposeT t1 t2 m)
+    ) => Mtl.MonadRWS r w s (ComposeT t1 t2 m)
 
--- | Set by 'CPST.RWST'.
-deriving via CPST.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.CPST.RWST'.
+deriving via Mtl.CPST.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadRWS r w s (ComposeT (CPST.RWST r w s) t2 m)
+    ) => Mtl.MonadRWS r w s (ComposeT (Mtl.CPST.RWST r w s) t2 m)
 
--- | Set by 'LT.RWST'.
-deriving via LT.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.LT.RWST'.
+deriving via Mtl.LT.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadRWS r w s (ComposeT (LT.RWST r w s) t2 m)
+    ) => Mtl.MonadRWS r w s (ComposeT (Mtl.LT.RWST r w s) t2 m)
 
--- | Set by 'ST.RWST'.
-deriving via ST.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.ST.RWST'.
+deriving via Mtl.ST.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadRWS r w s (ComposeT (ST.RWST r w s) t2 m)
+    ) => Mtl.MonadRWS r w s (ComposeT (Mtl.ST.RWST r w s) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadSelect r (t2 m)
+    ( Mtl.MonadSelect r (t2 m)
     , MonadTrans t1
-    ) => MonadSelect r (ComposeT t1 t2 m)
+    ) => Mtl.MonadSelect r (ComposeT t1 t2 m)
 
--- | Set by 'T.SelectT'.
-deriving via T.SelectT r (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.T.SelectT'.
+deriving via Mtl.T.SelectT r (t2 (m :: Type -> Type))
   instance
-    ( MonadBaseControlIdentity Identity (t2 m)
-    ) => MonadSelect r (ComposeT (T.SelectT r) t2 m)
+    ( MonadBaseControlIdentity Mtl.Identity (t2 m)
+    ) => Mtl.MonadSelect r (ComposeT (Mtl.T.SelectT r) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadState s (t2 m)
+    ( Mtl.MonadState s (t2 m)
     , MonadTrans t1
-    ) => MonadState s (ComposeT t1 t2 m)
+    ) => Mtl.MonadState s (ComposeT t1 t2 m)
 
--- | Set by 'LT.StateT'.
-deriving via LT.StateT s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.LT.StateT'.
+deriving via Mtl.LT.StateT s (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
-    ) => MonadState s (ComposeT (LT.StateT s) t2 m)
+    ) => Mtl.MonadState s (ComposeT (Mtl.LT.StateT s) t2 m)
 
--- | Set by 'ST.StateT'.
-deriving via ST.StateT s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.ST.StateT'.
+deriving via Mtl.ST.StateT s (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
-    ) => MonadState s (ComposeT (ST.StateT s) t2 m)
+    ) => Mtl.MonadState s (ComposeT (Mtl.ST.StateT s) t2 m)
 
--- | Set by 'CPST.RWST'.
-deriving via CPST.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.CPST.RWST'.
+deriving via Mtl.CPST.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadState s (ComposeT (CPST.RWST r w s) t2 m)
+    ) => Mtl.MonadState s (ComposeT (Mtl.CPST.RWST r w s) t2 m)
 
--- | Set by 'LT.RWST'.
-deriving via LT.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.LT.RWST'.
+deriving via Mtl.LT.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadState s (ComposeT (LT.RWST r w s) t2 m)
+    ) => Mtl.MonadState s (ComposeT (Mtl.LT.RWST r w s) t2 m)
 
--- | Set by 'ST.RWST'.
-deriving via ST.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.ST.RWST'.
+deriving via Mtl.ST.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadState s (ComposeT (ST.RWST r w s) t2 m)
+    ) => Mtl.MonadState s (ComposeT (Mtl.ST.RWST r w s) t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
-    ( MonadWriter w (t2 m)
+    ( Mtl.MonadWriter w (t2 m)
     , MonadTransControl t1
-    ) => MonadWriter w (ComposeT t1 t2 m)
+    ) => Mtl.MonadWriter w (ComposeT t1 t2 m)
 
--- | Set by 'CPST.WriterT'.
-deriving via CPST.WriterT w (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.CPST.WriterT'.
+deriving via Mtl.CPST.WriterT w (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadWriter w (ComposeT (CPST.WriterT w) t2 m)
+    ) => Mtl.MonadWriter w (ComposeT (Mtl.CPST.WriterT w) t2 m)
 
--- | Set by 'LT.WriterT'.
-deriving via LT.WriterT w (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.LT.WriterT'.
+deriving via Mtl.LT.WriterT w (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadWriter w (ComposeT (LT.WriterT w) t2 m)
+    ) => Mtl.MonadWriter w (ComposeT (Mtl.LT.WriterT w) t2 m)
 
--- | Set by 'ST.WriterT'.
-deriving via ST.WriterT w (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.ST.WriterT'.
+deriving via Mtl.ST.WriterT w (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadWriter w (ComposeT (ST.WriterT w) t2 m)
+    ) => Mtl.MonadWriter w (ComposeT (Mtl.ST.WriterT w) t2 m)
 
--- | Set by 'CPST.RWST'.
-deriving via CPST.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.CPST.RWST'.
+deriving via Mtl.CPST.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadWriter w (ComposeT (CPST.RWST r w s) t2 m)
+    ) => Mtl.MonadWriter w (ComposeT (Mtl.CPST.RWST r w s) t2 m)
 
--- | Set by 'LT.RWST'.
-deriving via LT.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.LT.RWST'.
+deriving via Mtl.LT.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadWriter w (ComposeT (LT.RWST r w s) t2 m)
+    ) => Mtl.MonadWriter w (ComposeT (Mtl.LT.RWST r w s) t2 m)
 
--- | Set by 'ST.RWST'.
-deriving via ST.RWST r w s (t2 (m :: Type -> Type))
+-- | Set by 'Mtl.ST.RWST'.
+deriving via Mtl.ST.RWST r w s (t2 (m :: Type -> Type))
   instance
     ( Monoid w
     , Monad (t2 m)
-    ) => MonadWriter w (ComposeT (ST.RWST r w s) t2 m)
+    ) => Mtl.MonadWriter w (ComposeT (Mtl.ST.RWST r w s) t2 m)
 #endif
 
 #if defined(VERSION_primitive)
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( PrimMonad m
+    ( Primitive.PrimMonad m
     , MonadTrans (ComposeT t1 t2)
     ) =>
-    PrimMonad (ComposeT t1 t2 m)
+    Primitive.PrimMonad (ComposeT t1 t2 m)
 #endif
 
 #if defined(VERSION_resourcet)
--- | Elevated to @m@.
-deriving via Elevator (ComposeT t1 t2) m
-  instance
-    ( MonadResource m
-    , MonadTrans (ComposeT t1 t2)
-    ) =>
-    MonadResource (ComposeT t1 t2 m)
+-- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( ResourceT.MonadResource (t2 m)
+    , MonadTrans t1
+    , MonadIO m
+    , MonadTrans t2
+    ) => ResourceT.MonadResource (ComposeT t1 t2 m)
 
 -- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
--- | Set by 'ResourceT'.
-deriving via ResourceT (t2 (m :: Type -> Type))
+-- | Set by 'ResourceT.ResourceT'.
+deriving via ResourceT.ResourceT (t2 (m :: Type -> Type))
   instance
     ( MonadIO (t2 m)
     , MonadIO m
     , MonadTrans t2
-    ) => MonadResource (ComposeT ResourceT t2 m)
+    ) => ResourceT.MonadResource (ComposeT ResourceT.ResourceT t2 m)
 #endif
 
 #if defined(VERSION_unliftio_core)
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( MonadUnliftIO m
+    ( UnliftIO.MonadUnliftIO m
     , MonadTransControlIdentity (ComposeT t1 t2)
     ) =>
-    MonadUnliftIO (ComposeT t1 t2 m)
+    UnliftIO.MonadUnliftIO (ComposeT t1 t2 m)
 #endif
 
 
@@ -506,7 +506,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- Create a monad transformer stack and wrap it using a newtype.
 --
 -- @
--- type AppStackT = t'Control.Monad.Trans.Compose.Transparent.TransparentT' t'Control.Monad.Trans.Compose.Infix..|>' 'T.ReaderT' 'Bool' t'Control.Monad.Trans.Compose.Infix..|>' CustomT t'Control.Monad.Trans.Compose.Infix..|>' 'T.ReaderT' 'Char' t'Control.Monad.Trans.Compose.Infix..|>' 'LT.StateT' 'Int'
+-- type AppStackT = t'Control.Monad.Trans.Compose.Transparent.TransparentT' t'Control.Monad.Trans.Compose.Infix..|>' 'Control.Monad.Trans.Reader.ReaderT' 'Bool' t'Control.Monad.Trans.Compose.Infix..|>' CustomT t'Control.Monad.Trans.Compose.Infix..|>' 'Control.Monad.Trans.Reader.ReaderT' 'Char' t'Control.Monad.Trans.Compose.Infix..|>' 'Control.Monad.Trans.State.Lazy.StateT' 'Int'
 -- newtype AppT m a = AppT { unAppT :: AppStackT m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
@@ -547,15 +547,15 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 --     'Control.Monad.Trans.Compose.Infix../>' runStateT'
 --     $ unAppT appTma
 --  where
---   runReaderT' :: 'Control.Monad.Reader.Class.MonadReader' 'Bool' m => 'T.ReaderT' 'Char' m a -> m a
+--   runReaderT' :: 'Control.Monad.Reader.Class.MonadReader' 'Bool' m => 'Control.Monad.Trans.Reader.ReaderT' 'Char' m a -> m a
 --   runReaderT' tma = do
 --     bool <- 'Control.Monad.Reader.Class.ask'
 --     let char = if bool then \'Y\' else \'N\'
---     'T.runReaderT' tma char
+--     'Control.Monad.Trans.Reader.runReaderT' tma char
 --
---   runStateT' :: 'Control.Monad.Reader.Class.MonadReader' 'Char' m => 'LT.StateT' 'Int' m a -> m (a, 'Int')
+--   runStateT' :: 'Control.Monad.Reader.Class.MonadReader' 'Char' m => 'Control.Monad.Trans.State.Lazy.StateT' 'Int' m a -> m (a, 'Int')
 --   runStateT' tma = do
 --     char <- 'Control.Monad.Reader.Class.ask'
 --     let num = 'fromEnum' char
---     'LT.runStateT' tma num
+--     'Control.Monad.Trans.State.Lazy.runStateT' tma num
 -- @
