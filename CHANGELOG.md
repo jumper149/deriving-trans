@@ -13,6 +13,7 @@
 * Add "base-case" instances for `AccumT` and `SelectT`.
 * Add "base-case" instances for the CPS versions of `WriterT` and `RWST`.
 * Remove `Monad m` constraint from "base-case" instance for `ContT`.
+* Add `MonadResource` instances to `Elevator` and `ComposeT` including a `ResourceT` "base-case" instance.
 
 ## 0.5.2.0 *17 Jan 2023*
 
