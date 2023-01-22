@@ -4,7 +4,7 @@
 
 * Update dependencies:
   - transformers `>= 0.6`
-  - exceptions (optional)
+  - exceptions `>= 0.4` (optional)
   - mtl `>= 2.3` (optional)
   - primitive (optional)
   - resourcet `>= 1.2` (optional)
