@@ -65,7 +65,7 @@ library
     , transformers-base
   if flag(exceptions)
     build-depends:
-      , exceptions
+      , exceptions >= 0.4
   if flag(mtl)
     other-modules:
       Control.Monad.Accum.OrphanInstances
