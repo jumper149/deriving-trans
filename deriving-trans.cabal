@@ -40,6 +40,11 @@ flag primitive
   description:
     Implement instances for `PrimMonad`.
 
+flag resourcet
+  default: True
+  description:
+    Implement instances for `MonadResource`.
+
 flag unliftio
   default: True
   description:
@@ -70,6 +75,9 @@ library
   if flag(primitive)
     build-depends:
       , primitive
+  if flag(resourcet)
+    build-depends:
+      , resourcet >= 1.2
   if flag(unliftio)
     build-depends:
       , unliftio-core
