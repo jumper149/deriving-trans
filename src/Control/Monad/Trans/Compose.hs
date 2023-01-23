@@ -29,6 +29,10 @@ import Control.Monad.Logic qualified as LogicT.T
 import Control.Monad.Logic.Class qualified as LogicT
 #endif
 
+#if defined(VERSION_monad_logger)
+import Control.Monad.Logger qualified as MonadLogger
+#endif
+
 #if defined(VERSION_mtl)
 import Control.Monad.Accum qualified as Mtl
 import Control.Monad.Accum.OrphanInstances qualified as Mtl ()
@@ -300,6 +304,63 @@ deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
     ) => LogicT.MonadLogic (ComposeT LogicT.T.LogicT t2 m)
+#endif
+
+#if defined(VERSION_monad_logger)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadLogger.MonadLogger (t2 m)
+    , MonadTrans t1
+    ) => MonadLogger.MonadLogger (ComposeT t1 t2 m)
+
+-- | Set by 'MonadLogger.LoggingT'.
+deriving via MonadLogger.LoggingT (t2 (m :: Type -> Type))
+  instance
+    ( MonadIO (t2 m)
+    ) => MonadLogger.MonadLogger (ComposeT MonadLogger.LoggingT t2 m)
+
+-- | Set by 'MonadLogger.NoLoggingT'.
+deriving via MonadLogger.NoLoggingT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => MonadLogger.MonadLogger (ComposeT MonadLogger.NoLoggingT t2 m)
+
+-- | Set by 'MonadLogger.WriterLoggingT'.
+deriving via MonadLogger.WriterLoggingT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => MonadLogger.MonadLogger (ComposeT MonadLogger.WriterLoggingT t2 m)
+
+-- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadLogger.MonadLoggerIO (t2 m)
+    , MonadTrans t1
+    , MonadIO m
+    , MonadTrans t2
+    ) => MonadLogger.MonadLoggerIO (ComposeT t1 t2 m)
+
+-- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
+-- | Set by 'MonadLogger.LoggingT'.
+deriving via MonadLogger.LoggingT (t2 (m :: Type -> Type))
+  instance
+    ( MonadIO (t2 m)
+    , MonadIO m
+    , MonadTrans t2
+    ) => MonadLogger.MonadLoggerIO (ComposeT MonadLogger.LoggingT t2 m)
+
+-- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
+-- | Set by 'MonadLogger.NoLoggingT'.
+deriving via MonadLogger.NoLoggingT (t2 (m :: Type -> Type))
+  instance
+    ( MonadIO (t2 m)
+    , MonadIO m
+    , MonadTrans t2
+    ) => MonadLogger.MonadLoggerIO (ComposeT MonadLogger.NoLoggingT t2 m)
 #endif
 
 #if defined(VERSION_mtl)

@@ -23,6 +23,10 @@ import Control.Monad.Catch qualified as Exceptions
 import Control.Monad.Logic.Class qualified as LogicT
 #endif
 
+#if defined(VERSION_monad_logger)
+import Control.Monad.Logger qualified as MonadLogger
+#endif
+
 #if defined(VERSION_mtl)
 import Control.Monad.Accum qualified as Mtl
 import Control.Monad.Cont.Class qualified as Mtl
@@ -145,6 +149,15 @@ instance (Exceptions.MonadMask m, MonadTransControl t) => Exceptions.MonadMask (
 instance (LogicT.MonadLogic m, MonadTransControlIdentity t) => LogicT.MonadLogic (Elevator t m) where
   msplit tma = (((\(a, b) -> (a, lift b)) <$>) <$>) $
     liftWithIdentity $ \runT -> LogicT.msplit $ runT tma
+#endif
+
+#if defined(VERSION_monad_logger)
+instance (MonadLogger.MonadLogger m, MonadTrans t) => MonadLogger.MonadLogger (Elevator t m) where
+  monadLoggerLog location logSource logLevel = lift .
+    MonadLogger.monadLoggerLog location logSource logLevel
+
+instance (MonadLogger.MonadLoggerIO m, MonadTrans t) => MonadLogger.MonadLoggerIO (Elevator t m) where
+  askLoggerIO = lift MonadLogger.askLoggerIO
 #endif
 
 #if defined(VERSION_mtl)

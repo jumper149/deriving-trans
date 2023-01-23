@@ -35,6 +35,11 @@ flag logict
   description:
     Implement instances for `MonadLogic`.
 
+flag monad-logger
+  default: True
+  description:
+    Implement instances for `MonadLogger` and `MonadLoggerIO`.
+
 flag mtl
   default: True
   description:
@@ -79,6 +84,9 @@ library
   if flag(logict)
     build-depends:
       , logict >= 0.8.0.0
+  if flag(monad-logger)
+    build-depends:
+      , monad-logger >= 0.3.38
   if flag(mtl)
     other-modules:
       Control.Monad.Accum.OrphanInstances
