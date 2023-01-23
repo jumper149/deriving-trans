@@ -541,7 +541,7 @@ runComposeT' runT1 runT2 = runT2 . runT1 . deComposeT
 -- runAppT :: AppT m a -> m ('StT' AppT a)
 -- runAppT appTma =
 --   'Control.Monad.Trans.Compose.Transparent.runTransparentT'
---     'Control.Monad.Trans.Compose.Infix../>' (\\ tma -> 'T.runReaderT' tma 'True')
+--     'Control.Monad.Trans.Compose.Infix../>' (\\ tma -> 'Control.Monad.Trans.Reader.runReaderT' tma 'True')
 --     'Control.Monad.Trans.Compose.Infix../>' runCustomT
 --     'Control.Monad.Trans.Compose.Infix../>' runReaderT'
 --     'Control.Monad.Trans.Compose.Infix../>' runStateT'
