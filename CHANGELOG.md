@@ -1,6 +1,6 @@
 # Revision history for deriving-trans
 
-## 0.6.0.0 *TODO*
+## 0.6.0.0 *23 Jan 2023*
 
 * Update dependencies:
   - transformers `>= 0.6`
