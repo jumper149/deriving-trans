@@ -33,7 +33,7 @@
         };
         cabalOptions =
           let
-            flags = import flags.nix;
+            flags = import ./flags.nix;
             setFlag = name: on: "${if on then "-f+" else "-f-"}${name}";
           in
             lib.strings.escapeShellArgs (builtins.attrValues (builtins.mapAttrs setFlag flags));
