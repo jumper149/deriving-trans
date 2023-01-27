@@ -33,7 +33,7 @@
         };
       in (haskellPackages.extend overlay).callCabal2nix "deriving-trans" src {};
 
-    devShells.x86_64_linux.default =
+    devShells.x86_64-linux.default =
       with import nixpkgs { system = "x86_64-linux"; };
       haskellPackages.shellFor {
         buildInputs = with haskellPackages; [
