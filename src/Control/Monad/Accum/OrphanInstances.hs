@@ -3,7 +3,7 @@
 module Control.Monad.Accum.OrphanInstances where
 
 import Control.Monad.Accum
-import qualified Control.Monad.Trans.Accum as T
+import Control.Monad.Trans.Accum qualified as T
 
 instance (Monoid w, Monad m) => MonadAccum w (T.AccumT w m) where
   look = T.look

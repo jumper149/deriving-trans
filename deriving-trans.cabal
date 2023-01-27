@@ -124,5 +124,4 @@ library
     -Wno-missing-export-lists
     -Wno-missing-import-lists
     -Wno-missing-safe-haskell-mode
-    -Wno-prepositive-qualified-module
     -Wno-unsafe

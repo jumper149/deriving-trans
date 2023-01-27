@@ -4,7 +4,7 @@ module Control.Monad.Select.OrphanInstances where
 
 import Control.Monad.Select
 import Control.Monad.Trans.Control.Identity
-import qualified Control.Monad.Trans.Select as T
+import Control.Monad.Trans.Select qualified as T
 import Data.Functor.Identity
 
 instance MonadBaseControlIdentity Identity m => MonadSelect r (T.SelectT r m) where
