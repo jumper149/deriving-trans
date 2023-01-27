@@ -118,6 +118,11 @@ library
     TypeFamilies
     TypeOperators
   ghc-options:
-    -Wall
-    -Wunused-packages
-    -Wredundant-constraints
+    -Weverything
+    -Wno-implicit-prelude
+    -Wno-missing-kind-signatures
+    -Wno-missing-export-lists
+    -Wno-missing-import-lists
+    -Wno-missing-safe-haskell-mode
+    -Wno-prepositive-qualified-module
+    -Wno-unsafe
