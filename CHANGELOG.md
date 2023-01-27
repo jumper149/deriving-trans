@@ -1,5 +1,11 @@
 # Revision history for deriving-trans
 
+## 0.6.1.0 *27 Jan 2023*
+
+* Add optional dependency `random >= 1.2`.
+* Add `StatefulGen`, `FrozenGen` and `RandomGenM` instances to `Elevator` and `ComposeT`.
+  There are no "base-case" instances because there are no related transformers, just base monads.
+
 ## 0.6.0.0 *23 Jan 2023*
 
 * Update dependencies:
