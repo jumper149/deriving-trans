@@ -19,7 +19,7 @@
 
   outputs = { self, nixpkgs, monad-control-identity }: {
 
-    defaultPackage.x86_64-linux =
+    packages.x86_64-linux.default =
       with import nixpkgs { system = "x86_64-linux"; };
       let
         src = nix-gitignore.gitignoreSource [] ./.;
@@ -33,7 +33,7 @@
         };
       in (haskellPackages.extend overlay).callCabal2nix "deriving-trans" src {};
 
-    devShell.x86_64-linux =
+    packages.x86_64_linux.devShell =
       with import nixpkgs { system = "x86_64-linux"; };
       haskellPackages.shellFor {
         buildInputs = with haskellPackages; [
