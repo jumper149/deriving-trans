@@ -66,9 +66,9 @@ import Control.Monad.IO.Unlift qualified as UnliftIO
 -- [@t :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] monad transformer
 -- [@m :: 'Type' -> 'Type'@] monad
 -- [@a :: 'Type'@] value
-type Elevator :: ((Type -> Type) -> Type -> Type) -- ^ @t@
-              -> (Type -> Type) -- ^ @m@
-              -> Type -- ^ @a@
+type Elevator :: ((Type -> Type) -> Type -> Type) -- @t@
+              -> (Type -> Type) -- @m@
+              -> Type -- @a@
               -> Type
 newtype Elevator t m a = Ascend { descend :: t m a }
   deriving newtype (Applicative, Functor, Monad)

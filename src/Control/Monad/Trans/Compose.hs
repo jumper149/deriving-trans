@@ -82,10 +82,10 @@ import Control.Monad.IO.Unlift qualified as UnliftIO
 -- [@t2 :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] inner monad transformer
 -- [@m :: 'Type' -> 'Type'@] monad
 -- [@a :: 'Type'@] value
-type ComposeT :: ((Type -> Type) -> Type -> Type) -- ^ @t1@
-              -> ((Type -> Type) -> Type -> Type) -- ^ @t2@
-              -> (Type -> Type) -- ^ @m@
-              -> Type -- ^ @a@
+type ComposeT :: ((Type -> Type) -> Type -> Type) -- @t1@
+              -> ((Type -> Type) -> Type -> Type) -- @t2@
+              -> (Type -> Type) -- @m@
+              -> Type -- @a@
               -> Type
 newtype ComposeT t1 t2 m a = ComposeT { deComposeT :: t1 (t2 m) a }
   deriving newtype (Applicative, Functor, Monad)
