@@ -7,6 +7,30 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        flag/exceptions:
+          [ true
+          , false
+          ]
+        flag/mtl:
+          [ true
+          , false
+          ]
+        flag/primitive:
+          [ true
+          , false
+          ]
+        flag/random:
+          [ true
+          , false
+          ]
+        flag/resourcet:
+          [ true
+          , false
+          ]
+        flag/unliftio:
+          [ true
+          , false
+          ]
         output:
           [ packages.x86_64-linux.default
           , devShells.x86_64-linux.default
@@ -21,6 +45,14 @@ jobs:
       with:
         name: jumper149-deriving-trans
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    - name: "Set Cabal flags"
+      run: sed --expression='s/^  "exceptions" = true;$/  "exceptions" = .\#${{ matrix.flag/exceptions }}/g' --in-place flags.nix
+      run: sed --expression='s/^  "mtl" = true;$/  "mtl" = .\#${{ matrix.flag/mtl }}/g' --in-place flags.nix
+      run: sed --expression='s/^  "primitive" = true;$/  "primitive" = .\#${{ matrix.flag/primitive }}/g' --in-place flags.nix
+      run: sed --expression='s/^  "random" = true;$/  "random" = .\#${{ matrix.flag/random }}/g' --in-place flags.nix
+      run: sed --expression='s/^  "resourcet" = true;$/  "resourcet" = .\#${{ matrix.flag/resourcet }}/g' --in-place flags.nix
+      run: sed --expression='s/^  "unliftio" = true;$/  "unliftio" = .\#${{ matrix.flag/unliftio }}/g' --in-place flags.nix
+      run: cat flags.nix
     - name: "Build"
       run: nix build --print-build-logs .\#${{ matrix.output }}
   check:
