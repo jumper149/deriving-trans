@@ -37,9 +37,9 @@ jobs:
           ]
     steps:
     - name: "Set up GitHub Actions"
-      uses: actions/checkout@v3.0.2
+      uses: actions/checkout@v3.3.0
     - name: "Set up Nix"
-      uses: cachix/install-nix-action@v17
+      uses: cachix/install-nix-action@v18
     - name: "Set up Cachix"
       uses: cachix/cachix-action@v12
       with:
@@ -61,9 +61,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Set up GitHub Actions"
-      uses: actions/checkout@v3.0.2
+      uses: actions/checkout@v3.3.0
     - name: "Set up Nix"
-      uses: cachix/install-nix-action@v17
+      uses: cachix/install-nix-action@v18
     - name: "Set up Cachix"
       uses: cachix/cachix-action@v12
       with:
