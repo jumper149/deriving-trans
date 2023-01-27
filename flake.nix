@@ -58,5 +58,14 @@
         withHoogle = true;
       };
 
+    checks.x86_64-linux.warning =
+      with import nixpkgs { system = "x86_64-linux"; };
+      let override = old: {
+        configureFlags = [
+          "--ghc-option=-Werror"
+        ];
+      };
+      in haskell.lib.overrideCabal self.packages.x86_64-linux.default override;
+
   };
 }

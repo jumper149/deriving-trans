@@ -34,6 +34,7 @@ jobs:
         output:
           [ packages.x86_64-linux.default
           , devShells.x86_64-linux.default
+          , checks.x86_64-linux.warning
           ]
     steps:
     - name: "Set up GitHub Actions"
