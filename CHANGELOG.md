@@ -1,5 +1,11 @@
 # Revision history for deriving-trans
 
+## 0.7.0.0 *31 Jan 2023*
+
+* Update required version bounds for `exceptions` to `>= 0.10.5`.
+* Remove redundant `MonadIO` constraints from instances `StatefulGen`, `FrozenGen` and `RandomGenM`.
+* Drop support for `GHC < 9.2`.
+
 ## 0.6.1.0 *27 Jan 2023*
 
 * Add optional dependency `random >= 1.2`.
