@@ -48,7 +48,6 @@
           ghcid
           haskell-language-server
           hlint
-          hnix
           implicit-hie
           rnix-lsp
         ];
