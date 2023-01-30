@@ -382,10 +382,9 @@ deriving via Elevator (ComposeT t1 t2) m
 #endif
 
 #if defined(VERSION_random)
--- TODO: `MonadIO (t2 m)` should not be required for this instance
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
-instance {-# OVERLAPPABLE #-} (Random.StatefulGen g (t2 m), MonadTrans t1, MonadIO (t2 m)) => Random.StatefulGen (Random.Const g (ComposeT t1 t2)) (ComposeT t1 t2 m) where
+instance {-# OVERLAPPABLE #-} (Random.StatefulGen g (t2 m), MonadTrans t1) => Random.StatefulGen (Random.Const g (ComposeT t1 t2)) (ComposeT t1 t2 m) where
   uniformWord32R word32 = ComposeT . lift . Random.uniformWord32R word32 . Random.getConst
   uniformWord64R word64 = ComposeT . lift . Random.uniformWord64R word64 . Random.getConst
   uniformWord8 = ComposeT . lift . Random.uniformWord8 . Random.getConst
@@ -394,18 +393,16 @@ instance {-# OVERLAPPABLE #-} (Random.StatefulGen g (t2 m), MonadTrans t1, Monad
   uniformWord64 = ComposeT . lift . Random.uniformWord64 . Random.getConst
   uniformShortByteString n = ComposeT . lift . Random.uniformShortByteString n . Random.getConst
 
--- TODO: `MonadIO (t2 m)` should not be required for this instance
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
-instance {-# OVERLAPPABLE #-} (Random.FrozenGen f (t2 m), MonadTrans t1, MonadIO (t2 m)) => Random.FrozenGen (Random.Const f (ComposeT t1 t2)) (ComposeT t1 t2 m) where
+instance {-# OVERLAPPABLE #-} (Random.FrozenGen f (t2 m), MonadTrans t1) => Random.FrozenGen (Random.Const f (ComposeT t1 t2)) (ComposeT t1 t2 m) where
   type MutableGen (Random.Const f (ComposeT t1 t2)) (ComposeT t1 t2 m) = Random.Const (Random.MutableGen f (t2 m)) (ComposeT t1 t2)
   freezeGen = ComposeT . lift . fmap Random.Const . Random.freezeGen . Random.getConst
   thawGen = ComposeT . lift . fmap Random.Const . Random.thawGen . Random.getConst
 
--- TODO: `MonadIO (t2 m)` should not be required for this instance
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
-instance {-# OVERLAPPABLE #-} (Random.RandomGenM g r (t2 m), MonadTrans t1, MonadIO (t2 m)) => Random.RandomGenM (Random.Const g (ComposeT t1 t2)) r (ComposeT t1 t2 m) where
+instance {-# OVERLAPPABLE #-} (Random.RandomGenM g r (t2 m), MonadTrans t1) => Random.RandomGenM (Random.Const g (ComposeT t1 t2)) r (ComposeT t1 t2 m) where
   applyRandomGenM f = ComposeT . lift . Random.applyRandomGenM f . Random.getConst
 #endif
 
