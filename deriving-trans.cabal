@@ -63,7 +63,7 @@ library
     Control.Monad.Trans.Compose.Transparent
     Control.Monad.Trans.Elevator
   build-depends:
-    , base >= 4.16.1.0.0 && < 5
+    , base >= 4.16.1.0 && < 5
     , monad-control
     , monad-control-identity
     , transformers >= 0.6
