@@ -98,6 +98,7 @@ library
     FunctionalDependencies
     OverloadedStrings
     TypeFamilies
+    UnboxedTuples
   ghc-options:
     -Weverything
     -Wno-implicit-prelude
