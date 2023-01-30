@@ -185,7 +185,7 @@ deriving via Elevator t1 (t2 (m :: Type -> Type))
     ) => Mtl.MonadCont (ComposeT t1 t2 m)
 
 -- | Set by 'Mtl.T.ContT'.
-deriving via Mtl.T.ContT r (t2 (m :: Type -> Type))
+deriving via Mtl.T.ContT (r :: Type) (t2 (m :: Type -> Type))
   instance Mtl.MonadCont (ComposeT (Mtl.T.ContT r) t2 m)
 
 -- | /OVERLAPPABLE/.
