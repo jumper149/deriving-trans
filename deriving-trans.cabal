@@ -64,10 +64,10 @@ library
     Control.Monad.Trans.Elevator
   build-depends:
     , base >= 4.16.1.0 && < 5
-    , monad-control
-    , monad-control-identity
+    , monad-control >= 1.0.3
+    , monad-control-identity >= 0.2.0.0
     , transformers >= 0.6
-    , transformers-base
+    , transformers-base >= 0.4.6
   if flag(exceptions)
     build-depends:
       , exceptions >= 0.10.5
@@ -79,7 +79,7 @@ library
       , mtl >= 2.3
   if flag(primitive)
     build-depends:
-      , primitive
+      , primitive >= 0.7.1.0
   if flag(random)
     build-depends:
       , random >= 1.2
@@ -88,7 +88,7 @@ library
       , resourcet >= 1.2
   if flag(unliftio)
     build-depends:
-      , unliftio-core
+      , unliftio-core >= 0.2.0.0
   hs-source-dirs: src
   default-language: GHC2021
   default-extensions:
