@@ -5,6 +5,7 @@
 module Control.Monad.Trans.Compose where
 
 import Control.Applicative
+import Control.Monad
 import Control.Monad.Base
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
@@ -154,6 +155,8 @@ deriving via T.MaybeT (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
     ) => Alternative (ComposeT T.MaybeT t2 m)
+
+instance (MonadPlus (t2 m), MonadTransControl t1) => MonadPlus (ComposeT t1 t2 m)
 
 #if defined(VERSION_exceptions)
 -- | Set by 'Exceptions.T.CatchT'.
