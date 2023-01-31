@@ -1,5 +1,20 @@
 # Revision history for deriving-trans
 
+## 0.8.0.0 *31 Jan 2023*
+
+* Update version boundaries of dependencies:
+  - monad-control `>= 1.0.3`
+  - monad-control-identity `>= 0.2.0.0`
+  - transformers-base `>= 0.4.6`
+  - primitive `>= 0.7.1.0`
+  - unliftio-core `>= 0.2.0.0`
+* Add common instances to `ComposeT`:
+  - `Alternative` (recursive and "base-case")
+  - `MonadFail` (recursive and "base-case")
+  - `MonadFix` (recursive; didn't find any "base-case")
+  - `MonadPlus` (determined by `Alternative`)
+  - `MonadZip` (recursive; didn't find any "base-case")
+
 ## 0.7.0.0 *31 Jan 2023*
 
 * Update required version bounds for `exceptions` to `>= 0.10.5`.
