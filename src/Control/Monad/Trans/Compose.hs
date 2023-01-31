@@ -149,6 +149,20 @@ deriving via T.MaybeT (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     ) => Alternative (ComposeT T.MaybeT t2 m)
 
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadFail (t2 m)
+    , MonadTrans t1
+    ) => MonadFail (ComposeT t1 t2 m)
+
+-- | Set by 'T.MaybeT'.
+deriving via T.MaybeT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => MonadFail (ComposeT T.MaybeT t2 m)
+
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
@@ -165,6 +179,12 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
     ) => Alternative (ComposeT Exceptions.T.CatchT t2 m)
+
+-- | Set by 'Exceptions.T.CatchT'.
+deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => MonadFail (ComposeT Exceptions.T.CatchT t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
