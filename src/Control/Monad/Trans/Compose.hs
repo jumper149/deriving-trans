@@ -13,6 +13,9 @@ import Control.Monad.Trans.Control.Identity
 import Control.Monad.Trans.Elevator
 import Data.Kind
 
+import Control.Monad.Trans.Except qualified as T
+import Control.Monad.Trans.Maybe qualified as T
+
 #if defined(VERSION_exceptions)
 import Control.Monad.Catch qualified as Exceptions
 import Control.Monad.Catch.Pure qualified as Exceptions.T
@@ -31,7 +34,6 @@ import Control.Monad.State.Class qualified as Mtl
 import Control.Monad.Trans.Accum qualified as Mtl.T
 import Control.Monad.Trans.Cont qualified as Mtl.T
 import Control.Monad.Trans.Except qualified as Mtl.T
-import Control.Monad.Trans.Maybe qualified as Mtl.T
 import Control.Monad.Trans.RWS.CPS qualified as Mtl.CPST
 import Control.Monad.Trans.RWS.Lazy qualified as Mtl.LT
 import Control.Monad.Trans.RWS.Strict qualified as Mtl.ST
@@ -140,6 +142,19 @@ deriving via Elevator t1 (t2 (m :: Type -> Type))
     , MonadTransControl t1
     ) => Alternative (ComposeT t1 t2 m)
 
+-- | Set by 'T.ExceptT'.
+deriving via T.ExceptT e (t2 (m :: Type -> Type))
+  instance
+    ( Monoid e
+    , Monad (t2 m)
+    ) => Alternative (ComposeT (T.ExceptT e) t2 m)
+
+-- | Set by 'T.MaybeT'.
+deriving via T.MaybeT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => Alternative (ComposeT T.MaybeT t2 m)
+
 #if defined(VERSION_exceptions)
 -- | Set by 'Exceptions.T.CatchT'.
 deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
@@ -177,19 +192,6 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
 #endif
 
 #if defined(VERSION_mtl)
--- | Set by 'Mtl.T.ExceptT'.
-deriving via Mtl.T.ExceptT e (t2 (m :: Type -> Type))
-  instance
-    ( Monoid e
-    , Monad (t2 m)
-    ) => Alternative (ComposeT (Mtl.T.ExceptT e) t2 m)
-
--- | Set by 'Mtl.T.MaybeT'.
-deriving via Mtl.T.MaybeT (t2 (m :: Type -> Type))
-  instance
-    ( Monad (t2 m)
-    ) => Alternative (ComposeT Mtl.T.MaybeT t2 m)
-
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
