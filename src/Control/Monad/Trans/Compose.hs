@@ -7,11 +7,13 @@ module Control.Monad.Trans.Compose where
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Base
+import Control.Monad.Fix
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Control.Identity
 import Control.Monad.Trans.Elevator
+import Control.Monad.Zip
 import Data.Kind
 
 import Control.Monad.Trans.Except qualified as T
@@ -163,6 +165,14 @@ deriving via T.MaybeT (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     ) => MonadFail (ComposeT T.MaybeT t2 m)
 
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadFix (t2 m)
+    , MonadTransControlIdentity t1
+    ) => MonadFix (ComposeT t1 t2 m)
+
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
@@ -172,6 +182,14 @@ deriving via Elevator (ComposeT t1 t2) m
 
 -- | Determined by 'Alternative'.
 instance (MonadPlus (t2 m), MonadTransControl t1) => MonadPlus (ComposeT t1 t2 m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadZip (t2 m)
+    , MonadTransControlIdentity t1
+    ) => MonadZip (ComposeT t1 t2 m)
 
 #if defined(VERSION_exceptions)
 -- | Set by 'Exceptions.T.CatchT'.
