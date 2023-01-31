@@ -109,13 +109,6 @@ instance (MonadTransControlIdentity t1, MonadTransControlIdentity t2) => MonadTr
 -- | Elevated to @m@.
 deriving via Elevator (ComposeT t1 t2) m
   instance
-    ( MonadIO m
-    , MonadTrans (ComposeT t1 t2)
-    ) => MonadIO (ComposeT t1 t2 m)
-
--- | Elevated to @m@.
-deriving via Elevator (ComposeT t1 t2) m
-  instance
     ( MonadBase b m
     , MonadTrans (ComposeT t1 t2)
     ) => MonadBase b (ComposeT t1 t2 m)
@@ -156,6 +149,14 @@ deriving via T.MaybeT (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     ) => Alternative (ComposeT T.MaybeT t2 m)
 
+-- | Elevated to @m@.
+deriving via Elevator (ComposeT t1 t2) m
+  instance
+    ( MonadIO m
+    , MonadTrans (ComposeT t1 t2)
+    ) => MonadIO (ComposeT t1 t2 m)
+
+-- | Determined by 'Alternative'.
 instance (MonadPlus (t2 m), MonadTransControl t1) => MonadPlus (ComposeT t1 t2 m)
 
 #if defined(VERSION_exceptions)
