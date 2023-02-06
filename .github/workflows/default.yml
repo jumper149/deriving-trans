@@ -9,7 +9,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - output: packages.x86_64-linux.default
+
+          # All flags `false`.
+          - output: checks.x86_64-linux.default
+            flag-exceptions: false
+            flag-logict: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-random: false
+            flag-resourcet: false
+            flag-unliftio: false
+
+          # 1 flag `true`.
+          - output: checks.x86_64-linux.default
             flag-exceptions: true
             flag-logict: false
             flag-mtl: false
@@ -17,7 +29,7 @@ jobs:
             flag-random: false
             flag-resourcet: false
             flag-unliftio: false
-          - output: packages.x86_64-linux.default
+          - output: checks.x86_64-linux.default
             flag-exceptions: false
             flag-logict: true
             flag-mtl: false
@@ -25,7 +37,7 @@ jobs:
             flag-random: false
             flag-resourcet: false
             flag-unliftio: false
-          - output: packages.x86_64-linux.default
+          - output: checks.x86_64-linux.default
             flag-exceptions: false
             flag-logict: false
             flag-mtl: true
@@ -33,7 +45,7 @@ jobs:
             flag-random: false
             flag-resourcet: false
             flag-unliftio: false
-          - output: packages.x86_64-linux.default
+          - output: checks.x86_64-linux.default
             flag-exceptions: false
             flag-logict: false
             flag-mtl: false
@@ -41,7 +53,7 @@ jobs:
             flag-random: false
             flag-resourcet: false
             flag-unliftio: false
-          - output: packages.x86_64-linux.default
+          - output: checks.x86_64-linux.default
             flag-exceptions: false
             flag-logict: false
             flag-mtl: false
@@ -49,7 +61,7 @@ jobs:
             flag-random: true
             flag-resourcet: false
             flag-unliftio: false
-          - output: packages.x86_64-linux.default
+          - output: checks.x86_64-linux.default
             flag-exceptions: false
             flag-logict: false
             flag-mtl: false
@@ -57,7 +69,7 @@ jobs:
             flag-random: false
             flag-resourcet: true
             flag-unliftio: false
-          - output: packages.x86_64-linux.default
+          - output: checks.x86_64-linux.default
             flag-exceptions: false
             flag-logict: false
             flag-mtl: false
@@ -65,6 +77,8 @@ jobs:
             flag-random: false
             flag-resourcet: false
             flag-unliftio: true
+
+          # All flags `true`.
           - output: packages.x86_64-linux.default
             flag-exceptions: true
             flag-logict: true
@@ -89,6 +103,7 @@ jobs:
             flag-random: true
             flag-resourcet: true
             flag-unliftio: true
+
     steps:
     - name: "Set up GitHub Actions"
       uses: actions/checkout@v3.3.0
