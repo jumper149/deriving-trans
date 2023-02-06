@@ -12,6 +12,10 @@ jobs:
           [ true
           , false
           ]
+        flag-logict:
+          [ true
+          , false
+          ]
         flag-mtl:
           [ true
           , false
@@ -50,6 +54,7 @@ jobs:
     - name: "Set Cabal flags"
       run: |
         sed --expression='s/^  "exceptions" = true;$/  "exceptions" = ${{ matrix.flag-exceptions }};/g' --in-place flags.nix
+        sed --expression='s/^  "logict" = true;$/  "logict" = ${{ matrix.flag-logict }};/g' --in-place flags.nix
         sed --expression='s/^  "mtl" = true;$/  "mtl" = ${{ matrix.flag-mtl }};/g' --in-place flags.nix
         sed --expression='s/^  "primitive" = true;$/  "primitive" = ${{ matrix.flag-primitive }};/g' --in-place flags.nix
         sed --expression='s/^  "random" = true;$/  "random" = ${{ matrix.flag-random }};/g' --in-place flags.nix
