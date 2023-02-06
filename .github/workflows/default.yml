@@ -8,33 +8,80 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flag-exceptions: [ false ]
-        flag-logict: [ false ]
-        flag-mtl: [ false ]
-        flag-primitive: [ false ]
-        flag-random: [ false ]
-        flag-resourcet: [ false ]
-        flag-unliftio: [ false ]
         include:
           - output: packages.x86_64-linux.default
             flag-exceptions: true
+            flag-logict: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-random: false
+            flag-resourcet: false
+            flag-unliftio: false
           - output: packages.x86_64-linux.default
+            flag-exceptions: false
             flag-logict: true
+            flag-mtl: false
+            flag-primitive: false
+            flag-random: false
+            flag-resourcet: false
+            flag-unliftio: false
           - output: packages.x86_64-linux.default
+            flag-exceptions: false
+            flag-logict: false
             flag-mtl: true
+            flag-primitive: false
+            flag-random: false
+            flag-resourcet: false
+            flag-unliftio: false
           - output: packages.x86_64-linux.default
+            flag-exceptions: false
+            flag-logict: false
+            flag-mtl: false
             flag-primitive: true
+            flag-random: false
+            flag-resourcet: false
+            flag-unliftio: false
           - output: packages.x86_64-linux.default
+            flag-exceptions: false
+            flag-logict: false
+            flag-mtl: false
+            flag-primitive: false
             flag-random: true
+            flag-resourcet: false
+            flag-unliftio: false
           - output: packages.x86_64-linux.default
+            flag-exceptions: false
+            flag-logict: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-random: false
             flag-resourcet: true
+            flag-unliftio: false
           - output: packages.x86_64-linux.default
+            flag-exceptions: false
+            flag-logict: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-random: false
+            flag-resourcet: false
             flag-unliftio: true
-          - output:
-              [ packages.x86_64-linux.default
-              , devShells.x86_64-linux.default
-              , checks.x86_64-linux.warning
-              ]
+          - output: packages.x86_64-linux.default
+            flag-exceptions: true
+            flag-logict: true
+            flag-mtl: true
+            flag-primitive: true
+            flag-random: true
+            flag-resourcet: true
+            flag-unliftio: true
+          - output: devShells.x86_64-linux.default
+            flag-exceptions: true
+            flag-logict: true
+            flag-mtl: true
+            flag-primitive: true
+            flag-random: true
+            flag-resourcet: true
+            flag-unliftio: true
+          - output: checks.x86_64-linux.default
             flag-exceptions: true
             flag-logict: true
             flag-mtl: true
