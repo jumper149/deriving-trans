@@ -185,8 +185,26 @@ deriving via Elevator (ComposeT t1 t2) m
     , MonadTrans (ComposeT t1 t2)
     ) => MonadIO (ComposeT t1 t2 m)
 
--- | Determined by 'Alternative'.
-instance (MonadPlus (t2 m), MonadTransControl t1) => MonadPlus (ComposeT t1 t2 m)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadPlus (t2 m)
+    , MonadTransControl t1
+    ) => MonadPlus (ComposeT t1 t2 m)
+
+-- | Set by 'T.ExceptT'.
+deriving via T.ExceptT e (t2 (m :: Type -> Type))
+  instance
+    ( Monoid e
+    , Monad (t2 m)
+    ) => MonadPlus (ComposeT (T.ExceptT e) t2 m)
+
+-- | Set by 'T.MaybeT'.
+deriving via T.MaybeT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => MonadPlus (ComposeT T.MaybeT t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
@@ -208,6 +226,12 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
     ) => MonadFail (ComposeT Exceptions.T.CatchT t2 m)
+
+-- | Set by 'Exceptions.T.CatchT'.
+deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => MonadPlus (ComposeT Exceptions.T.CatchT t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
@@ -242,6 +266,10 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
 -- | Set by 'LogicT.T.LogicT'.
 deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
   instance Alternative (ComposeT LogicT.T.LogicT t2 m)
+
+-- | Set by 'LogicT.T.LogicT'.
+deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
+  instance MonadPlus (ComposeT LogicT.T.LogicT t2 m)
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
