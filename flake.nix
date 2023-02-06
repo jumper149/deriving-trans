@@ -57,6 +57,10 @@
         withHoogle = true;
       };
 
+    checks.x86_64-linux.build = self.packages.x86_64-linux.default;
+
+    checks.x86_64-linux.shell = self.devShells.x86_64-linux.default;
+
     checks.x86_64-linux.warning =
       with import nixpkgs { system = "x86_64-linux"; };
       let override = old: {

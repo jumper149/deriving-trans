@@ -3,7 +3,7 @@ on:
   push:
 jobs:
   build:
-    name: "Build"
+    name: "Flake"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -11,8 +11,7 @@ jobs:
         include:
 
           # All flags `false`.
-          - output: checks.x86_64-linux.default
-            flag-exceptions: false
+          - flag-exceptions: false
             flag-logict: false
             flag-mtl: false
             flag-primitive: false
@@ -21,56 +20,49 @@ jobs:
             flag-unliftio: false
 
           # 1 flag `true`.
-          - output: checks.x86_64-linux.default
-            flag-exceptions: true
+          - flag-exceptions: true
             flag-logict: false
             flag-mtl: false
             flag-primitive: false
             flag-random: false
             flag-resourcet: false
             flag-unliftio: false
-          - output: checks.x86_64-linux.default
-            flag-exceptions: false
+          - flag-exceptions: false
             flag-logict: true
             flag-mtl: false
             flag-primitive: false
             flag-random: false
             flag-resourcet: false
             flag-unliftio: false
-          - output: checks.x86_64-linux.default
-            flag-exceptions: false
+          - flag-exceptions: false
             flag-logict: false
             flag-mtl: true
             flag-primitive: false
             flag-random: false
             flag-resourcet: false
             flag-unliftio: false
-          - output: checks.x86_64-linux.default
-            flag-exceptions: false
+          - flag-exceptions: false
             flag-logict: false
             flag-mtl: false
             flag-primitive: true
             flag-random: false
             flag-resourcet: false
             flag-unliftio: false
-          - output: checks.x86_64-linux.default
-            flag-exceptions: false
+          - flag-exceptions: false
             flag-logict: false
             flag-mtl: false
             flag-primitive: false
             flag-random: true
             flag-resourcet: false
             flag-unliftio: false
-          - output: checks.x86_64-linux.default
-            flag-exceptions: false
+          - flag-exceptions: false
             flag-logict: false
             flag-mtl: false
             flag-primitive: false
             flag-random: false
             flag-resourcet: true
             flag-unliftio: false
-          - output: checks.x86_64-linux.default
-            flag-exceptions: false
+          - flag-exceptions: false
             flag-logict: false
             flag-mtl: false
             flag-primitive: false
@@ -79,24 +71,7 @@ jobs:
             flag-unliftio: true
 
           # All flags `true`.
-          - output: packages.x86_64-linux.default
-            flag-exceptions: true
-            flag-logict: true
-            flag-mtl: true
-            flag-primitive: true
-            flag-random: true
-            flag-resourcet: true
-            flag-unliftio: true
-          - output: devShells.x86_64-linux.default
-            flag-exceptions: true
-            flag-logict: true
-            flag-mtl: true
-            flag-primitive: true
-            flag-random: true
-            flag-resourcet: true
-            flag-unliftio: true
-          - output: checks.x86_64-linux.default
-            flag-exceptions: true
+          - flag-exceptions: true
             flag-logict: true
             flag-mtl: true
             flag-primitive: true
@@ -124,20 +99,5 @@ jobs:
         sed --expression='s/^  "resourcet" = true;$/  "resourcet" = ${{ matrix.flag-resourcet }};/g' --in-place flags.nix
         sed --expression='s/^  "unliftio" = true;$/  "unliftio" = ${{ matrix.flag-unliftio }};/g' --in-place flags.nix
         cat flags.nix
-    - name: "Build"
-      run: nix build --print-build-logs .\#${{ matrix.output }}
-  check:
-    name: "Check Flake"
-    runs-on: ubuntu-latest
-    steps:
-    - name: "Set up GitHub Actions"
-      uses: actions/checkout@v3.3.0
-    - name: "Set up Nix"
-      uses: cachix/install-nix-action@v18
-    - name: "Set up Cachix"
-      uses: cachix/cachix-action@v12
-      with:
-        name: jumper149-deriving-trans
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: "Check"
+    - name: "Check Flake"
       run: nix flake check --keep-going --print-build-logs
