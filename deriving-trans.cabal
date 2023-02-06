@@ -30,6 +30,11 @@ flag exceptions
   description:
     Implement instances for 'MonadThrow' and 'MonadCatch'.
 
+flag logict
+  default: True
+  description:
+    Implement instances for `MonadLogic`.
+
 flag mtl
   default: True
   description:
@@ -71,6 +76,9 @@ library
   if flag(exceptions)
     build-depends:
       , exceptions >= 0.10.5
+  if flag(logict)
+    build-depends:
+      , logict >= 0.8.0.0
   if flag(mtl)
     other-modules:
       Control.Monad.Accum.OrphanInstances

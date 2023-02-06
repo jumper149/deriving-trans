@@ -24,6 +24,10 @@ import Control.Monad.Catch qualified as Exceptions
 import Control.Monad.Catch.Pure qualified as Exceptions.T
 #endif
 
+#if defined(VERSION_logict)
+import Control.Monad.Logic.Class qualified as LogicT
+#endif
+
 #if defined(VERSION_mtl)
 import Control.Monad.Accum qualified as Mtl
 import Control.Monad.Accum.OrphanInstances qualified as Mtl ()
@@ -231,6 +235,63 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
     ) => Exceptions.MonadCatch (ComposeT Exceptions.T.CatchT t2 m)
+#endif
+
+#if defined(VERSION_logict)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+instance {-# OVERLAPPABLE #-} (LogicT.MonadLogic (t2 m), MonadTransControlIdentity t1) => LogicT.MonadLogic (ComposeT t1 t2 m) where
+  msplit tma = (((\(a, b) -> (a, fromElevator b)) <$>) <$>) $ fromElevator $ LogicT.msplit $ toElevator tma
+   where
+    toElevator :: ComposeT t1' t2' m' a' -> Elevator t1' (t2' m') a'
+    toElevator = Ascend . deComposeT
+    fromElevator :: Elevator t1' (t2' m') a' -> ComposeT t1' t2' m' a'
+    fromElevator = ComposeT . descend
+
+-- TODO: It's not possible to use DerivingVia for this instance.
+--
+-- src/Control/Monad/Trans/Compose.hs:244:1: error:
+--     • Couldn't match representation of type: t1
+--                                                (t2 m) (Maybe (a, ComposeT t1 t2 m a))
+--                                with that of: t1 (t2 m) (Maybe (a, Elevator t1 (t2 m) a))
+--         arising from a use of ‘ghc-prim-0.8.0:GHC.Prim.coerce’
+--       NB: We cannot know what roles the parameters to ‘t1 (t2 m)’ have;
+--         we must assume that the role is nominal
+--     • In the expression:
+--         ghc-prim-0.8.0:GHC.Prim.coerce
+--           @(Elevator t1 (t2 m) a
+--             -> Elevator t1 (t2 m) (Maybe (a, Elevator t1 (t2 m) a)))
+--           @(ComposeT t1 t2 m a
+--             -> ComposeT t1 t2 m (Maybe (a, ComposeT t1 t2 m a)))
+--           (LogicT.msplit @(Elevator t1 (t2 m)))
+--       In an equation for ‘LogicT.msplit’:
+--           LogicT.msplit
+--             = ghc-prim-0.8.0:GHC.Prim.coerce
+--                 @(Elevator t1 (t2 m) a
+--                   -> Elevator t1 (t2 m) (Maybe (a, Elevator t1 (t2 m) a)))
+--                 @(ComposeT t1 t2 m a
+--                   -> ComposeT t1 t2 m (Maybe (a, ComposeT t1 t2 m a)))
+--                 (LogicT.msplit @(Elevator t1 (t2 m)))
+--       When typechecking the code for ‘LogicT.msplit’
+--         in a derived instance for ‘LogicT.MonadLogic (ComposeT t1 t2 m)’:
+--         To see the code I am typechecking, use -ddump-deriv
+--       In the instance declaration for
+--         ‘LogicT.MonadLogic (ComposeT t1 t2 m)’
+--     • Relevant bindings include
+--         msplit :: ComposeT t1 t2 m a
+--                   -> ComposeT t1 t2 m (Maybe (a, ComposeT t1 t2 m a))
+--           (bound at src/Control/Monad/Trans/Compose.hs:244:1)
+--     |
+-- 244 | deriving via Elevator t1 (t2 (m :: Type -> Type))
+--     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...
+--
+-- -- | /OVERLAPPABLE/.
+-- -- Elevated to @(t2 m)@.
+-- deriving via Elevator t1 (t2 (m :: Type -> Type))
+--   instance {-# OVERLAPPABLE #-}
+--     ( LogicT.MonadLogic (t2 m)
+--     , MonadTransControlIdentity t1
+--     ) => LogicT.MonadLogic (ComposeT t1 t2 m)
 #endif
 
 #if defined(VERSION_mtl)

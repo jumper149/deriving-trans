@@ -19,6 +19,10 @@ import Data.Kind
 import Control.Monad.Catch qualified as Exceptions
 #endif
 
+#if defined(VERSION_logict)
+import Control.Monad.Logic.Class qualified as LogicT
+#endif
+
 #if defined(VERSION_mtl)
 import Control.Monad.Accum qualified as Mtl
 import Control.Monad.Cont.Class qualified as Mtl
@@ -111,6 +115,12 @@ instance (Exceptions.MonadThrow m, MonadTrans t) => Exceptions.MonadThrow (Eleva
 instance (Exceptions.MonadCatch m, MonadTransControl t) => Exceptions.MonadCatch (Elevator t m) where
   catch throwing catching = (restoreT . pure =<<) $ liftWith $ \ runT ->
     Exceptions.catch (runT throwing) (runT . catching)
+#endif
+
+#if defined(VERSION_logict)
+instance (LogicT.MonadLogic m, MonadTransControlIdentity t) => LogicT.MonadLogic (Elevator t m) where
+  msplit tma = (((\(a, b) -> (a, lift b)) <$>) <$>) $
+    liftWithIdentity $ \runT -> LogicT.msplit $ runT tma
 #endif
 
 #if defined(VERSION_mtl)
