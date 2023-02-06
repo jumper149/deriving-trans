@@ -267,6 +267,10 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
 deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
   instance Alternative (ComposeT LogicT.T.LogicT t2 m)
 
+-- | Set by 'Logic.T.LogicT'.
+deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
+  instance MonadFail (ComposeT LogicT.T.LogicT t2 m)
+
 -- | Set by 'LogicT.T.LogicT'.
 deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
   instance MonadPlus (ComposeT LogicT.T.LogicT t2 m)
