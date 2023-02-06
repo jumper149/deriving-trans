@@ -25,6 +25,7 @@ import Control.Monad.Catch.Pure qualified as Exceptions.T
 #endif
 
 #if defined(VERSION_logict)
+import Control.Monad.Logic qualified as LogicT.T
 import Control.Monad.Logic.Class qualified as LogicT
 #endif
 
@@ -238,11 +239,21 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
 #endif
 
 #if defined(VERSION_logict)
+-- | Set by 'LogicT.T.LogicT'.
+deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
+  instance Alternative (ComposeT LogicT.T.LogicT t2 m)
+
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 instance {-# OVERLAPPABLE #-} (LogicT.MonadLogic (t2 m), MonadTransControlIdentity t1) => LogicT.MonadLogic (ComposeT t1 t2 m) where
   msplit = (((\(a, b) -> (a, ComposeT $ descend b)) <$>) <$>) .
     ComposeT . descend . LogicT.msplit . Ascend . deComposeT
+
+-- | Set by 'LogicT.T.LogicT'.
+deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => LogicT.MonadLogic (ComposeT LogicT.T.LogicT t2 m)
 #endif
 
 #if defined(VERSION_mtl)
