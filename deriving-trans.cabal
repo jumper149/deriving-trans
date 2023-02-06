@@ -104,6 +104,7 @@ library
     DerivingStrategies
     DerivingVia
     FunctionalDependencies
+    LambdaCase
     OverloadedStrings
     TypeFamilies
     UnboxedTuples

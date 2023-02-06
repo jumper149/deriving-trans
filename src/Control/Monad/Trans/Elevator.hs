@@ -118,9 +118,10 @@ instance (Exceptions.MonadCatch m, MonadTransControl t) => Exceptions.MonadCatch
 #endif
 
 #if defined(VERSION_logict)
-instance (LogicT.MonadLogic m, MonadTransControlIdentity t) => LogicT.MonadLogic (Elevator t m) where
-  msplit tma = (((\(a, b) -> (a, lift b)) <$>) <$>) $
-    liftWithIdentity $ \runT -> LogicT.msplit $ runT tma
+instance (LogicT.MonadLogic m, MonadTransControl t) => LogicT.MonadLogic (Elevator t m) where
+  msplit tma = liftWith (\runT -> LogicT.msplit $ runT tma) >>= \case
+    Nothing -> pure Nothing
+    Just (a, as) -> Just . (, restoreT as) <$> restoreT (pure a)
 #endif
 
 #if defined(VERSION_mtl)

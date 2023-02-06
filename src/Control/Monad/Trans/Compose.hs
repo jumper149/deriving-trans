@@ -277,7 +277,7 @@ deriving via LogicT.T.LogicT (t2 (m :: Type -> Type))
 
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
-instance {-# OVERLAPPABLE #-} (LogicT.MonadLogic (t2 m), MonadTransControlIdentity t1) => LogicT.MonadLogic (ComposeT t1 t2 m) where
+instance {-# OVERLAPPABLE #-} (LogicT.MonadLogic (t2 m), MonadTransControl t1) => LogicT.MonadLogic (ComposeT t1 t2 m) where
   msplit = (((\(a, b) -> (a, ComposeT $ descend b)) <$>) <$>) .
     ComposeT . descend . LogicT.msplit . Ascend . deComposeT
 
