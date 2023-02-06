@@ -41,6 +41,29 @@ jobs:
           , devShells.x86_64-linux.default
           , checks.x86_64-linux.warning
           ]
+        exclude:
+          - flag-exceptions: true
+          - flag-logict: true
+          - flag-mtl: true
+          - flag-primitive: true
+          - flag-random: true
+          - flag-resourcet: true
+          - flag-unliftio: true
+        include:
+          - flag-exceptions: true
+          - flag-logict: true
+          - flag-mtl: true
+          - flag-primitive: true
+          - flag-random: true
+          - flag-resourcet: true
+          - flag-unliftio: true
+          - flag-exceptions: true
+            flag-logict: true
+            flag-mtl: true
+            flag-primitive: true
+            flag-random: true
+            flag-resourcet: true
+            flag-unliftio: true
     steps:
     - name: "Set up GitHub Actions"
       uses: actions/checkout@v3.3.0
