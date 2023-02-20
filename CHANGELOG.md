@@ -1,5 +1,12 @@
 # Revision history for deriving-trans
 
+## 0.8.1.0 *20 Feb 2023*
+
+* Support new optional dependency logict `>= 0.8.0.0`.
+* Add `MonadLogic` instances to `Elevator` and `ComposeT` including a `LogicT` "base-case" instance.
+* Add `MonadMask` instances to `Elevator` and `ComposeT` including a `CatchT` "base-case" instance.
+* Add `MonadPlus` "base-case" instances for `ExceptT`, `MaybeT`, `CatchT` and `LogicT`.
+
 ## 0.8.0.0 *31 Jan 2023*
 
 * Update version boundaries of dependencies:
