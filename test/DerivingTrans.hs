@@ -1,4 +1,9 @@
 module DerivingTrans where
 
+import Test.Tasty
+import Test.Tasty.QuickCheck
+
 main :: IO ()
-main = putStrLn "Let's start testing!"
+main =
+  defaultMain $
+    testProperty "example" $ (1 :: Int) == 1

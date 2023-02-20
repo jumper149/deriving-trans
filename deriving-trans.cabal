@@ -117,22 +117,25 @@ library
     -Wno-unsafe
 
 test-suite test-deriving-trans
-  exposed-modules:
+  other-modules:
     DerivingTrans
   main-is: Main.hs
   hs-source-dirs: test
   build-depends:
     , base
-    , monad-control
-    , monad-control-identity
-    , transformers
-    , transformers-base
     , exceptions
     , logict
+    , monad-control
+    , monad-control-identity
     , mtl
     , primitive
+    , QuickCheck
     , random
     , resourcet
+    , tasty
+    , tasty-quickcheck
+    , transformers
+    , transformers-base
     , unliftio-core
   type: exitcode-stdio-1.0
   default-language: GHC2021
@@ -152,3 +155,4 @@ test-suite test-deriving-trans
     -Wno-missing-import-lists
     -Wno-missing-safe-haskell-mode
     -Wno-unsafe
+    -Wno-unused-packages
