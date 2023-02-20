@@ -26,10 +26,11 @@
         overlay = self: super: {
           base-orphans = pkgs.haskell.lib.dontCheck super.base-orphans;
           exceptions = super.exceptions_0_10_7;
+          logict = pkgs.haskell.lib.dontCheck super.logict;
           monad-control-identity = self.callCabal2nix "monad-control-identity" monad-control-identity.outPath {};
           mtl = super.mtl_2_3_1;
           resourcet = pkgs.haskell.lib.dontCheck super.resourcet;
-          transformers = super.transformers_0_6_0_4;
+          transformers = super.transformers_0_6_1_0;
         };
         cabalOptions =
           let
