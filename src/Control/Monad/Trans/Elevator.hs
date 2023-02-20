@@ -115,6 +115,15 @@ instance (Exceptions.MonadThrow m, MonadTrans t) => Exceptions.MonadThrow (Eleva
 instance (Exceptions.MonadCatch m, MonadTransControl t) => Exceptions.MonadCatch (Elevator t m) where
   catch throwing catching = (restoreT . pure =<<) $ liftWith $ \ runT ->
     Exceptions.catch (runT throwing) (runT . catching)
+
+instance (Exceptions.MonadMask m, MonadTransControlIdentity t) => Exceptions.MonadMask (Elevator t m) where
+  mask f = liftWithIdentity $ \ runT -> Exceptions.mask $ \ u -> runT $ f $ lift . u . runT
+  uninterruptibleMask f = liftWithIdentity $ \ runT -> Exceptions.uninterruptibleMask $ \ u -> runT $ f $ lift . u . runT
+  generalBracket acquire release use = liftWithIdentity $ \ runT ->
+    Exceptions.generalBracket
+      (runT acquire)
+      (\ resource exitCase -> runT $ release resource exitCase)
+      (\ resource -> runT $ use resource)
 #endif
 
 #if defined(VERSION_logict)

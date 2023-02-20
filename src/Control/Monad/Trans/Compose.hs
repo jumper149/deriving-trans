@@ -260,6 +260,20 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
   instance
     ( Monad (t2 m)
     ) => Exceptions.MonadCatch (ComposeT Exceptions.T.CatchT t2 m)
+
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( Exceptions.MonadMask (t2 m)
+    , MonadTransControlIdentity t1
+    ) => Exceptions.MonadMask (ComposeT t1 t2 m)
+
+-- | Set by 'Exceptions.T.CatchT'.
+deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
+  instance
+    ( Monad (t2 m)
+    ) => Exceptions.MonadMask (ComposeT Exceptions.T.CatchT t2 m)
 #endif
 
 #if defined(VERSION_logict)
