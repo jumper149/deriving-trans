@@ -266,7 +266,7 @@ deriving via Exceptions.T.CatchT (t2 (m :: Type -> Type))
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
     ( Exceptions.MonadMask (t2 m)
-    , MonadTransControlIdentity t1
+    , MonadTransControl t1
     ) => Exceptions.MonadMask (ComposeT t1 t2 m)
 
 -- | Set by 'Exceptions.T.CatchT'.

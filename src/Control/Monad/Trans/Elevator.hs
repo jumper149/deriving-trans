@@ -116,14 +116,29 @@ instance (Exceptions.MonadCatch m, MonadTransControl t) => Exceptions.MonadCatch
   catch throwing catching = (restoreT . pure =<<) $ liftWith $ \ runT ->
     Exceptions.catch (runT throwing) (runT . catching)
 
-instance (Exceptions.MonadMask m, MonadTransControlIdentity t) => Exceptions.MonadMask (Elevator t m) where
-  mask f = liftWithIdentity $ \ runT -> Exceptions.mask $ \ u -> runT $ f $ lift . u . runT
-  uninterruptibleMask f = liftWithIdentity $ \ runT -> Exceptions.uninterruptibleMask $ \ u -> runT $ f $ lift . u . runT
-  generalBracket acquire release use = liftWithIdentity $ \ runT ->
-    Exceptions.generalBracket
-      (runT acquire)
-      (\ resource exitCase -> runT $ release resource exitCase)
-      (\ resource -> runT $ use resource)
+instance (Exceptions.MonadMask m, MonadTransControl t) => Exceptions.MonadMask (Elevator t m) where
+  mask f = (restoreT . pure =<<) $ liftWith $ \ runT ->
+    Exceptions.mask $ \ u -> runT $ f $ restoreT . u . runT
+  uninterruptibleMask f = (restoreT . pure =<<) $ liftWith $ \ runT ->
+    Exceptions.uninterruptibleMask $ \ u -> runT $ f $ restoreT . u . runT
+  generalBracket acquire release use = do
+    (usageResult', releaseResult') <- liftWith $ \ runT -> do
+      Exceptions.generalBracket
+        (runT acquire)
+        (\ resource' exitCase' -> runT $ do
+          resource <- restoreT $ pure resource'
+          case exitCase' of
+            Exceptions.ExitCaseSuccess x' ->
+              release resource . Exceptions.ExitCaseSuccess =<< restoreT (pure x')
+            Exceptions.ExitCaseException e ->
+              release resource (Exceptions.ExitCaseException e)
+            Exceptions.ExitCaseAbort ->
+              release resource Exceptions.ExitCaseAbort
+        )
+        (\ resource -> runT $ use =<< restoreT (pure resource))
+    usageResult <- restoreT $ pure usageResult'
+    releaseResult <- restoreT $ pure releaseResult'
+    pure (usageResult, releaseResult)
 #endif
 
 #if defined(VERSION_logict)
