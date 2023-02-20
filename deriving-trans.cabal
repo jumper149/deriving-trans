@@ -28,7 +28,7 @@ extra-source-files: CHANGELOG.md
 flag exceptions
   default: True
   description:
-    Implement instances for 'MonadThrow' and 'MonadCatch'.
+    Implement instances for exception's type classes.
 
 flag logict
   default: True
