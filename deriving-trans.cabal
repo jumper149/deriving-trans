@@ -119,6 +119,8 @@ library
 test-suite test-deriving-trans
   other-modules:
     DerivingTrans
+    DerivingTrans.Applicative
+    DerivingTrans.Functor
   main-is: Main.hs
   hs-source-dirs: test
   build-depends:
@@ -149,6 +151,7 @@ test-suite test-deriving-trans
     UnboxedTuples
   ghc-options:
     -Weverything
+    -Wno-all-missed-specialisations
     -Wno-implicit-prelude
     -Wno-missing-kind-signatures
     -Wno-missing-export-lists
