@@ -5,7 +5,9 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 
 tests :: TestTree
-tests = testGroup "Applicative"
+tests =
+  testGroup
+    "Applicative"
     [ testProperty "Identity" $ lawIdentity (T.runExcept @()) (pure ())
     ]
 

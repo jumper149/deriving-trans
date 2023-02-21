@@ -7,7 +7,8 @@ import Test.Tasty
 main :: IO ()
 main =
   defaultMain $
-    testGroup "deriving-trans"
-    [ DerivingTrans.Functor.tests
-    , DerivingTrans.Applicative.tests
-    ]
+    testGroup
+      "deriving-trans"
+      [ DerivingTrans.Functor.tests
+      , DerivingTrans.Applicative.tests
+      ]

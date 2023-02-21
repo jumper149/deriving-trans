@@ -46,6 +46,7 @@
       haskellPackages.shellFor {
         buildInputs = with haskellPackages; [
           cabal-install
+          fourmolu
           ghcid
           haskell-language-server
           hlint
@@ -70,6 +71,24 @@
         ];
       };
       in haskell.lib.overrideCabal self.packages.x86_64-linux.default override;
+
+    checks.x86_64-linux.fourmolu =
+      with import nixpkgs { system = "x86_64-linux"; };
+      stdenv.mkDerivation {
+        name = "deriving-trans-fourmolu";
+        src = ./.;
+        buildPhase = ''
+          fourmolu --mode check test
+        '';
+        installPhase = ''
+          mkdir $out
+        '';
+        buildInputs = [
+        ];
+        nativeBuildInputs = [
+          haskellPackages.fourmolu
+        ];
+      };
 
   };
 }
