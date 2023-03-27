@@ -248,7 +248,7 @@ instance (UnliftIO.MonadUnliftIO m, MonadTransControlIdentity t) => UnliftIO.Mon
 -- @
 -- newtype CustomT m a = CustomT { unCustomT :: 'Control.Monad.Trans.Identity.IdentityT' m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
---   deriving newtype ('MonadTrans', 'MonadTransControl')
+--   deriving newtype ('MonadTrans', 'MonadTransControl', 'MonadTransControlIdentity')
 --
 -- runCustomT :: CustomT m a -> m a
 -- runCustomT = 'Control.Monad.Trans.Identity.runIdentityT' . unCustomT
