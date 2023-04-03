@@ -13,6 +13,7 @@ jobs:
           # All flags `false`.
           - flag-exceptions: false
             flag-logict: false
+            flag-monad-logger: false
             flag-mtl: false
             flag-primitive: false
             flag-random: false
@@ -22,6 +23,7 @@ jobs:
           # 1 flag `true`.
           - flag-exceptions: true
             flag-logict: false
+            flag-monad-logger: false
             flag-mtl: false
             flag-primitive: false
             flag-random: false
@@ -29,6 +31,7 @@ jobs:
             flag-unliftio: false
           - flag-exceptions: false
             flag-logict: true
+            flag-monad-logger: false
             flag-mtl: false
             flag-primitive: false
             flag-random: false
@@ -36,6 +39,15 @@ jobs:
             flag-unliftio: false
           - flag-exceptions: false
             flag-logict: false
+            flag-monad-logger: true
+            flag-mtl: false
+            flag-primitive: false
+            flag-random: false
+            flag-resourcet: false
+            flag-unliftio: false
+          - flag-exceptions: false
+            flag-logict: false
+            flag-monad-logger: false
             flag-mtl: true
             flag-primitive: false
             flag-random: false
@@ -43,6 +55,7 @@ jobs:
             flag-unliftio: false
           - flag-exceptions: false
             flag-logict: false
+            flag-monad-logger: false
             flag-mtl: false
             flag-primitive: true
             flag-random: false
@@ -50,6 +63,7 @@ jobs:
             flag-unliftio: false
           - flag-exceptions: false
             flag-logict: false
+            flag-monad-logger: false
             flag-mtl: false
             flag-primitive: false
             flag-random: true
@@ -57,6 +71,7 @@ jobs:
             flag-unliftio: false
           - flag-exceptions: false
             flag-logict: false
+            flag-monad-logger: false
             flag-mtl: false
             flag-primitive: false
             flag-random: false
@@ -64,6 +79,7 @@ jobs:
             flag-unliftio: false
           - flag-exceptions: false
             flag-logict: false
+            flag-monad-logger: false
             flag-mtl: false
             flag-primitive: false
             flag-random: false
@@ -73,6 +89,7 @@ jobs:
           # All flags `true`.
           - flag-exceptions: true
             flag-logict: true
+            flag-monad-logger: true
             flag-mtl: true
             flag-primitive: true
             flag-random: true
@@ -93,6 +110,7 @@ jobs:
       run: |
         sed --expression='s/^  "exceptions" = true;$/  "exceptions" = ${{ matrix.flag-exceptions }};/g' --in-place flags.nix
         sed --expression='s/^  "logict" = true;$/  "logict" = ${{ matrix.flag-logict }};/g' --in-place flags.nix
+        sed --expression='s/^  "monad-logger" = true;$/  "monad-logger" = ${{ matrix.flag-monad-logger }};/g' --in-place flags.nix
         sed --expression='s/^  "mtl" = true;$/  "mtl" = ${{ matrix.flag-mtl }};/g' --in-place flags.nix
         sed --expression='s/^  "primitive" = true;$/  "primitive" = ${{ matrix.flag-primitive }};/g' --in-place flags.nix
         sed --expression='s/^  "random" = true;$/  "random" = ${{ matrix.flag-random }};/g' --in-place flags.nix
