@@ -24,13 +24,6 @@
       let
         source = nix-gitignore.gitignoreSource [] ./.;
         overlay = self: super: {
-          base-orphans = pkgs.haskell.lib.dontCheck super.base-orphans;
-          exceptions = super.exceptions_0_10_7;
-          logict = pkgs.haskell.lib.dontCheck super.logict;
-          monad-control-identity = self.callCabal2nix "monad-control-identity" monad-control-identity.outPath {};
-          mtl = super.mtl_2_3_1;
-          resourcet = pkgs.haskell.lib.dontCheck super.resourcet;
-          transformers = super.transformers_0_6_1_0;
         };
         cabalOptions =
           let
@@ -39,23 +32,23 @@
           in
             lib.strings.escapeShellArgs (builtins.attrValues (builtins.mapAttrs setFlag flags));
 
-      in (haskellPackages.extend overlay).callCabal2nixWithOptions "deriving-trans" source cabalOptions {};
+      in (haskell.packages.ghc96.extend overlay).callCabal2nixWithOptions "deriving-trans" source cabalOptions {};
 
     devShells.x86_64-linux.default =
       with import nixpkgs { system = "x86_64-linux"; };
-      haskellPackages.shellFor {
-        buildInputs = with haskellPackages; [
+      haskell.packages.ghc96.shellFor {
+        buildInputs = with haskell.packages.ghc96; [
           cabal-install
-          ghcid
+#          ghcid
           haskell-language-server
-          hlint
+#          hlint
           implicit-hie
           rnix-lsp
         ];
         packages = haskellPackages: [
           self.packages.x86_64-linux.default
         ];
-        withHoogle = true;
+        withHoogle = false;
       };
 
     checks.x86_64-linux.build = self.packages.x86_64-linux.default;
