@@ -109,6 +109,7 @@ library
     UnboxedTuples
   ghc-options:
     -Weverything
+    -Wno-all-missed-specialisations
     -Wno-implicit-prelude
     -Wno-missing-kind-signatures
     -Wno-missing-export-lists
