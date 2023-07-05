@@ -1,5 +1,7 @@
 # Revision history for deriving-trans
 
+## 0.9.0.0 *05 Jul 2023*
+
 * Drop support for `GHC < 9.6`.
 
 ## 0.8.1.0 *20 Feb 2023*
