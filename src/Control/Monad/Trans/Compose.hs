@@ -117,25 +117,28 @@ instance (MonadTransControlIdentity t1, MonadTransControlIdentity t2) => MonadTr
   liftWithIdentity inner = ComposeT $ liftWithIdentity $ \ runId1 ->
     liftWithIdentity $ \ runId2 -> inner $ runId2 . runId1 . deComposeT
 
--- | Elevated to @m@.
-deriving via Elevator (ComposeT t1 t2) m
-  instance
-    ( MonadBase b m
-    , MonadTrans (ComposeT t1 t2)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadBase b (t2 m)
+    , MonadTrans t1
     ) => MonadBase b (ComposeT t1 t2 m)
 
--- | Elevated to @m@.
-deriving via Elevator (ComposeT t1 t2) m
-  instance
-    ( MonadBaseControl b m
-    , MonadTransControl (ComposeT t1 t2)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadBaseControl b (t2 m)
+    , MonadTransControl t1
     ) => MonadBaseControl b (ComposeT t1 t2 m)
 
--- | Elevated to @m@.
-deriving via Elevator (ComposeT t1 t2) m
-  instance
-    ( MonadBaseControlIdentity b m
-    , MonadTransControlIdentity (ComposeT t1 t2)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadBaseControlIdentity b (t2 m)
+    , MonadTransControlIdentity t1
     ) => MonadBaseControlIdentity b (ComposeT t1 t2 m)
 
 -- | /OVERLAPPABLE/.
@@ -182,11 +185,12 @@ deriving via Elevator t1 (t2 (m :: Type -> Type))
     , MonadTransControlIdentity t1
     ) => MonadFix (ComposeT t1 t2 m)
 
--- | Elevated to @m@.
-deriving via Elevator (ComposeT t1 t2) m
-  instance
-    ( MonadIO m
-    , MonadTrans (ComposeT t1 t2)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( MonadIO (t2 m)
+    , MonadTrans t1
     ) => MonadIO (ComposeT t1 t2 m)
 
 -- | /OVERLAPPABLE/.
@@ -333,33 +337,24 @@ deriving via MonadLogger.WriterLoggingT (t2 (m :: Type -> Type))
     ( Monad (t2 m)
     ) => MonadLogger.MonadLogger (ComposeT MonadLogger.WriterLoggingT t2 m)
 
--- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
     ( MonadLogger.MonadLoggerIO (t2 m)
     , MonadTrans t1
-    , MonadIO m
-    , MonadTrans t2
     ) => MonadLogger.MonadLoggerIO (ComposeT t1 t2 m)
 
--- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
 -- | Set by 'MonadLogger.LoggingT'.
 deriving via MonadLogger.LoggingT (t2 (m :: Type -> Type))
   instance
     ( MonadIO (t2 m)
-    , MonadIO m
-    , MonadTrans t2
     ) => MonadLogger.MonadLoggerIO (ComposeT MonadLogger.LoggingT t2 m)
 
--- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
 -- | Set by 'MonadLogger.NoLoggingT'.
 deriving via MonadLogger.NoLoggingT (t2 (m :: Type -> Type))
   instance
     ( MonadIO (t2 m)
-    , MonadIO m
-    , MonadTrans t2
     ) => MonadLogger.MonadLoggerIO (ComposeT MonadLogger.NoLoggingT t2 m)
 #endif
 
@@ -611,33 +606,28 @@ instance {-# OVERLAPPABLE #-} (Random.RandomGenM g r (t2 m), MonadTrans t1) => R
 #endif
 
 #if defined(VERSION_resourcet)
--- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
 -- | /OVERLAPPABLE/.
 -- Elevated to @(t2 m)@.
 deriving via Elevator t1 (t2 (m :: Type -> Type))
   instance {-# OVERLAPPABLE #-}
     ( ResourceT.MonadResource (t2 m)
     , MonadTrans t1
-    , MonadIO m
-    , MonadTrans t2
     ) => ResourceT.MonadResource (ComposeT t1 t2 m)
 
--- TODO: `MonadIO m` and `MonadTrans t2` should not be required for this instance
 -- | Set by 'ResourceT.ResourceT'.
 deriving via ResourceT.ResourceT (t2 (m :: Type -> Type))
   instance
     ( MonadIO (t2 m)
-    , MonadIO m
-    , MonadTrans t2
     ) => ResourceT.MonadResource (ComposeT ResourceT.ResourceT t2 m)
 #endif
 
 #if defined(VERSION_unliftio_core)
--- | Elevated to @m@.
-deriving via Elevator (ComposeT t1 t2) m
-  instance
-    ( UnliftIO.MonadUnliftIO m
-    , MonadTransControlIdentity (ComposeT t1 t2)
+-- | /OVERLAPPABLE/.
+-- Elevated to @(t2 m)@.
+deriving via Elevator t1 (t2 (m :: Type -> Type))
+  instance {-# OVERLAPPABLE #-}
+    ( UnliftIO.MonadUnliftIO (t2 m)
+    , MonadTransControlIdentity t1
     ) =>
     UnliftIO.MonadUnliftIO (ComposeT t1 t2 m)
 #endif
