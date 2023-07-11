@@ -59,7 +59,8 @@
       with import nixpkgs { system = "x86_64-linux"; };
       let override = old: {
         configureFlags = [
-          "--ghc-option=-Werror"
+          # TODO: Enable -Werror with GHC 9.6.3.
+          #"--ghc-option=-Werror"
         ];
       };
       in haskell.lib.overrideCabal self.packages.x86_64-linux.default override;
