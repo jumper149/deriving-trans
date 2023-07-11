@@ -1,5 +1,9 @@
 # Revision history for deriving-trans
 
+* Support new optional dependency monad-logger `>= 0.3.38`.
+* Add `MonadLogger` and `MonadLoggerIO` instances to `Elevator` and `ComposeT`.
+* Add `MonadLogger` and `MonadLoggerIO` "base-case" instances for `LoggingT`, `NoLoggingT` and `WriterLoggingT`.
+
 ## 0.9.0.0 *05 Jul 2023*
 
 * Drop support for `GHC < 9.6`.
