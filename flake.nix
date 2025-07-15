@@ -24,6 +24,8 @@
       let
         source = nix-gitignore.gitignoreSource [] ./.;
         overlay = self: super: {
+          base-orphans = pkgs.haskell.lib.dontCheck super.base-orphans;
+          random = pkgs.haskell.lib.dontCheck super.random_1_3_1;
         };
         cabalOptions =
           let
@@ -32,7 +34,7 @@
           in
             lib.strings.escapeShellArgs (builtins.attrValues (builtins.mapAttrs setFlag flags));
 
-      in (haskell.packages.ghc96.extend overlay).callCabal2nixWithOptions "deriving-trans" source cabalOptions {};
+      in (haskell.packages.ghc912.extend overlay).callCabal2nixWithOptions "deriving-trans" source cabalOptions {};
 
     devShells.x86_64-linux.default =
       with import nixpkgs { system = "x86_64-linux"; };
@@ -60,7 +62,7 @@
       let override = old: {
         configureFlags = [
           # TODO: Enable -Werror with GHC 9.6.3.
-          #"--ghc-option=-Werror"
+          "--ghc-option=-Werror"
         ];
       };
       in haskell.lib.overrideCabal self.packages.x86_64-linux.default override;
