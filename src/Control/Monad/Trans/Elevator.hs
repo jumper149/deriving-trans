@@ -78,6 +78,7 @@ type Elevator :: ((Type -> Type) -> Type -> Type) -- @t@
               -> (Type -> Type) -- @m@
               -> Type -- @a@
               -> Type
+type role Elevator representational nominal nominal
 newtype Elevator t m a = Ascend { descend :: t m a }
   deriving newtype (Applicative, Functor, Monad)
   deriving newtype (MonadTrans, MonadTransControl, MonadTransControlIdentity)

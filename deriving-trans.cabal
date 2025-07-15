@@ -115,6 +115,7 @@ library
     OverloadedStrings
     TypeFamilies
     UnboxedTuples
+    RoleAnnotations
   ghc-options:
     -Weverything
     -Wno-all-missed-specialisations
