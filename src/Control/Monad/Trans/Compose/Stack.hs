@@ -53,6 +53,7 @@ runStackT (runRemainingStackT :..> runNextT) = runStackT runRemainingStackT . ru
 -- This is basically a heterogeneous list of monad transformer runners.
 --
 -- 'RunStackT' can only be used for monad transformer stacks without monadic state t'Control.Monad.Trans.Control.StT'.
+type role RunStackT nominal nominal nominal
 data RunStackT :: Stack -> (Type -> Type) -> Type -> Type where
   -- | run an empty monad transformer stack
   RunNilT :: RunStackT NilT m a

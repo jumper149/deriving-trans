@@ -102,6 +102,7 @@ type ComposeT :: ((Type -> Type) -> Type -> Type) -- @t1@
               -> (Type -> Type) -- @m@
               -> Type -- @a@
               -> Type
+type role ComposeT representational nominal nominal nominal
 newtype ComposeT t1 t2 m a = ComposeT { deComposeT :: t1 (t2 m) a }
   deriving newtype (Applicative, Functor, Monad)
 
