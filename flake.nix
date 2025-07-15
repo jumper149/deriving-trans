@@ -36,14 +36,14 @@
 
     devShells.x86_64-linux.default =
       with import nixpkgs { system = "x86_64-linux"; };
-      haskell.packages.ghc96.shellFor {
-        buildInputs = with haskell.packages.ghc96; [
+      haskell.packages.ghc912.shellFor {
+        buildInputs = with haskell.packages.ghc912; [
           cabal-install
 #          ghcid
           haskell-language-server
 #          hlint
           implicit-hie
-          rnix-lsp
+          nil
         ];
         packages = haskellPackages: [
           self.packages.x86_64-linux.default
