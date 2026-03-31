@@ -51,7 +51,7 @@ flag primitive
     Implement instances for `PrimMonad`.
 
 flag random
-  default: True
+  default: False
   description:
     Implement instances for random's type classes.
 
@@ -98,7 +98,7 @@ library
       , primitive >= 0.7.1.0
   if flag(random)
     build-depends:
-      , random >= 1.2
+      , random >= 1.2 && < 1.3
   if flag(resourcet)
     build-depends:
       , resourcet >= 1.2
