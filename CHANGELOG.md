@@ -1,5 +1,7 @@
 # Revision history for deriving-trans
 
+## 0.10.0.0 *02 Apr 2026*
+
 * Add support for `GHC 9.12`.
 * Add explicit role annotations
 * Disable the `random` flag by default.
