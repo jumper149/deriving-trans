@@ -24,8 +24,6 @@
       let
         source = nix-gitignore.gitignoreSource [] ./.;
         overlay = self: super: {
-          base-orphans = pkgs.haskell.lib.dontCheck super.base-orphans;
-          random = pkgs.haskell.lib.dontCheck super.random_1_3_1;
         };
         cabalOptions =
           let
