@@ -4,7 +4,7 @@
   "monad-logger" = true;
   "mtl" = true;
   "primitive" = true;
-  "random" = true;
+  "random" = false;
   "resourcet" = true;
   "unliftio" = true;
 }
