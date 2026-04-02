@@ -1,5 +1,10 @@
 # Revision history for deriving-trans
 
+* Add support for `GHC 9.12`.
+* Add explicit role annotations
+* Disable the `random` flag by default.
+* Drop support for the random version `>= 1.13`.
+
 ## 0.9.1.0 *12 Jul 2023*
 
 * Support new optional dependency monad-logger `>= 0.3.38`.
