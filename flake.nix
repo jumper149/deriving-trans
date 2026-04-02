@@ -59,7 +59,6 @@
       with import nixpkgs { system = "x86_64-linux"; };
       let override = old: {
         configureFlags = [
-          # TODO: Enable -Werror with GHC 9.6.3.
           "--ghc-option=-Werror"
         ];
       };
