@@ -89,10 +89,9 @@ library
       , monad-logger >= 0.3.38
   if flag(mtl)
     other-modules:
-      Control.Monad.Accum.OrphanInstances
       Control.Monad.Select.OrphanInstances
     build-depends:
-      , mtl >= 2.3 && < 2.3.2
+      , mtl >= 2.3.2
   if flag(primitive)
     build-depends:
       , primitive >= 0.7.1.0

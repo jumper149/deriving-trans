@@ -32,18 +32,18 @@
           in
             lib.strings.escapeShellArgs (builtins.attrValues (builtins.mapAttrs setFlag flags));
 
-      in (haskell.packages.ghc912.extend overlay).callCabal2nixWithOptions "deriving-trans" source cabalOptions {};
+      in (haskell.packages.ghc9124.extend overlay).callCabal2nixWithOptions "deriving-trans" source cabalOptions {};
 
     devShells.x86_64-linux.default =
       with import nixpkgs { system = "x86_64-linux"; };
-      haskell.packages.ghc912.shellFor {
-        buildInputs = with haskell.packages.ghc912; [
+      haskell.packages.ghc9124.shellFor {
+        buildInputs = with haskell.packages.ghc9124; [
           cabal-install
 #          ghcid
-          haskell-language-server
+#          haskell-language-server
 #          hlint
-          implicit-hie
-          nil
+#          implicit-hie
+#          nil
         ];
         packages = haskellPackages: [
           self.packages.x86_64-linux.default
