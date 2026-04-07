@@ -35,7 +35,6 @@ import Control.Monad.Logger qualified as MonadLogger
 
 #if defined(VERSION_mtl)
 import Control.Monad.Accum qualified as Mtl
-import Control.Monad.Accum.OrphanInstances qualified as Mtl ()
 import Control.Monad.Cont.Class qualified as Mtl
 import Control.Monad.Error.Class qualified as Mtl
 import Control.Monad.Reader.Class qualified as Mtl
