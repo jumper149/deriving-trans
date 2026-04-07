@@ -1,5 +1,7 @@
 # Revision history for deriving-trans
 
+* Raise lower version bound for mtl `>= 2.3.2`.
+
 ## 0.10.0.0 *02 Apr 2026*
 
 * Add support for `GHC 9.12`.
