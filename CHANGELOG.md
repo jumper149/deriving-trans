@@ -1,5 +1,7 @@
 # Revision history for deriving-trans
 
+## 0.11.0.0 *07 Apr 2026*
+
 * Raise lower version bound for mtl `>= 2.3.2`.
 * Completely remove the `random` flag and drop the optional dependency.
 
