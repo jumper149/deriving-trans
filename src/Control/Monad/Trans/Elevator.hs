@@ -42,11 +42,6 @@ import Control.Monad.Writer.Class qualified as Mtl
 import Control.Monad.Primitive qualified as Primitive
 #endif
 
-#if defined(VERSION_random)
-import Data.Functor.Const qualified as Random
-import System.Random.Stateful qualified as Random
-#endif
-
 #if defined(VERSION_resourcet)
 import Control.Monad.Trans.Resource qualified as ResourceT
 #endif
@@ -200,25 +195,6 @@ instance (Mtl.MonadWriter w m, MonadTransControl t) => Mtl.MonadWriter w (Elevat
 instance (Primitive.PrimMonad m, MonadTrans t) => Primitive.PrimMonad (Elevator t m) where
   type PrimState (Elevator t m) = Primitive.PrimState m
   primitive = lift . Primitive.primitive
-#endif
-
-#if defined(VERSION_random)
-instance (Random.StatefulGen g m, MonadTrans t) => Random.StatefulGen (Random.Const g (Elevator t)) (Elevator t m) where
-  uniformWord32R word32 = lift . Random.uniformWord32R word32 . Random.getConst
-  uniformWord64R word64 = lift . Random.uniformWord64R word64 . Random.getConst
-  uniformWord8 = lift . Random.uniformWord8 . Random.getConst
-  uniformWord16 = lift . Random.uniformWord16 . Random.getConst
-  uniformWord32 = lift . Random.uniformWord32 . Random.getConst
-  uniformWord64 = lift . Random.uniformWord64 . Random.getConst
-  uniformShortByteString n = lift . Random.uniformShortByteString n . Random.getConst
-
-instance (Random.FrozenGen f m, MonadTrans t) => Random.FrozenGen (Random.Const f (Elevator t)) (Elevator t m) where
-  type MutableGen (Const f (Elevator t)) (Elevator t m) = Const (Random.MutableGen f m) (Elevator t)
-  freezeGen = lift . fmap Random.Const . Random.freezeGen . Random.getConst
-  thawGen = lift . fmap Random.Const . Random.thawGen . Random.getConst
-
-instance (Random.RandomGenM g r m, MonadTrans t) => Random.RandomGenM (Random.Const g (Elevator t)) r (Elevator t m) where
-  applyRandomGenM f = lift . Random.applyRandomGenM f . Random.getConst
 #endif
 
 #if defined(VERSION_resourcet)
