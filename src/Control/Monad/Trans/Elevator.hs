@@ -1,24 +1,54 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE TupleSections #-}
 
 module Control.Monad.Trans.Elevator where
 
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Base
-import Control.Monad.Cont.Class
-import Control.Monad.Error.Class
 import Control.Monad.Fix
-import Control.Monad.Reader.Class
-import Control.Monad.RWS.Class (MonadRWS)
-import Control.Monad.State.Class
-import Control.Monad.Trans
+import Control.Monad.IO.Class
+import Control.Monad.Trans.Class
 import Control.Monad.Trans.Control
 import Control.Monad.Trans.Control.Identity
-import Control.Monad.Writer.Class
 import Control.Monad.Zip
 import Data.Kind
+
+#if defined(VERSION_exceptions)
+import Control.Monad.Catch qualified as Exceptions
+#endif
+
+#if defined(VERSION_logict)
+import Control.Monad.Logic.Class qualified as LogicT
+#endif
+
+#if defined(VERSION_monad_logger)
+import Control.Monad.Logger qualified as MonadLogger
+#endif
+
+#if defined(VERSION_mtl)
+import Control.Monad.Accum qualified as Mtl
+import Control.Monad.Cont.Class qualified as Mtl
+import Control.Monad.Error.Class qualified as Mtl
+import Control.Monad.Reader.Class qualified as Mtl
+import Control.Monad.RWS.Class qualified as Mtl (MonadRWS)
+import Control.Monad.Select qualified as Mtl
+import Control.Monad.State.Class qualified as Mtl
+import Control.Monad.Writer.Class qualified as Mtl
+#endif
+
+#if defined(VERSION_primitive)
+import Control.Monad.Primitive qualified as Primitive
+#endif
+
+#if defined(VERSION_resourcet)
+import Control.Monad.Trans.Resource qualified as ResourceT
+#endif
+
+#if defined(VERSION_unliftio_core)
+import Control.Monad.IO.Unlift qualified as UnliftIO
+#endif
 
 -- * 'Elevator'
 --
@@ -39,69 +69,143 @@ import Data.Kind
 -- [@t :: ('Type' -> 'Type') -> 'Type' -> 'Type'@] monad transformer
 -- [@m :: 'Type' -> 'Type'@] monad
 -- [@a :: 'Type'@] value
-type Elevator :: ((Type -> Type) -> Type -> Type) -- ^ @t@
-              -> (Type -> Type) -- ^ @m@
-              -> Type -- ^ @a@
+type Elevator :: ((Type -> Type) -> Type -> Type) -- @t@
+              -> (Type -> Type) -- @m@
+              -> Type -- @a@
               -> Type
+type role Elevator representational nominal nominal
 newtype Elevator t m a = Ascend { descend :: t m a }
   deriving newtype (Applicative, Functor, Monad)
   deriving newtype (MonadTrans, MonadTransControl, MonadTransControlIdentity)
 
-instance (Monad (t m), MonadTrans t, MonadBase b m) => MonadBase b (Elevator t m) where
+instance (MonadBase b m, MonadTrans t) => MonadBase b (Elevator t m) where
   liftBase = lift . liftBase
 
-instance (Monad (t m), MonadTransControl t, MonadBaseControl b m) => MonadBaseControl b (Elevator t m) where
+instance (MonadBaseControl b m, MonadTransControl t) => MonadBaseControl b (Elevator t m) where
   type StM (Elevator t m) a = StM m (StT t a)
   liftBaseWith f = liftWith $ \ runT -> liftBaseWith $ \ runInBase -> f $ runInBase . runT
   restoreM = restoreT . restoreM
 
-instance (Monad (t m), MonadTransControlIdentity t, MonadBaseControlIdentity b m) => MonadBaseControlIdentity b (Elevator t m) where
+instance (MonadBaseControlIdentity b m, MonadTransControlIdentity t) => MonadBaseControlIdentity b (Elevator t m) where
   liftBaseWithIdentity = defaultLiftBaseWithIdentity
 
-instance (Monad (t m), MonadTransControl t, Monad m, Alternative m) => Alternative (Elevator t m) where
+instance (Alternative m, Monad m, MonadTransControl t) => Alternative (Elevator t m) where
   empty = lift empty
   (<|>) x y = (restoreT . pure =<<) $ liftWith $ \ runT -> runT x <|> runT y
 
-instance (Monad (t m), MonadTrans t, MonadFail m) => MonadFail (Elevator t m) where
+instance (MonadFail m, MonadTrans t) => MonadFail (Elevator t m) where
   fail = lift . fail
 
-instance (Monad (t m), MonadTransControlIdentity t, MonadFix m) => MonadFix (Elevator t m) where
+instance (MonadFix m, MonadTransControlIdentity t) => MonadFix (Elevator t m) where
   mfix f = liftWithIdentity $ \ runT -> mfix $ \ x -> runT $ f x
 
-instance (Monad (t m), MonadTrans t, MonadIO m) => MonadIO (Elevator t m) where
+instance (MonadIO m, MonadTrans t) => MonadIO (Elevator t m) where
   liftIO = lift . liftIO
 
-instance (Monad (t m), MonadTransControl t, MonadPlus m) => MonadPlus (Elevator t m)
+instance (MonadPlus m, MonadTransControl t) => MonadPlus (Elevator t m)
 
-instance (Monad (t m), MonadTransControlIdentity t, MonadZip m) => MonadZip (Elevator t m) where
+instance (MonadZip m, MonadTransControlIdentity t) => MonadZip (Elevator t m) where
   mzip x y = liftWithIdentity $ \ runT ->
     mzip (runT x) (runT y)
 
-instance (Monad (t m), MonadTransControl t, MonadCont m) => MonadCont (Elevator t m) where
+#if defined(VERSION_exceptions)
+instance (Exceptions.MonadThrow m, MonadTrans t) => Exceptions.MonadThrow (Elevator t m) where
+  throwM = lift . Exceptions.throwM
+
+instance (Exceptions.MonadCatch m, MonadTransControl t) => Exceptions.MonadCatch (Elevator t m) where
+  catch throwing catching = (restoreT . pure =<<) $ liftWith $ \ runT ->
+    Exceptions.catch (runT throwing) (runT . catching)
+
+instance (Exceptions.MonadMask m, MonadTransControl t) => Exceptions.MonadMask (Elevator t m) where
+  mask f = (restoreT . pure =<<) $ liftWith $ \ runT ->
+    Exceptions.mask $ \ u -> runT $ f $ restoreT . u . runT
+  uninterruptibleMask f = (restoreT . pure =<<) $ liftWith $ \ runT ->
+    Exceptions.uninterruptibleMask $ \ u -> runT $ f $ restoreT . u . runT
+  generalBracket acquire release use = do
+    (usageResult', releaseResult') <- liftWith $ \ runT -> do
+      Exceptions.generalBracket
+        (runT acquire)
+        (\ resource' exitCase' -> runT $ do
+          resource <- restoreT $ pure resource'
+          case exitCase' of
+            Exceptions.ExitCaseSuccess x' ->
+              release resource . Exceptions.ExitCaseSuccess =<< restoreT (pure x')
+            Exceptions.ExitCaseException e ->
+              release resource (Exceptions.ExitCaseException e)
+            Exceptions.ExitCaseAbort ->
+              release resource Exceptions.ExitCaseAbort
+        )
+        (\ resource -> runT $ use =<< restoreT (pure resource))
+    usageResult <- restoreT $ pure usageResult'
+    releaseResult <- restoreT $ pure releaseResult'
+    pure (usageResult, releaseResult)
+#endif
+
+#if defined(VERSION_logict)
+instance (LogicT.MonadLogic m, MonadTransControlIdentity t) => LogicT.MonadLogic (Elevator t m) where
+  msplit tma = (((\(a, b) -> (a, lift b)) <$>) <$>) $
+    liftWithIdentity $ \runT -> LogicT.msplit $ runT tma
+#endif
+
+#if defined(VERSION_monad_logger)
+instance (MonadLogger.MonadLogger m, MonadTrans t) => MonadLogger.MonadLogger (Elevator t m) where
+  monadLoggerLog location logSource logLevel = lift .
+    MonadLogger.monadLoggerLog location logSource logLevel
+
+instance (MonadLogger.MonadLoggerIO m, MonadTrans t) => MonadLogger.MonadLoggerIO (Elevator t m) where
+  askLoggerIO = lift MonadLogger.askLoggerIO
+#endif
+
+#if defined(VERSION_mtl)
+instance (Mtl.MonadAccum w m, MonadTrans t) => Mtl.MonadAccum w (Elevator t m) where
+  look = lift Mtl.look
+  add = lift . Mtl.add
+
+instance (Mtl.MonadCont m, MonadTransControl t) => Mtl.MonadCont (Elevator t m) where
   callCC f = (restoreT . pure =<<) $ liftWith $ \ runT ->
-    callCC $ \ c -> runT $ f $ \ a -> restoreT $ c =<< runT (pure a)
+    Mtl.callCC $ \ c -> runT $ f $ \ a -> restoreT $ c =<< runT (pure a)
 
-instance (Monad (t m), MonadTransControl t, MonadError e m) => MonadError e (Elevator t m) where
-  throwError = lift . throwError
+instance (Mtl.MonadError e m, MonadTransControl t) => Mtl.MonadError e (Elevator t m) where
+  throwError = lift . Mtl.throwError
   catchError throwing catching = (restoreT . pure =<<) $ liftWith $ \ runT ->
-    catchError (runT throwing) (runT . catching)
+    Mtl.catchError (runT throwing) (runT . catching)
 
-instance (Monad (t m), MonadTransControl t, MonadReader r m) => MonadReader r (Elevator t m) where
-  ask = lift ask
+instance (Mtl.MonadReader r m, MonadTransControl t) => Mtl.MonadReader r (Elevator t m) where
+  ask = lift Mtl.ask
   local f tma = (restoreT . pure =<<) $ liftWith $ \ runT ->
-    local f $ runT tma
+    Mtl.local f $ runT tma
 
-instance (Monad (t m), MonadTransControl t, MonadRWS r w s m) => MonadRWS r w s (Elevator t m)
+instance (Mtl.MonadRWS r w s m, MonadTransControl t) => Mtl.MonadRWS r w s (Elevator t m)
 
-instance (Monad (t m), MonadTrans t, MonadState s m) => MonadState s (Elevator t m) where
-  get = lift get
-  put = lift . put
+instance (Mtl.MonadSelect r m, MonadTrans t) => Mtl.MonadSelect r (Elevator t m) where
+  select = lift . Mtl.select
 
-instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (Elevator t m) where
-  tell = lift . tell
-  listen tma = liftWith (\ runT -> listen $ runT tma) >>= \ (sta, w) ->
+instance (Mtl.MonadState s m, MonadTrans t) => Mtl.MonadState s (Elevator t m) where
+  get = lift Mtl.get
+  put = lift . Mtl.put
+
+instance (Mtl.MonadWriter w m, MonadTransControl t) => Mtl.MonadWriter w (Elevator t m) where
+  tell = lift . Mtl.tell
+  listen tma = liftWith (\ runT -> Mtl.listen $ runT tma) >>= \ (sta, w) ->
     (, w) <$> restoreT (pure sta)
-  pass tma = lift . pass . pure =<< tma
+  pass tma = lift . Mtl.pass . pure =<< tma
+#endif
+
+#if defined(VERSION_primitive)
+instance (Primitive.PrimMonad m, MonadTrans t) => Primitive.PrimMonad (Elevator t m) where
+  type PrimState (Elevator t m) = Primitive.PrimState m
+  primitive = lift . Primitive.primitive
+#endif
+
+#if defined(VERSION_resourcet)
+instance (ResourceT.MonadResource m, MonadTrans t) => ResourceT.MonadResource (Elevator t m) where
+  liftResourceT = lift . ResourceT.liftResourceT
+#endif
+
+#if defined(VERSION_unliftio_core)
+instance (UnliftIO.MonadUnliftIO m, MonadTransControlIdentity t) => UnliftIO.MonadUnliftIO (Elevator t m) where
+  withRunInIO f = liftWithIdentity $ \runT -> UnliftIO.withRunInIO $ \runInIO -> f $ runInIO . runT
+#endif
 
 -- * Examples
 
@@ -116,13 +220,13 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- Now you want to expose the inner @('MonadReader' 'Bool')@ instance with @(StackT m)@.
+-- Now you want to expose the inner @('Control.Monad.Reader.Class.MonadReader' 'Bool')@ instance with @(StackT m)@.
 --
--- Normally it's shadowed by the @('MonadReader' 'Char')@ instance, but we can use 'Elevator' to
+-- Normally it's shadowed by the @('Control.Monad.Reader.Class.MonadReader' 'Char')@ instance, but we can use 'Elevator' to
 -- access the inner transformer.
 --
 -- @
---   deriving ('MonadReader' 'Bool') via 'Elevator' ('Control.Monad.Trans.Reader.ReaderT' 'Char') ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m)
+--   deriving ('Control.Monad.Reader.Class.MonadReader' 'Bool') via 'Elevator' ('Control.Monad.Trans.Reader.ReaderT' 'Char') ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m)
 -- @
 
 -- ** Example 2: Custom transformer without boilerplate
@@ -134,7 +238,7 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- @
 -- newtype CustomT m a = CustomT { unCustomT :: 'Control.Monad.Trans.Identity.IdentityT' m a }
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
---   deriving newtype ('MonadTrans', 'MonadTransControl')
+--   deriving newtype ('MonadTrans', 'MonadTransControl', 'MonadTransControlIdentity')
 --
 -- runCustomT :: CustomT m a -> m a
 -- runCustomT = 'Control.Monad.Trans.Identity.runIdentityT' . unCustomT
@@ -147,13 +251,13 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 --   deriving newtype ('Functor', 'Applicative', 'Monad')
 -- @
 --
--- Unfortunately we can't derive a @('Monad' m => 'MonadReader' 'Bool' (StackT m))@ instance with
+-- Unfortunately we can't derive a @('Monad' m => 'Control.Monad.Reader.Class.MonadReader' 'Bool' (StackT m))@ instance with
 -- /GeneralizedNewtypeDeriving/, without also adding the instance to @CustomT@.
 --
 -- To still derive this trivial instance we can use 'Elevator' with /DerivingVia/.
 --
 -- @
---   deriving ('MonadReader' 'Bool') via ('Elevator' CustomT ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m))
+--   deriving ('Control.Monad.Reader.Class.MonadReader' 'Bool') via ('Elevator' CustomT ('Control.Monad.Trans.Reader.ReaderT' 'Bool' m))
 -- @
 
 -- ** Example 3: Adding an instance for 'Elevator'
@@ -182,5 +286,5 @@ instance (Monad (t m), MonadTransControl t, MonadWriter w m) => MonadWriter w (E
 -- @
 --
 -- Some useful examples (or exercises) are the instances for
--- [mtl](https://hackage.haskell.org/package/mtl)'s type classes ('MonadError', 'MonadReader',
--- 'MonadState', 'MonadWriter').
+-- [mtl](https://hackage.haskell.org/package/mtl)'s type classes ('Control.Monad.Error.Class.MonadError', 'Control.Monad.Reader.Class.MonadReader',
+-- 'Control.Monad.State.Class.MonadState', 'Control.Monad.Writer.Class.MonadWriter').

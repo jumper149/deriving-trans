@@ -19,32 +19,50 @@
 
   outputs = { self, nixpkgs, monad-control-identity }: {
 
-    defaultPackage.x86_64-linux =
+    packages.x86_64-linux.default =
       with import nixpkgs { system = "x86_64-linux"; };
       let
-        src = nix-gitignore.gitignoreSource [] ./.;
+        source = nix-gitignore.gitignoreSource [] ./.;
         overlay = self: super: {
-          monad-control-identity = self.callCabal2nix "monad-control-identity" monad-control-identity.outPath {};
         };
-      in (haskellPackages.extend overlay).callCabal2nix "deriving-trans" src {};
+        cabalOptions =
+          let
+            flags = import ./flags.nix;
+            setFlag = name: on: "${if on then "-f+" else "-f-"}${name}";
+          in
+            lib.strings.escapeShellArgs (builtins.attrValues (builtins.mapAttrs setFlag flags));
 
-    devShell.x86_64-linux =
+      in (haskell.packages.ghc9124.extend overlay).callCabal2nixWithOptions "deriving-trans" source cabalOptions {};
+
+    devShells.x86_64-linux.default =
       with import nixpkgs { system = "x86_64-linux"; };
-      haskellPackages.shellFor {
-        buildInputs = with haskellPackages; [
+      haskell.packages.ghc9124.shellFor {
+        buildInputs = with haskell.packages.ghc9124; [
           cabal-install
-          ghcid
-          haskell-language-server
-          hlint
-          hnix
-          implicit-hie
-          rnix-lsp
+#          ghcid
+#          haskell-language-server
+#          hlint
+#          implicit-hie
+#          nil
         ];
         packages = haskellPackages: [
-          self.defaultPackage.x86_64-linux
+          self.packages.x86_64-linux.default
         ];
-        withHoogle = true;
+        withHoogle = false;
       };
+
+    checks.x86_64-linux.build = self.packages.x86_64-linux.default;
+
+    checks.x86_64-linux.shell = self.devShells.x86_64-linux.default;
+
+    checks.x86_64-linux.warning =
+      with import nixpkgs { system = "x86_64-linux"; };
+      let override = old: {
+        configureFlags = [
+          "--ghc-option=-Werror"
+        ];
+      };
+      in haskell.lib.overrideCabal self.packages.x86_64-linux.default override;
 
   };
 }

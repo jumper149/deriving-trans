@@ -7,6 +7,7 @@ import Control.Monad.Trans.Control
 import Control.Monad.Trans.Control.Identity
 import Control.Monad.Trans.Elevator
 import Control.Monad.Trans.Identity
+import Data.Kind
 
 -- | A monad transformer, that passes through all instances via 'Elevator'.
 --
@@ -20,6 +21,8 @@ runTransparentT = runIdentityT . unNoT . descend
 -- | A newtype wrapper around 'IdentityT'.
 --
 -- This is used in 'TransparentT' to encourage the use of 'runTransparentT'.
+type NoT :: (Type -> Type) -> Type -> Type
+type role NoT representational nominal
 newtype NoT m a = MkNoT {unNoT :: IdentityT m a}
   deriving newtype (Functor, Applicative, Monad)
   deriving newtype (MonadTrans, MonadTransControl, MonadTransControlIdentity)

@@ -1,5 +1,93 @@
 # Revision history for deriving-trans
 
+## 0.11.0.0 *07 Apr 2026*
+
+* Raise lower version bound for mtl `>= 2.3.2`.
+* Completely remove the `random` flag and drop the optional dependency.
+
+## 0.10.0.1 *07 Apr 2026*
+
+* Add upper version bound for mtl `< 2.3.2`.
+
+## 0.10.0.0 *02 Apr 2026*
+
+* Add support for `GHC 9.12`.
+* Add explicit role annotations
+* Disable the `random` flag by default.
+* Drop support for the random version `>= 1.13`.
+
+## 0.9.1.0 *12 Jul 2023*
+
+* Support new optional dependency monad-logger `>= 0.3.38`.
+* Add `MonadLogger` and `MonadLoggerIO` instances to `Elevator` and `ComposeT`.
+* Add `MonadLogger` and `MonadLoggerIO` "base-case" instances for `LoggingT`, `NoLoggingT` and `WriterLoggingT`.
+
+## 0.9.0.0 *05 Jul 2023*
+
+* Drop support for `GHC < 9.6`.
+
+## 0.8.1.0 *20 Feb 2023*
+
+* Support new optional dependency logict `>= 0.8.0.0`.
+* Add `MonadLogic` instances to `Elevator` and `ComposeT` including a `LogicT` "base-case" instance.
+* Add `MonadMask` instances to `Elevator` and `ComposeT` including a `CatchT` "base-case" instance.
+* Add `MonadPlus` "base-case" instances for `ExceptT`, `MaybeT`, `CatchT` and `LogicT`.
+
+## 0.8.0.0 *31 Jan 2023*
+
+* Update version boundaries of dependencies:
+  - monad-control `>= 1.0.3`
+  - monad-control-identity `>= 0.2.0.0`
+  - transformers-base `>= 0.4.6`
+  - primitive `>= 0.7.1.0`
+  - unliftio-core `>= 0.2.0.0`
+* Add common instances to `ComposeT`:
+  - `Alternative` (recursive and "base-case")
+  - `MonadFail` (recursive and "base-case")
+  - `MonadFix` (recursive; didn't find any "base-case")
+  - `MonadPlus` (determined by `Alternative`)
+  - `MonadZip` (recursive; didn't find any "base-case")
+
+## 0.7.0.0 *31 Jan 2023*
+
+* Update required version bounds for `exceptions` to `>= 0.10.5`.
+* Remove redundant `MonadIO` constraints from instances `StatefulGen`, `FrozenGen` and `RandomGenM`.
+* Drop support for `GHC < 9.2`.
+
+## 0.6.1.0 *27 Jan 2023*
+
+* Add optional dependency `random >= 1.2`.
+* Add `StatefulGen`, `FrozenGen` and `RandomGenM` instances to `Elevator` and `ComposeT`.
+  There are no "base-case" instances because there are no related transformers, just base monads.
+
+## 0.6.0.0 *23 Jan 2023*
+
+* Update dependencies:
+  - transformers `>= 0.6`
+  - exceptions `>= 0.4` (optional)
+  - mtl `>= 2.3` (optional)
+  - primitive (optional)
+  - resourcet `>= 1.2` (optional)
+  - unliftio (optional)
+* Add `MonadAccum` and `MonadSelect` instances to `Elevator` and `ComposeT`.
+* Add "base-case" instances for `AccumT` and `SelectT`.
+* Add "base-case" instances for the CPS versions of `WriterT` and `RWST`.
+* Remove `Monad m` constraint from "base-case" instance for `ContT`.
+* Add `MonadResource` instances to `Elevator` and `ComposeT` including a `ResourceT` "base-case" instance.
+
+## 0.5.2.0 *17 Jan 2023*
+
+* Add optional dependency `primitive`.
+* Add `MonadPrim` instances to `Elevator` and `ComposeT`.
+
+## 0.5.1.0 *11 Jan 2023*
+
+* Introduce cabal flags `exceptions`, `mtl` and `unliftio`.
+  These flags enable the dependency on additional optional packages, to reduce the requirement of orphan instances.
+* Add `MonadUnliftIO` instances to `Elevator` and `ComposeT`.
+* Add `MonadThrow` and `MonadCatch` instances to `Elevator` and `ComposeT`.
+* Add `MonadThrow` and `MonadCatch` "base-case" instances for `CatchT` to `ComposeT`.
+
 ## 0.5.0.1 *04 Aug 2022*
 
 * Improve Haddock examples.

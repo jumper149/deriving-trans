@@ -1,0 +1,103 @@
+name: "Default"
+on:
+  push:
+jobs:
+  build:
+    name: "Flake"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+
+          # All flags `false`.
+          - flag-exceptions: false
+            flag-logict: false
+            flag-monad-logger: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-resourcet: false
+            flag-unliftio: false
+
+          # 1 flag `true`.
+          - flag-exceptions: true
+            flag-logict: false
+            flag-monad-logger: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-resourcet: false
+            flag-unliftio: false
+          - flag-exceptions: false
+            flag-logict: true
+            flag-monad-logger: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-resourcet: false
+            flag-unliftio: false
+          - flag-exceptions: false
+            flag-logict: false
+            flag-monad-logger: true
+            flag-mtl: false
+            flag-primitive: false
+            flag-resourcet: false
+            flag-unliftio: false
+          - flag-exceptions: false
+            flag-logict: false
+            flag-monad-logger: false
+            flag-mtl: true
+            flag-primitive: false
+            flag-resourcet: false
+            flag-unliftio: false
+          - flag-exceptions: false
+            flag-logict: false
+            flag-monad-logger: false
+            flag-mtl: false
+            flag-primitive: true
+            flag-resourcet: false
+            flag-unliftio: false
+          - flag-exceptions: false
+            flag-logict: false
+            flag-monad-logger: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-resourcet: true
+            flag-unliftio: false
+          - flag-exceptions: false
+            flag-logict: false
+            flag-monad-logger: false
+            flag-mtl: false
+            flag-primitive: false
+            flag-resourcet: false
+            flag-unliftio: true
+
+          # All flags `true`.
+          - flag-exceptions: true
+            flag-logict: true
+            flag-monad-logger: true
+            flag-mtl: true
+            flag-primitive: true
+            flag-resourcet: true
+            flag-unliftio: true
+
+    steps:
+    - name: "Set up GitHub Actions"
+      uses: actions/checkout@v6
+    - name: "Set up Nix"
+      uses: cachix/install-nix-action@v31
+    - name: "Set up Cachix"
+      uses: cachix/cachix-action@v17
+      with:
+        name: jumper149-deriving-trans
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    - name: "Set Cabal flags"
+      run: |
+        sed --expression='s/^  "exceptions" = true;$/  "exceptions" = ${{ matrix.flag-exceptions }};/g' --in-place flags.nix
+        sed --expression='s/^  "logict" = true;$/  "logict" = ${{ matrix.flag-logict }};/g' --in-place flags.nix
+        sed --expression='s/^  "monad-logger" = true;$/  "monad-logger" = ${{ matrix.flag-monad-logger }};/g' --in-place flags.nix
+        sed --expression='s/^  "mtl" = true;$/  "mtl" = ${{ matrix.flag-mtl }};/g' --in-place flags.nix
+        sed --expression='s/^  "primitive" = true;$/  "primitive" = ${{ matrix.flag-primitive }};/g' --in-place flags.nix
+        sed --expression='s/^  "resourcet" = true;$/  "resourcet" = ${{ matrix.flag-resourcet }};/g' --in-place flags.nix
+        sed --expression='s/^  "unliftio" = true;$/  "unliftio" = ${{ matrix.flag-unliftio }};/g' --in-place flags.nix
+        cat flags.nix
+    - name: "Check Flake"
+      run: nix flake check --keep-going --print-build-logs
