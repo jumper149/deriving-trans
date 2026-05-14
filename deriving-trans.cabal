@@ -1,4 +1,4 @@
-cabal-version: 3.0
+cabal-version: 3.8
 name: deriving-trans
 version: 0.11.0.0
 synopsis: Derive instances for monad transformer stacks
@@ -60,7 +60,22 @@ flag unliftio
   description:
     Implement instances for 'MonadUnliftIO'.
 
+common language
+  default-language: GHC2021
+  default-extensions:
+    DataKinds
+    DerivingStrategies
+    DerivingVia
+    FunctionalDependencies
+    OverloadedStrings
+    RoleAnnotations
+    TypeFamilies
+    TypeOperators
+    UnboxedTuples
+
 library
+  import:
+    , language
   exposed-modules:
     Control.Monad.Trans.Compose
     Control.Monad.Trans.Compose.Infix
@@ -97,17 +112,8 @@ library
     build-depends:
       , unliftio-core >= 0.2.0.0
   hs-source-dirs: src
-  default-language: GHC2021
-  default-extensions:
-    DataKinds
-    DerivingStrategies
-    DerivingVia
-    FunctionalDependencies
-    OverloadedStrings
-    TypeFamilies
-    UnboxedTuples
-    RoleAnnotations
   ghc-options:
+    -O2
     -Weverything
     -Wno-all-missed-specialisations
     -Wno-implicit-prelude
@@ -116,3 +122,39 @@ library
     -Wno-missing-import-lists
     -Wno-missing-safe-haskell-mode
     -Wno-unsafe
+
+benchmark bench
+  import:
+    , language
+  hs-source-dirs: bench
+  main-is: Main.hs
+  other-modules:
+    Countdown
+    Countdown.DerivingTrans
+    Countdown.Mtl
+    Countdown.Reference
+    Countdown.ST
+    DerivingTrans.Internal
+    Transformers.AsyncState
+    Transformers.AsyncState.Class
+  build-depends:
+    , base < 5
+    , deriving-trans
+    , monad-control
+    , monad-control-identity
+    , mtl
+    , tasty-bench
+    , transformers
+  ghc-options:
+    -- compare against baseline benchmark consistently
+    -fproc-alignment=64
+
+    -- optimizations
+    -flate-specialise
+    -fspecialise-aggressively
+    -O2
+    -threaded
+
+    -- include memory usage in benchmarks
+    -rtsopts
+    -with-rtsopts=-T

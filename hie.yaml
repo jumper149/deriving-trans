@@ -2,3 +2,30 @@ cradle:
   cabal:
     - path: "src"
       component: "lib:deriving-trans"
+
+    - path: "bench/Main.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown/DerivingTrans.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown/Mtl.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown/Reference.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Countdown/ST.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/DerivingTrans/Internal.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Transformers/AsyncState.hs"
+      component: "deriving-trans:exe:bench"
+
+    - path: "bench/Transformers/AsyncState/Class.hs"
+      component: "deriving-trans:exe:bench"
