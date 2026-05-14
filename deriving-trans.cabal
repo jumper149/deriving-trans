@@ -146,9 +146,15 @@ benchmark bench
     , tasty-bench
     , transformers
   ghc-options:
+    -- compare against baseline benchmark consistently
+    -fproc-alignment=64
+
+    -- optimizations
     -flate-specialise
     -fspecialise-aggressively
     -O2
     -threaded
+
+    -- include memory usage in benchmarks
     -rtsopts
     -with-rtsopts=-T
